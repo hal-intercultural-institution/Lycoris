@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lycoris", "Lycoris\Lycoris.vcxproj", "{0D78040B-69EF-4F70-8983-A0157EBBA33B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lycoris", "Lycoris.vcxproj", "{0D78040B-69EF-4F70-8983-A0157EBBA33B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
