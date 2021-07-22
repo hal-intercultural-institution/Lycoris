@@ -5,8 +5,8 @@
 
 #include "render/renderer.h"
 #include "system/settings.h"
-#include "debug/logger.h"
-#include "debug/overlay.h"
+#include "profiler/logger.h"
+#include "profiler/overlay.h"
 
 namespace lycoris::game
 {
@@ -59,7 +59,7 @@ namespace lycoris::game
 		game& operator=(const game&) = delete;
 
 		// ロガー
-		debug::logger logger;
+		profiler::logger logger;
 
 	private:
 		// フレームカウント
@@ -71,7 +71,7 @@ namespace lycoris::game
 		// 設定
 		system::settings settings_;
 
-		debug::debug_overlay overlay_;
+		profiler::debug_overlay overlay_;
 
 		HINSTANCE h_instance_{};
 		MSG* message_ = nullptr;
