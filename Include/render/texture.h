@@ -8,7 +8,6 @@
 #include <d3d11.h>
 
 #include "game.h"
-#include "debug/logger.h"
 #include "utility/cast.h"
 
 namespace lycoris::render::texture
