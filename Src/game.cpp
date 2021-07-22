@@ -76,7 +76,7 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 	
 	try
 	{
-		logger = debug::logger("log.txt");
+		logger = profiler::logger("log.txt");
 		renderer_.initialize(h_instance, h_wnd, true);
 		renderer_.get_camera().initialize();
 		InitInput(h_instance, h_wnd);
@@ -164,7 +164,6 @@ void lycoris::game::game::destroy()
 	
 	UnregisterClass(class_name, h_instance_);
 	CoUninitialize();
-
 }
 
 lycoris::game::scene& lycoris::game::game::get_current_scene() const
