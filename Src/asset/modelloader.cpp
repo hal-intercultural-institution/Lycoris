@@ -42,7 +42,7 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 		{
 			if (line.size() <= 2)
 				throw std::runtime_error("ModelLoader: illegal data detected");
-			uv.emplace_back(std::stof(line[1]), std::stof(line[2]));
+			uv.emplace_back(std::stof(line[1]), 1.0f - std::stof(line[2]));
 		}
 		else if (line[0] == "vn") // normals
 		{
