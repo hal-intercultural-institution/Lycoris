@@ -80,6 +80,7 @@ namespace lycoris::render::model3d
 		//	: parts_(std::move(parts)), materials_(std::move(materials))
 		//{
 		//}
+		model_3d() = default;
 		explicit model_3d(model_part&& part)
 		{
 			part_ = std::move(part);
