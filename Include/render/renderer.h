@@ -99,7 +99,8 @@ namespace lycoris::render
 		void set_directional_light(DirectX::XMFLOAT3& light);
 		// Material を更新し、GPUへ転送する
 		void set_material(material& material);
-
+		// カリング設定
+		void set_culling_mode(D3D11_CULL_MODE culling_mode);
 		void draw_text(const std::wstring& text);
 
 		ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
@@ -109,6 +110,8 @@ namespace lycoris::render
 		camera& get_camera();
 
 	private:
+		// pointers
+		
 		winrt::com_ptr<ID3D11Device> device_;
 		winrt::com_ptr<ID3D11DeviceContext> immediate_context_;
 		winrt::com_ptr<IDXGISwapChain> swap_chain_;
@@ -134,11 +137,15 @@ namespace lycoris::render
 		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_;
 		winrt::com_ptr<IDWriteTextFormat> d_write_text_format_;
 
+		// values
+		
 		DirectX::XMFLOAT4X4 world_matrix_ = {};
 		DirectX::XMFLOAT4X4 view_matrix_ = {};
 		DirectX::XMFLOAT4X4 projection_matrix_ = {};
 		DirectX::XMFLOAT4 directional_light_ = {};
 
+		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
+		
 		screen screen_;
 		camera camera_;
 	};
