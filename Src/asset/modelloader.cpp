@@ -9,6 +9,7 @@
 namespace strutil = lycoris::utility::string;
 
 constexpr auto diffuse = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+constexpr auto model_scale = 10.0f;
 
 lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesystem::path& path)
 {
@@ -35,7 +36,7 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 		{
 			if (line.size() <= 3)
 				throw std::runtime_error("ModelLoader: illegal data detected");
-			positions.emplace_back(std::stof(line[1]), std::stof(line[2]), std::stof(line[3]));
+			positions.emplace_back(std::stof(line[1]) * model_scale, std::stof(line[2]) * model_scale, std::stof(line[3]) * model_scale);
 		}
 		else if (line[0] == "vt") // uv
 		{
