@@ -12,7 +12,7 @@ namespace lycoris::utility::string
 		std::uint64_t pos = 0;
 		while (true)
 		{
-			const std::uint32_t found = work.find(separator, pos);
+			const std::uint64_t found = work.find(separator, pos);
 			if (found == std::string::npos) break;
 			result.push_back(work.substr(pos, found - pos));
 			pos = found + length;
