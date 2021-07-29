@@ -104,7 +104,9 @@ namespace lycoris::render::texture
 		void initialize();
 		image load_image_from_file(const std::filesystem::path& path);
 		texture create_texture_from_file(const std::filesystem::path& path);
+		void destroy();
 	private:
-		winrt::com_ptr<IWICImagingFactory> imaging_factory_;
+		//winrt::com_ptr<IWICImagingFactory> imaging_factory_;
+		IWICImagingFactory* imaging_factory_ = nullptr;
 	};
 }

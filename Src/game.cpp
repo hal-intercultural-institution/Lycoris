@@ -162,6 +162,7 @@ void lycoris::game::game::destroy()
 	if (scene_) scene_->on_destroy();
 	renderer_.destroy();
 	UninitInput();
+	texture_loader_.destroy();
 	
 	UnregisterClass(class_name, h_instance_);
 	CoUninitialize();
