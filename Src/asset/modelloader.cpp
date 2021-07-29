@@ -51,7 +51,9 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 		}
 		else if (line[0] == "mtllib") // .mtl file
 		{
-			auto material = load_material(path);
+			auto mtl_path = path;
+			mtl_path.replace_filename(line[1]);
+			auto material = load_material(mtl_path);
 			materials.insert(material.begin(), material.end());
 		}
 		else if (line[0] == "usemtl") // specify mtl
@@ -60,7 +62,7 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 				throw std::runtime_error("ModelLoader: material not found");
 			// “Ç‚İ‚ñ‚¾Material‚ğƒRƒs[‚µ‚Ä‚¢‚ê‚é
 			part.materials.push_back(materials[line[1]]);
-			if (indices.size() == 0)
+			if (materials.size() == 1)
 			{
 				// Material‚ª1‚Â–Ú‚È‚ç‚Îstart_index‚Í0
 				part.materials.back().start_index = 0;
@@ -85,9 +87,9 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 				auto vertex = strutil::split(line[i], "/");
 				vertices.emplace_back(
 					positions[std::stoi(vertex[0]) - 1ull],
-					normals[std::stoi(vertex[1]) - 1ull],
+					normals[std::stoi(vertex[2]) - 1ull],
 					diffuse,
-					uv[std::stoi(vertex[2]) - 1ull]
+					uv[std::stoi(vertex[1]) - 1ull]
 				);
 				indices.emplace_back(static_cast<std::uint32_t>(vertices.size()) - 1);
 			}
