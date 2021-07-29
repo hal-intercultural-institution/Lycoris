@@ -1,9 +1,9 @@
 #pragma once
 
-#include <chrono>
 #include <memory>
 
 #include "render/renderer.h"
+#include "render/texture.h"
 #include "system/settings.h"
 #include "profiler/logger.h"
 #include "profiler/overlay.h"
@@ -46,6 +46,7 @@ namespace lycoris::game
 		
 		scene& get_current_scene() const;
 		render::renderer& get_renderer() noexcept;
+		render::texture::texture_loader& get_texture_loader() noexcept;
 		void initialize(HINSTANCE h_instance, int n_show_cmd, MSG* message);
 		void run();
 		void destroy();
@@ -68,6 +69,7 @@ namespace lycoris::game
 		std::unique_ptr<scene> scene_ = nullptr;
 		// ƒŒƒ“ƒ_ƒ‰[
 		render::renderer renderer_;
+		render::texture::texture_loader texture_loader_;
 		// İ’è
 		system::settings settings_;
 

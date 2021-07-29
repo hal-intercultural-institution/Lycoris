@@ -79,6 +79,7 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 		logger = profiler::logger("log.txt");
 		renderer_.initialize(h_instance, h_wnd, true);
 		renderer_.get_camera().initialize();
+		texture_loader_.initialize();
 		InitInput(h_instance, h_wnd);
 	}
 	catch (const std::runtime_error& e)
@@ -188,6 +189,11 @@ void lycoris::game::game::set_settings(system::settings& settings)
 lycoris::render::renderer& lycoris::game::game::get_renderer() noexcept
 {
 	return renderer_;
+}
+
+lycoris::render::texture::texture_loader& lycoris::game::game::get_texture_loader() noexcept
+{
+	return texture_loader_;
 }
 
 lycoris::game::game& lycoris::game::get_game() noexcept
