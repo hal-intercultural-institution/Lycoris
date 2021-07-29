@@ -69,7 +69,7 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 			{
 				// Material‚ª2‚Â–ÚˆÈ~‚È‚çstart_index‚Íindex buffer‚Ì—v‘f”-1
 				auto& current = part.materials.back();
-				current.start_index = indices.size() - 1;
+				current.start_index = static_cast<std::uint32_t>(indices.size()) - 1;
 				auto& before = part.materials.at(part.materials.size() - 2);
 				// 1‚Â‘O‚ÌMaterial‚Ì’¸“_”‚ª‚í‚©‚é‚Ì‚ÅŒvZ‚µ‚Ä‘ã“ü
 				before.indices = before.start_index - current.start_index;
@@ -89,13 +89,13 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 					diffuse,
 					uv[std::stoi(vertex[2]) - 1ull]
 				);
-				indices.emplace_back(vertices.size() - 1);
+				indices.emplace_back(static_cast<std::uint32_t>(vertices.size()) - 1);
 			}
 			// lŠpŒ`ƒ|ƒŠƒSƒ“ˆ—
 			if (vertex_count == 4)
 			{
-				indices.emplace_back(vertices.size() - 4);
-				indices.emplace_back(vertices.size() - 2);
+				indices.emplace_back(static_cast<std::uint32_t>(vertices.size()) - 4);
+				indices.emplace_back(static_cast<std::uint32_t>(vertices.size()) - 2);
 			}
 		}
 	}
@@ -104,19 +104,19 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 	if (part.materials.size() == 1)
 	{
 		// Material‚ª1ŒÂ‚µ‚©–³‚¢‚Æ‚«‚Íindex buffer‚Ì”‚ğ‚»‚Ì‚Ü‚Ü“ü‚ê‚é
-		part.materials.back().indices = indices.size();
+		part.materials.back().indices = static_cast<std::uint32_t>(indices.size());
 	}
 	else
 	{
 		auto& last = part.materials.back();
-		last.indices = indices.size() - last.start_index;
+		last.indices = static_cast<std::uint32_t>(indices.size()) - last.start_index;
 	}
 
 	auto& renderer = game::get_game().get_renderer();
 	{
 		D3D11_BUFFER_DESC buffer_desc{};
 		buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-		buffer_desc.ByteWidth = sizeof(render::vertex) * vertices.size();
+		buffer_desc.ByteWidth = static_cast<std::uint32_t>(sizeof(render::vertex) * vertices.size());
 		buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		buffer_desc.CPUAccessFlags = 0;
 
@@ -129,7 +129,7 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 	{
 		D3D11_BUFFER_DESC buffer_desc{};
 		buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-		buffer_desc.ByteWidth = sizeof(std::uint32_t) * indices.size();
+		buffer_desc.ByteWidth = static_cast<std::uint32_t>(sizeof(std::uint32_t) * indices.size());
 		buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		buffer_desc.CPUAccessFlags = 0;
 

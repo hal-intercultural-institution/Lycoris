@@ -13,7 +13,7 @@ void lycoris::render::model3d::draw_model(model_3d& model)
 		std::array vertex_buffers = {
 			parts.model.get_vertex_buffer()
 		};
-		device_context.IASetVertexBuffers(0, vertex_buffers.size(), vertex_buffers.data(), &stride, &offset);
+		device_context.IASetVertexBuffers(0, static_cast<std::uint32_t>(vertex_buffers.size()), vertex_buffers.data(), &stride, &offset);
 
 		device_context.IASetIndexBuffer(parts.model.get_index_buffer(), DXGI_FORMAT_R32_UINT, 0);
 
@@ -25,7 +25,7 @@ void lycoris::render::model3d::draw_model(model_3d& model)
 			std::array srvs = {
 				texture.get_shader_resource_view()
 			};
-			device_context.PSSetShaderResources(0, srvs.size(), srvs.data());
+			device_context.PSSetShaderResources(0, static_cast<std::uint32_t>(srvs.size()), srvs.data());
 			device_context.DrawIndexed(indices, start_index, 0);
 		}
 	}
