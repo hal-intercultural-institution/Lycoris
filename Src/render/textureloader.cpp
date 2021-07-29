@@ -57,8 +57,13 @@ lycoris::render::texture::image lycoris::render::texture::texture_loader::load_i
 void lycoris::render::texture::texture_loader::initialize()
 {
 	if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
-	                                  IID_PPV_ARGS(imaging_factory_.put()))))
+	                                  IID_PPV_ARGS(&imaging_factory_))))
 		throw std::runtime_error("TextureLoader: failed to initialize WICImagingFactory");
+}
+
+void lycoris::render::texture::texture_loader::destroy()
+{
+	imaging_factory_->Release();
 }
 
 lycoris::render::texture::texture lycoris::render::texture::texture_loader::create_texture_from_file(const std::filesystem::path& path)

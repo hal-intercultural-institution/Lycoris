@@ -161,9 +161,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Include\asset\model.h" />
     <ClInclude Include="Include\debug\logger.h" />
-    <ClInclude Include="Include\debug\overlay.h" />
     <ClInclude Include="Include\game.h" />
+    <ClInclude Include="Include\profiler\logger.h" />
+    <ClInclude Include="Include\profiler\overlay.h" />
     <ClInclude Include="Include\render\camera.h" />
     <ClInclude Include="Include\render\constantbuffer.h" />
     <ClInclude Include="Include\render\model3d.h" />
@@ -177,10 +179,11 @@
     <ClInclude Include="Include\utility\timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\debug\overlay.cpp" />
+    <ClCompile Include="Src\asset\modelloader.cpp" />
     <ClCompile Include="Src\game.cpp" />
+    <ClCompile Include="Src\profiler\overlay.cpp" />
     <ClCompile Include="Src\render\camera.cpp" />
-    <ClCompile Include="Src\render\modelloader.cpp" />
+    <ClCompile Include="Src\render\model.cpp" />
     <ClCompile Include="Src\render\renderer.cpp" />
     <ClCompile Include="Src\render\screen.cpp" />
     <ClCompile Include="Src\render\texture.cpp" />
