@@ -1,12 +1,5 @@
-//=============================================================================
-//
-// ƒŒƒ“ƒ_ƒŠƒ“ƒOˆ— [renderer.h]
-// Author : 
-//
-//=============================================================================
 #pragma once
 
-#include <vector>
 #include <cstdint>
 
 #include <d3d11.h>
@@ -15,6 +8,7 @@
 #include <DirectXMath.h>
 #include <winrt/base.h>
 
+#include "render/shader.h"
 #include "render/camera.h"
 
 namespace lycoris::render
@@ -119,8 +113,8 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 
-		std::vector<winrt::com_ptr<ID3D11VertexShader>> vertex_shader_;
-		std::vector<winrt::com_ptr<ID3D11PixelShader>> pixel_shader_;
+		shader::vertex_shader vertex_shader_;
+		shader::pixel_shader pixel_shader_;
 		winrt::com_ptr<ID3D11InputLayout> input_layout_;
 		winrt::com_ptr<ID3D11Buffer> constant_buffer_;
 		winrt::com_ptr<ID3D11Buffer> material_buffer_;

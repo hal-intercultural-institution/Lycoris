@@ -321,51 +321,22 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		immediate_context_->PSSetSamplers(0, 1, samplerState);
 	}
 
-	DWORD shFlag = D3DCOMPILE_ENABLE_STRICTNESS;
-
-#ifdef _DEBUG
-	shFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-
 	// Vertex Shader, Input Layout
 	{
-		winrt::com_ptr<ID3DBlob> vs_blob, error_blob;
-		winrt::com_ptr<ID3D11VertexShader> vertex_shader;
-		hr = D3DCompileFromFile(L"shader.hlsl", nullptr, nullptr, "VertexShaderPolygon", "vs_4_0", shFlag, 0, vs_blob.put(), error_blob.put());
-		if (FAILED(hr))
-		{
-			auto error = static_cast<char*>(error_blob->GetBufferPointer());
-			throw std::runtime_error("Renderer: failed to compile vertex shader: " + std::string{ error });
-		}
-		const auto& vs_bytecode = vs_blob->GetBufferPointer();
-		const auto& vs_bytecode_size = vs_blob->GetBufferSize();
-		device_->CreateVertexShader(vs_bytecode, vs_bytecode_size, nullptr, vertex_shader.put());
-		vertex_shader_.emplace_back(std::move(vertex_shader));
-
-		std::array<D3D11_INPUT_ELEMENT_DESC, 4> layout{
-			{
+		std::initializer_list<D3D11_INPUT_ELEMENT_DESC> layout = {
 				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-			}
 		};
-		device_->CreateInputLayout(layout.data(), static_cast<std::uint32_t>(layout.size()), vs_bytecode, vs_bytecode_size, input_layout_.put());
-		immediate_context_->IASetInputLayout(input_layout_.get());
+		vertex_shader_ = shader::vertex_shader::compile("data/shader.hlsl", "VertexShader", layout);
+		shader::vertex_shader::set(vertex_shader_);
 	}
 
 	// PixelShader
 	{
-		winrt::com_ptr<ID3DBlob> ps_blob, error_blob;
-		winrt::com_ptr<ID3D11PixelShader> pixel_shader;
-		hr = D3DCompileFromFile(L"shader.hlsl", nullptr, nullptr, "PixelShaderPolygon", "ps_4_0", shFlag, 0, ps_blob.put(), error_blob.put());
-		if (FAILED(hr))
-		{
-			auto error = static_cast<char*>(error_blob->GetBufferPointer());
-			throw std::runtime_error("Renderer: failed to compile pixel shader: " + std::string(error));
-		}
-		device_->CreatePixelShader(ps_blob->GetBufferPointer(), ps_blob->GetBufferSize(), nullptr, pixel_shader.put());
-		pixel_shader_.emplace_back(std::move(pixel_shader));
+		pixel_shader_ = shader::pixel_shader::compile("data/shader.hlsl", "PixelShader");
+		shader::pixel_shader::set(pixel_shader_);
 	}
 
 	// Constant Buffer (Matrix)
@@ -397,11 +368,6 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		device_->CreateBuffer(&buffer_desc, nullptr, material_buffer);
 		immediate_context_->VSSetConstantBuffers(1, 1, material_buffer);
 	}
-
-
-	// set default shaders
-	immediate_context_->VSSetShader(vertex_shader_.at(0).get(), nullptr, 0);
-	immediate_context_->PSSetShader(pixel_shader_.at(0).get(), nullptr, 0);
 	
 	{
 		hr = device_->QueryInterface(IID_PPV_ARGS(dxgi_device_.put()));
