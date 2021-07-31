@@ -66,6 +66,9 @@
     <ClInclude Include="Include\render\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\gamedef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\render\camera.cpp">

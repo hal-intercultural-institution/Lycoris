@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <array>
 
-// #include "render/constantbuffer.h"
+#include "game.h"
 
 ID3D11Device& lycoris::render::renderer::get_device() const
 {
@@ -43,88 +43,50 @@ void lycoris::render::renderer::set_depth_enabled(bool flag) const
 
 void lycoris::render::renderer::set_world_view_projection_2d()
 {
-	constant cBuff{};
+	const auto identified_matrix = DirectX::XMMatrixIdentity();
+	
+	XMStoreFloat4x4(&world_matrix_.get(), identified_matrix);
+	world_matrix_.update();
+
+	XMStoreFloat4x4(&view_matrix_.get(), identified_matrix);
+	view_matrix_.update();
 
 	const auto height = screen_.get_screen_height();
 	const auto width = screen_.get_screen_width();
+	
 	// Ortho (³) ŽË‰e•ÏŠ·s—ñ‚ð¶¬‚·‚é
-	const auto wvp2d = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, height, width, 0.0f, 0.0f, 1.0f);
-	XMStoreFloat4x4(&cBuff.world_view_projection, XMMatrixTranspose(wvp2d));
+	const auto world_view_projection = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, height, width, 0.0f, 0.0f, 1.0f);
+	XMStoreFloat4x4(&projection_matrix_.get(), XMMatrixTranspose(world_view_projection));
+	projection_matrix_.update();
 
-	immediate_context_->UpdateSubresource(constant_buffer_.get(), 0, nullptr, &cBuff, 0, 0);
 }
 
 void lycoris::render::renderer::set_world_matrix(DirectX::XMFLOAT4X4& world_matrix)
 {
-	world_matrix_ = world_matrix;
-
-	constant cBuff{};
-
-	// World, View, Projection Matrix ‚ð‚©‚¯‚é
-	const auto world_view_projection = XMLoadFloat4x4(&world_matrix_) * XMLoadFloat4x4(&view_matrix_) * XMLoadFloat4x4(&projection_matrix_);
-	// Constant Buffer “]‘——p‚Ì\‘¢‘Ì‚É WorldViewProjection Matrix ‚ð“]’u‚µ‚Ä‚©‚ç“ü‚ê‚é
-	XMStoreFloat4x4(&cBuff.world_view_projection, XMMatrixTranspose(world_view_projection));
-
-	// Constant Buffer “]‘——p‚Ì\‘¢‘Ì‚É World Matrix ‚ð“]’u‚µ‚Ä‚©‚ç“ü‚ê‚é
-	const auto world = XMLoadFloat4x4(&world_matrix_);
-	XMStoreFloat4x4(&cBuff.world, XMMatrixTranspose(world));
-
-	cBuff.light = directional_light_;
-
-	immediate_context_->UpdateSubresource(constant_buffer_.get(), 0, nullptr, &cBuff, 0, 0);
+	XMStoreFloat4x4(&world_matrix_.get(), XMMatrixTranspose(XMLoadFloat4x4(&world_matrix)));
+	world_matrix_.update();
 }
 
 void lycoris::render::renderer::set_view_matrix(DirectX::XMFLOAT4X4& view_matrix)
 {
-	view_matrix_ = view_matrix;
-
-	constant cBuff{};
-
-	// World, View, Projection Matrix ‚ð‚©‚¯‚é
-	const auto world_view_projection = XMLoadFloat4x4(&world_matrix_) * XMLoadFloat4x4(&view_matrix_) * XMLoadFloat4x4(&projection_matrix_);
-	// Constant Buffer “]‘——p‚Ì\‘¢‘Ì‚É WorldViewProjection Matrix ‚ð“]’u‚µ‚Ä‚©‚ç“ü‚ê‚é
-	XMStoreFloat4x4(&cBuff.world_view_projection, XMMatrixTranspose(world_view_projection));
-
-	cBuff.light = directional_light_;
-
-	immediate_context_->UpdateSubresource(constant_buffer_.get(), 0, nullptr, &cBuff, 0, 0);
+	XMStoreFloat4x4(&view_matrix_.get(), XMMatrixTranspose(XMLoadFloat4x4(&view_matrix)));
+	view_matrix_.update();
 }
 
 void lycoris::render::renderer::set_projection_matrix(DirectX::XMFLOAT4X4& projection_matrix)
 {
-	projection_matrix_ = projection_matrix;
-
-	constant cBuff{};
-
-	// World, View, Projection Matrix ‚ð‚©‚¯‚é
-	const auto world_view_projection = XMLoadFloat4x4(&world_matrix_) * XMLoadFloat4x4(&view_matrix_) * XMLoadFloat4x4(&projection_matrix_);
-	// Constant Buffer “]‘——p‚Ì\‘¢‘Ì‚É WorldViewProjection Matrix ‚ð“]’u‚µ‚Ä‚©‚ç“ü‚ê‚é
-	XMStoreFloat4x4(&cBuff.world_view_projection, XMMatrixTranspose(world_view_projection));
-
-	cBuff.light = directional_light_;
-
-	immediate_context_->UpdateSubresource(constant_buffer_.get(), 0, nullptr, &cBuff, 0, 0);
+	XMStoreFloat4x4(&projection_matrix_.get(), XMMatrixTranspose(XMLoadFloat4x4(&projection_matrix)));
+	projection_matrix_.update();
 }
 
 void lycoris::render::renderer::set_directional_light(DirectX::XMFLOAT3& light)
 {
-	directional_light_ = { light.x, light.y, light.z, 0.0f };
-
-	constant cBuff{};
-
-	// World, View, Projection Matrix ‚ð‚©‚¯‚é
-	auto worldViewProjection = XMLoadFloat4x4(&world_matrix_) * XMLoadFloat4x4(&view_matrix_) * XMLoadFloat4x4(&projection_matrix_);
-	// Constant Buffer “]‘——p‚Ì\‘¢‘Ì‚É WorldViewProjection Matrix ‚ð“]’u‚µ‚Ä‚©‚ç“ü‚ê‚é
-	XMStoreFloat4x4(&cBuff.world_view_projection, XMMatrixTranspose(worldViewProjection));
-
-	cBuff.light = directional_light_;
-
-	immediate_context_->UpdateSubresource(constant_buffer_.get(), 0, nullptr, &cBuff, 0, 0);
+	directional_light_.update({ light.x, light.y, light.z, 0.0f });
 }
 
 void lycoris::render::renderer::set_material(material& material)
 {
-	immediate_context_->UpdateSubresource(material_buffer_.get(), 0, nullptr, &material, 0, 0);
+	material_.update(material);
 }
 
 void lycoris::render::renderer::set_culling_mode(D3D11_CULL_MODE culling_mode)
@@ -329,44 +291,23 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		vertex_shader_ = shader::vertex_shader::compile("data/shader.hlsl", "VertexShader", layout);
+		vertex_shader_ = shader::vertex_shader::compile("data/shader.hlsl", "vs_main", layout);
 		shader::vertex_shader::set(vertex_shader_);
 	}
 
 	// PixelShader
 	{
-		pixel_shader_ = shader::pixel_shader::compile("data/shader.hlsl", "PixelShader");
+		pixel_shader_ = shader::pixel_shader::compile("data/shader.hlsl", "ps_main");
 		shader::pixel_shader::set(pixel_shader_);
 	}
-
-	// Constant Buffer (Matrix)
+	
+	// Constant Buffers
 	{
-		D3D11_BUFFER_DESC buffer_desc{};
-		buffer_desc.ByteWidth = sizeof(constant);
-		buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-		buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		buffer_desc.CPUAccessFlags = 0;
-		buffer_desc.MiscFlags = 0;
-		buffer_desc.StructureByteStride = sizeof(float);
-
-		const auto& constant_buffer = constant_buffer_.put();
-		device_->CreateBuffer(&buffer_desc, nullptr, constant_buffer);
-		immediate_context_->VSSetConstantBuffers(0, 1, constant_buffer);
-	}
-
-	// Constant Buffer (Material)
-	{
-		D3D11_BUFFER_DESC buffer_desc{};
-		buffer_desc.ByteWidth = sizeof(material);
-		buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-		buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		buffer_desc.CPUAccessFlags = 0;
-		buffer_desc.MiscFlags = 0;
-		buffer_desc.StructureByteStride = sizeof(float);
-
-		const auto& material_buffer = material_buffer_.put();
-		device_->CreateBuffer(&buffer_desc, nullptr, material_buffer);
-		immediate_context_->VSSetConstantBuffers(1, 1, material_buffer);
+		world_matrix_ = constant_buffer<DirectX::XMFLOAT4X4, 0>::create();
+		view_matrix_ = constant_buffer<DirectX::XMFLOAT4X4, 1>::create();
+		projection_matrix_ = constant_buffer<DirectX::XMFLOAT4X4, 2>::create();
+		material_ = constant_buffer<material, 3>::create();
+		directional_light_ = constant_buffer<DirectX::XMFLOAT4, 4>::create();
 	}
 	
 	{

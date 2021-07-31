@@ -7,6 +7,7 @@
 #include "render/camera.h"
 
 #include "game.h"
+#include "gamedef.h"
 
 void lycoris::render::camera::initialize()
 {

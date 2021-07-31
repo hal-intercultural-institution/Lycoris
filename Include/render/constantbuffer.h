@@ -1,45 +1,61 @@
 #pragma once
 
-#include <stdexcept>
-
 #include <winrt/base.h>
+#include <d3d11.h>
 
-#include "render/renderer.h"
-#include "game.h"
+#include "gamedef.h"
 
 namespace lycoris::render
 {
-	template <typename T, int slot>
+	template <typename T, int Slot>
 	class constant_buffer
 	{
-		static_assert(slot >= 0, "slot of constant buffer is must be greater than 0");
+		static_assert(Slot >= 0, "slot of constant buffer is must be greater than 0");
 	public:
 		constant_buffer() = default;
-		// restrict the use of copy constructor
-		constant_buffer(const constant_buffer<T, slot>&) = delete;
-
-		void create()
+		explicit constant_buffer(winrt::com_ptr<ID3D11Buffer>&& other_ptr)
 		{
-			if (is_created_) throw std::runtime_error("ConstantBuffer: cbuff is already created");
-			D3D11_BUFFER_DESC bufferDesc;
-			bufferDesc.ByteWidth = sizeof(T);
-			bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-			bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-			bufferDesc.CPUAccessFlags = 0;
-			bufferDesc.MiscFlags = 0;
-			bufferDesc.StructureByteStride = sizeof(float);
+			buffer_ptr_ = std::move(other_ptr);
+		}
+		// restrict the use of copy constructor
+		constant_buffer(const constant_buffer<T, Slot>&) = delete;
+		constant_buffer(constant_buffer<T, Slot>&&) = default;
+		~constant_buffer() = default;
+
+		static constant_buffer<T, Slot> create()
+		{
+			winrt::com_ptr<ID3D11Buffer> buffer;
+
+			D3D11_BUFFER_DESC buffer_desc;
+			buffer_desc.ByteWidth = sizeof(T);
+			buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+			buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			buffer_desc.CPUAccessFlags = 0;
+			buffer_desc.MiscFlags = 0;
+			buffer_desc.StructureByteStride = sizeof(float);
 
 			auto& renderer = game::get_game().get_renderer();
+			renderer.get_device().CreateBuffer(&buffer_desc, nullptr, buffer.put());
 
-			renderer.get_device().CreateBuffer(&bufferDesc, nullptr, buffer_ptr_.put());
-			renderer.get_device_context().VSSetConstantBuffers(slot, 1, buffer_ptr_.put());
-			renderer.get_device_context().PSSetConstantBuffers(slot, 1, buffer_ptr_.put());
-			is_created_ = true;
+			std::array buffers = {
+				buffer.get()
+			};
+			renderer.get_device_context().VSSetConstantBuffers(Slot, buffers.size(), buffers.data());
+
+			return constant_buffer<T, Slot>(std::move(buffer));
 		}
 
 		void update()
 		{
-			if (!is_created_) throw std::runtime_error("ConstantBuffer: failed to update cbuffer (not created yet)");
+			auto& renderer = game::get_game().get_renderer();
+			renderer.get_device_context().UpdateSubresource(buffer_ptr_.get(), 0, nullptr, &data_, 0, 0);
+		}
+
+		void update(T data)
+		{
+			data_ = data;
+			auto& renderer = game::get_game().get_renderer();
+			renderer.get_device_context().UpdateSubresource(buffer_ptr_.get(), 0, nullptr, &data_, 0, 0);
 		}
 
 		T& get()
@@ -53,11 +69,11 @@ namespace lycoris::render
 		}
 
 		// restrict the use of equal operator
-		constant_buffer<T, slot>& operator=(const constant_buffer<T, slot>&) = delete;
+		constant_buffer<T, Slot>& operator=(const constant_buffer<T, Slot>&) = delete;
+		constant_buffer<T, Slot>& operator=(constant_buffer<T, Slot>&&) = default;
 
 	private:
 		T data_;
-		bool is_created_ = false;
 		winrt::com_ptr<ID3D11Buffer> buffer_ptr_;
 	};
 }

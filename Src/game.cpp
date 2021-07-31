@@ -7,6 +7,7 @@
 #include "system/input.h"
 #include "render/camera.h"
 #include "utility/timer.h"
+#include "render/renderer.h"
 
 constexpr auto frame_limit = 60.0;
 constexpr auto window_title = "test";

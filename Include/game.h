@@ -2,14 +2,16 @@
 
 #include <memory>
 
-#include "render/renderer.h"
+#include "gamedef.h"
 #include "render/texture.h"
 #include "system/settings.h"
 #include "profiler/logger.h"
 #include "profiler/overlay.h"
+#include "render/renderer.h"
 
 namespace lycoris::game
 {
+
 	class scene
 	{
 	public:
@@ -55,22 +57,16 @@ namespace lycoris::game
 		void set_scene(std::unique_ptr<scene>&& scene);
 
 		game() = default;
-		// コピー禁止。
 		game(const game&) = delete;
 		game& operator=(const game&) = delete;
 
-		// ロガー
 		profiler::logger logger;
 
 	private:
-		// フレームカウント
 		std::uint64_t frame_count_ = 0;
-		// 現在のシーン
 		std::unique_ptr<scene> scene_ = nullptr;
-		// レンダラー
 		render::renderer renderer_;
 		render::texture::texture_loader texture_loader_;
-		// 設定
 		system::settings settings_;
 
 		profiler::debug_overlay overlay_;
@@ -83,11 +79,9 @@ namespace lycoris::game
 		
 		static void set_game(game* ptr);
 
-		// FPSカウント用
 		LARGE_INTEGER per_second_{};
 		std::uint32_t frames_last_second_ = 0;
 		double frame_time_tick_ = 0.0, frame_time_draw_ = 0.0;
 	};
 	
-	game& get_game() noexcept;
 }
