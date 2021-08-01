@@ -1,12 +1,5 @@
-//=============================================================================
-//
-// ÉåÉìÉ_ÉäÉìÉOèàóù [renderer.h]
-// Author : 
-//
-//=============================================================================
 #pragma once
 
-#include <vector>
 #include <cstdint>
 
 #include <d3d11.h>
@@ -15,18 +8,12 @@
 #include <DirectXMath.h>
 #include <winrt/base.h>
 
+#include "render/constantbuffer.h"
+#include "render/shader.h"
 #include "render/camera.h"
 
 namespace lycoris::render
-{
-	struct constant
-	{
-		DirectX::XMFLOAT4X4 world;
-		DirectX::XMFLOAT4X4 world_view_projection;
-		DirectX::XMFLOAT4 light;
-		DirectX::XMFLOAT4 camera;
-	};
-
+{	
 	struct vertex
 	{
 		DirectX::XMFLOAT3 position;
@@ -103,8 +90,8 @@ namespace lycoris::render
 		void set_culling_mode(D3D11_CULL_MODE culling_mode);
 		void draw_text(const std::wstring& text);
 
-		ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
-		ID3D11PixelShader& get_pixel_shader(int index);
+		//ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
+		//ID3D11PixelShader& get_pixel_shader(int index);
 
 		screen& get_screen();
 		camera& get_camera();
@@ -119,8 +106,8 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 
-		std::vector<winrt::com_ptr<ID3D11VertexShader>> vertex_shader_;
-		std::vector<winrt::com_ptr<ID3D11PixelShader>> pixel_shader_;
+		shader::vertex_shader vertex_shader_;
+		shader::pixel_shader pixel_shader_;
 		winrt::com_ptr<ID3D11InputLayout> input_layout_;
 		winrt::com_ptr<ID3D11Buffer> constant_buffer_;
 		winrt::com_ptr<ID3D11Buffer> material_buffer_;
@@ -138,11 +125,12 @@ namespace lycoris::render
 		winrt::com_ptr<IDWriteTextFormat> d_write_text_format_;
 
 		// values
-		
-		DirectX::XMFLOAT4X4 world_matrix_ = {};
-		DirectX::XMFLOAT4X4 view_matrix_ = {};
-		DirectX::XMFLOAT4X4 projection_matrix_ = {};
-		DirectX::XMFLOAT4 directional_light_ = {};
+
+		constant_buffer<DirectX::XMFLOAT4X4, 0> world_matrix_ = {};
+		constant_buffer<DirectX::XMFLOAT4X4, 1> view_matrix_ = {};
+		constant_buffer<DirectX::XMFLOAT4X4, 2> projection_matrix_ = {};
+		constant_buffer<material, 3> material_ = {};
+		constant_buffer<DirectX::XMFLOAT4, 4> directional_light_ = {};
 
 		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
 		

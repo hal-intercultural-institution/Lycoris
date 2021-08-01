@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include "game.h"
+#include "gamedef.h"
 
 lycoris::render::texture::image lycoris::render::texture::texture_loader::load_image_from_file(const std::filesystem::path& path)
 {

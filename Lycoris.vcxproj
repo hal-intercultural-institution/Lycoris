@@ -132,6 +132,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -164,12 +165,14 @@
     <ClInclude Include="Include\asset\model.h" />
     <ClInclude Include="Include\debug\logger.h" />
     <ClInclude Include="Include\game.h" />
+    <ClInclude Include="Include\gamedef.h" />
     <ClInclude Include="Include\profiler\logger.h" />
     <ClInclude Include="Include\profiler\overlay.h" />
     <ClInclude Include="Include\render\camera.h" />
     <ClInclude Include="Include\render\constantbuffer.h" />
     <ClInclude Include="Include\render\model3d.h" />
     <ClInclude Include="Include\render\renderer.h" />
+    <ClInclude Include="Include\render\shader.h" />
     <ClInclude Include="Include\render\texture.h" />
     <ClInclude Include="Include\system\input.h" />
     <ClInclude Include="Include\system\settings.h" />
@@ -186,6 +189,7 @@
     <ClCompile Include="Src\render\model.cpp" />
     <ClCompile Include="Src\render\renderer.cpp" />
     <ClCompile Include="Src\render\screen.cpp" />
+    <ClCompile Include="Src\render\shader.cpp" />
     <ClCompile Include="Src\render\texture.cpp" />
     <ClCompile Include="Src\render\textureloader.cpp" />
     <ClCompile Include="Src\system\input.cpp" />
