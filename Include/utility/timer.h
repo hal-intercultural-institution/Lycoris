@@ -1,6 +1,6 @@
 #pragma once
 
-#include <profileapi.h>
+#include <Windows.h>
 
 namespace lycoris::utility
 {

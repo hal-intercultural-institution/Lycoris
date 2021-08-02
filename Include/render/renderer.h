@@ -40,11 +40,7 @@ namespace lycoris::render
 		screen(const screen&) = delete;
 		screen& operator=(const screen&) = delete;
 		
-		screen(screen&& other) noexcept
-		{
-			render_target_view_ = { std::move(other.render_target_view_) };
-			depth_stencil_view_ = { std::move(other.depth_stencil_view_) };
-		}
+		screen(screen&& other) noexcept = default;
 		
 		void resize(std::uint32_t new_width, std::uint32_t new_height);
 		float get_screen_width() const;

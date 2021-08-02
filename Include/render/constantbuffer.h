@@ -7,10 +7,9 @@
 
 namespace lycoris::render
 {
-	template <typename T, int Slot>
+	template <typename T, std::uint32_t Slot>
 	class constant_buffer
 	{
-		static_assert(Slot >= 0, "slot of constant buffer is must be greater than 0");
 	public:
 		constant_buffer() = default;
 		explicit constant_buffer(winrt::com_ptr<ID3D11Buffer>&& other_ptr)
@@ -40,7 +39,7 @@ namespace lycoris::render
 			std::array buffers = {
 				buffer.get()
 			};
-			renderer.get_device_context().VSSetConstantBuffers(Slot, buffers.size(), buffers.data());
+			renderer.get_device_context().VSSetConstantBuffers(Slot, static_cast<std::uint32_t>(buffers.size()), buffers.data());
 
 			return constant_buffer<T, Slot>(std::move(buffer));
 		}

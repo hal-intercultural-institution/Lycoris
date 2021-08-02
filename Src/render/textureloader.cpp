@@ -28,15 +28,15 @@ lycoris::render::texture::image lycoris::render::texture::texture_loader::load_i
 	if (FAILED(frame->GetSize(&width, &height)))
 		throw std::runtime_error("TextureLoader: failed to get image size: " + path.string());
 
-	WICPixelFormatGUID pixelFormat;
-	if (FAILED(frame->GetPixelFormat(&pixelFormat)))
+	WICPixelFormatGUID pixel_format;
+	if (FAILED(frame->GetPixelFormat(&pixel_format)))
 		throw std::runtime_error("TextureLoader: failed to get pixelformat: " + path.string());
 
-	constexpr std::uint32_t sizePerPixel = 4U; // R8G8B8A8 = 32bit = 4byte
-	if (pixelFormat == GUID_WICPixelFormat32bppRGBA) // 32bppRGBA = R8G8B8A8_UNORM
+	constexpr std::uint32_t size_per_pixel = 4U; // R8G8B8A8 = 32bit = 4byte
+	if (pixel_format == GUID_WICPixelFormat32bppRGBA) // 32bppRGBA = R8G8B8A8_UNORM
 	{
-		auto img = image(width, height, sizePerPixel);
-		if (FAILED(frame->CopyPixels(nullptr, width * sizePerPixel, width * height * sizePerPixel, img.get_raw_buffer())))
+		auto img = image(width, height, size_per_pixel);
+		if (FAILED(frame->CopyPixels(nullptr, width * size_per_pixel, width * height * size_per_pixel, img.get_raw_buffer())))
 			throw std::runtime_error("TextureLoader: failed to copy data: " + path.string());
 		return img;
 	}
@@ -48,8 +48,8 @@ lycoris::render::texture::image lycoris::render::texture::texture_loader::load_i
 		WICBitmapDitherType::WICBitmapDitherTypeErrorDiffusion, nullptr, 0.0, WICBitmapPaletteType::WICBitmapPaletteTypeCustom)))
 		throw std::runtime_error("TextureLoader: failed to convert image: " + path.string());
 
-	auto img = image(width, height, sizePerPixel);
-	if (FAILED(converter->CopyPixels(nullptr, width * sizePerPixel, width * height * sizePerPixel, img.get_raw_buffer())))
+	auto img = image(width, height, size_per_pixel);
+	if (FAILED(converter->CopyPixels(nullptr, width * size_per_pixel, width * height * size_per_pixel, img.get_raw_buffer())))
 		throw std::runtime_error("TextureLoader: failed to copy data: " + path.string());
 
 	return img;
