@@ -1,64 +1,78 @@
-//=============================================================================
-//
-// “ü—Íˆ— [input.h]
-// Author : 
-//
-//=============================================================================
-#pragma once
-#include <dinput.h>
+ï»¿#pragma once
 
-//*****************************************************************************
-// ƒ}ƒNƒ’è‹`
-//*****************************************************************************
+#include <array>
+#include <cstdint>
 
-// ƒvƒƒOƒ‰ƒ€•ª‚¯‚·‚é‚Æ‚«‚Ég‚¤
-#define	USE_KEYBOARD										// éŒ¾‚·‚é‚ÆƒL[ƒ{[ƒh‚Å‘€ì‰Â”\‚É‚È‚é
-#define	USE_MOUSE											// éŒ¾‚·‚é‚Æƒ}ƒEƒX‚Å‘€ì‰Â”\‚É‚È‚é
-#define	USE_PAD												// éŒ¾‚·‚é‚Æƒpƒbƒh‚Å‘€ì‰Â”\‚É‚È‚é
+#include <Windows.h>
 
+namespace lycoris::system::input
+{
+	class keyboard
+	{
+	public:
+		void update(RAWKEYBOARD& data);
+		// saves input state of this frame, for compare states in next frame. must be called after on_tick function(s).
+		void post_update();
+		bool is_triggered(std::uint8_t key);
+		bool is_released(std::uint8_t key);
+		bool is_pressed(std::uint8_t key);
+	
+	private:
+		std::array<bool, 256> key_state_previous_ = {};
+		std::array<bool, 256> key_state_ = {};
+	};
 
-/* game padî•ñ */
-#define BUTTON_UP		0x00000001l	// •ûŒüƒL[ã(.IY<0)
-#define BUTTON_DOWN		0x00000002l	// •ûŒüƒL[‰º(.IY>0)
-#define BUTTON_LEFT		0x00000004l	// •ûŒüƒL[¶(.IX<0)
-#define BUTTON_RIGHT	0x00000008l	// •ûŒüƒL[‰E(.IX>0)
-#define BUTTON_A		0x00000010l	// ‚`ƒ{ƒ^ƒ“(.rgbButtons[0]&0x80)
-#define BUTTON_B		0x00000020l	// ‚aƒ{ƒ^ƒ“(.rgbButtons[1]&0x80)
-#define BUTTON_C		0x00000040l	// ‚bƒ{ƒ^ƒ“(.rgbButtons[2]&0x80)
-#define BUTTON_X		0x00000080l	// ‚wƒ{ƒ^ƒ“(.rgbButtons[3]&0x80)
-#define BUTTON_Y		0x00000100l	// ‚xƒ{ƒ^ƒ“(.rgbButtons[4]&0x80)
-#define BUTTON_Z		0x00000200l	// ‚yƒ{ƒ^ƒ“(.rgbButtons[5]&0x80)
-#define BUTTON_L		0x00000400l	// ‚kƒ{ƒ^ƒ“(.rgbButtons[6]&0x80)
-#define BUTTON_R		0x00000800l	// ‚qƒ{ƒ^ƒ“(.rgbButtons[7]&0x80)
-#define BUTTON_START	0x00001000l	// ‚r‚s‚`‚q‚sƒ{ƒ^ƒ“(.rgbButtons[8]&0x80)
-#define BUTTON_M		0x00002000l	// ‚lƒ{ƒ^ƒ“(.rgbButtons[9]&0x80)
-#define GAMEPADMAX		4			// “¯‚ÉÚ‘±‚·‚éƒWƒ‡ƒCƒpƒbƒh‚ÌÅ‘å”‚ğƒZƒbƒg
+	class mouse
+	{
+	public:
+		enum class keycode : std::uint32_t
+		{
+			left,
+			right,
+			middle,
+			forward,
+			back,
+			wheel_up,
+			wheel_down
+		};
 
+		// method for process raw input api
+		void update(RAWMOUSE& data);
+		// method for retrieve on-window cursor position
+		void update(std::int64_t l_param);
+		void post_update();
+		bool is_triggered(keycode keycode);
+		bool is_released(keycode keycode);
+		bool is_pressed(keycode keycode);
+		std::int32_t get_move_x();
+		std::int32_t get_move_y();
+		std::int32_t get_screen_x();
+		std::int32_t get_screen_y();
+	
+	private:
+		std::array<bool, 8> button_state_previous_ = {};
+		std::array<bool, 8> button_state_ = {};
+		std::int32_t move_x_ = 0;
+		std::int32_t move_y_ = 0;
+		std::int32_t screen_x_ = 0;
+		std::int32_t screen_y_ = 0;
+	};
+	
+	class input
+	{
+	public:
+		void initialize();
+		void update();
+		void post_update();
+		void update_raw_input(std::int64_t l_param);
+		void update_mouse_move(std::int64_t l_param);
+		void destroy();
+		keyboard& get_keyboard();
+		mouse& get_mouse();
+	
+	private:
+		keyboard keyboard_;
+		mouse mouse_;
+	};
 
-//*****************************************************************************
-// ƒvƒƒgƒ^ƒCƒvéŒ¾
-//*****************************************************************************
-HRESULT InitInput(HINSTANCE hInst, HWND hWnd);
-void UninitInput(void);
-void UpdateInput(void);
-
-//---------------------------- keyboard
-bool GetKeyboardPress(int nKey);
-bool GetKeyboardTrigger(int nKey);
-bool GetKeyboardRepeat(int nKey);
-bool GetKeyboardRelease(int nKey);
-
-//---------------------------- mouse
-BOOL IsMouseLeftPressed(void); // ¶ƒNƒŠƒbƒN‚µ‚½ó‘Ô
-BOOL IsMouseLeftTriggered(void); // ¶ƒNƒŠƒbƒN‚µ‚½uŠÔ
-BOOL IsMouseRightPressed(void); // ‰EƒNƒŠƒbƒN‚µ‚½ó‘Ô
-BOOL IsMouseRightTriggered(void); // ‰EƒNƒŠƒbƒN‚µ‚½uŠÔ
-BOOL IsMouseCenterPressed(void); // ’†ƒNƒŠƒbƒN‚µ‚½ó‘Ô
-BOOL IsMouseCenterTriggered(void); // ’†ƒNƒŠƒbƒN‚µ‚½uŠÔ
-long GetMouseX(void); // ƒ}ƒEƒX‚ªX•ûŒü‚É“®‚¢‚½‘Š‘Î’l
-long GetMouseY(void); // ƒ}ƒEƒX‚ªY•ûŒü‚É“®‚¢‚½‘Š‘Î’l
-long GetMouseZ(void); // ƒ}ƒEƒXƒzƒC[ƒ‹‚ª“®‚¢‚½‘Š‘Î’l
-
-//---------------------------- game pad
-BOOL IsButtonPressed(int padNo, DWORD button);
-BOOL IsButtonTriggered(int padNo, DWORD button);
+}

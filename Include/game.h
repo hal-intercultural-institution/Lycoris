@@ -5,6 +5,7 @@
 #include "gamedef.h"
 #include "render/texture.h"
 #include "system/settings.h"
+#include "system/input.h"
 #include "profiler/logger.h"
 #include "profiler/overlay.h"
 #include "render/renderer.h"
@@ -49,6 +50,7 @@ namespace lycoris::game
 		scene& get_current_scene() const;
 		render::renderer& get_renderer() noexcept;
 		render::texture::texture_loader& get_texture_loader() noexcept;
+		system::input::input& get_input_system() noexcept;
 		void initialize(HINSTANCE h_instance, int n_show_cmd, MSG* message);
 		void run();
 		void destroy();
@@ -67,6 +69,7 @@ namespace lycoris::game
 		std::unique_ptr<scene> scene_ = nullptr;
 		render::renderer renderer_;
 		render::texture::texture_loader texture_loader_;
+		system::input::input input_system_;
 		system::settings settings_;
 
 		profiler::debug_overlay overlay_;
