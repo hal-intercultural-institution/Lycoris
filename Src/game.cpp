@@ -4,7 +4,6 @@
 
 #include <Windows.h>
 
-#include "system/input.h"
 #include "render/camera.h"
 #include "utility/timer.h"
 #include "render/renderer.h"
@@ -81,7 +80,7 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 		renderer_.initialize(h_instance, h_wnd, true);
 		renderer_.get_camera().initialize();
 		texture_loader_.initialize();
-		InitInput(h_instance, h_wnd);
+		input_system_.initialize();
 	}
 	catch (const std::runtime_error& e)
 	{
@@ -145,8 +144,9 @@ void lycoris::game::game::run()
 
 void lycoris::game::game::on_tick()
 {
-	UpdateInput();
+	input_system_.update();
 	if (scene_) scene_->on_tick();
+	input_system_.post_update();
 }
 
 void lycoris::game::game::on_draw()
@@ -162,8 +162,8 @@ void lycoris::game::game::destroy()
 {
 	if (scene_) scene_->on_destroy();
 	renderer_.destroy();
-	UninitInput();
 	texture_loader_.destroy();
+	input_system_.destroy();
 	
 	UnregisterClass(class_name, h_instance_);
 	CoUninitialize();
@@ -198,6 +198,11 @@ lycoris::render::texture::texture_loader& lycoris::game::game::get_texture_loade
 	return texture_loader_;
 }
 
+lycoris::system::input::input& lycoris::game::game::get_input_system() noexcept
+{
+	return input_system_;
+}
+
 lycoris::game::game& lycoris::game::get_game() noexcept
 {
 	return *instance;
@@ -224,6 +229,9 @@ LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		//default:
 		//	break;
 		//}
+		break;
+	case WM_INPUT:
+		lycoris::game::get_game().get_input_system().update_raw_input(lParam);
 		break;
 	case WM_SIZE:
 		switch (wParam)
