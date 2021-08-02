@@ -184,6 +184,7 @@
   <ItemGroup>
     <ClCompile Include="Src\asset\modelloader.cpp" />
     <ClCompile Include="Src\game.cpp" />
+    <ClCompile Include="Src\profiler\logger.cpp" />
     <ClCompile Include="Src\profiler\overlay.cpp" />
     <ClCompile Include="Src\render\camera.cpp" />
     <ClCompile Include="Src\render\model.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Src\system\input.cpp" />
     <ClCompile Include="Src\system\settings.cpp" />
     <ClCompile Include="Src\utility\file.cpp" />
+    <ClCompile Include="Src\utility\timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
