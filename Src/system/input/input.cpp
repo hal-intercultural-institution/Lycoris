@@ -32,12 +32,13 @@ void lycoris::system::input::input::initialize()
 
 void lycoris::system::input::input::update()
 {
-	
+
 }
 
 void lycoris::system::input::input::post_update()
 {
 	keyboard_.post_update();
+	mouse_.post_update();
 }
 
 void lycoris::system::input::input::update_raw_input(std::int64_t l_param)
@@ -55,6 +56,15 @@ void lycoris::system::input::input::update_raw_input(std::int64_t l_param)
 	{
 		keyboard_.update(input->data.keyboard);
 	}
+	else if (input->header.dwType == RIM_TYPEMOUSE)
+	{
+		mouse_.update(input->data.mouse);
+	}
+}
+
+void lycoris::system::input::input::update_mouse_move(std::int64_t l_param)
+{
+	mouse_.update(l_param);
 }
 
 void lycoris::system::input::input::destroy()
@@ -65,4 +75,9 @@ void lycoris::system::input::input::destroy()
 lycoris::system::input::keyboard& lycoris::system::input::input::get_keyboard()
 {
 	return keyboard_;
+}
+
+lycoris::system::input::mouse& lycoris::system::input::input::get_mouse()
+{
+	return mouse_;
 }

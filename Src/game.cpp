@@ -233,6 +233,9 @@ LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_INPUT:
 		lycoris::game::get_game().get_input_system().update_raw_input(lParam);
 		break;
+	case WM_MOUSEMOVE:
+		lycoris::game::get_game().get_input_system().update_mouse_move(lParam);
+		break;
 	case WM_SIZE:
 		switch (wParam)
 		{
