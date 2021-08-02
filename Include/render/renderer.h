@@ -1,12 +1,5 @@
-//=============================================================================
-//
-// レンダリング処理 [renderer.h]
-// Author : 
-//
-//=============================================================================
 #pragma once
 
-#include <vector>
 #include <cstdint>
 
 #include <d3d11.h>
@@ -15,18 +8,12 @@
 #include <DirectXMath.h>
 #include <winrt/base.h>
 
+#include "render/constantbuffer.h"
+#include "render/shader.h"
 #include "render/camera.h"
 
 namespace lycoris::render
-{
-	struct constant
-	{
-		DirectX::XMFLOAT4X4 world;
-		DirectX::XMFLOAT4X4 world_view_projection;
-		DirectX::XMFLOAT4 light;
-		DirectX::XMFLOAT4 camera;
-	};
-
+{	
 	struct vertex
 	{
 		DirectX::XMFLOAT3 position;
@@ -53,11 +40,7 @@ namespace lycoris::render
 		screen(const screen&) = delete;
 		screen& operator=(const screen&) = delete;
 		
-		screen(screen&& other) noexcept
-		{
-			render_target_view_ = { std::move(other.render_target_view_) };
-			depth_stencil_view_ = { std::move(other.depth_stencil_view_) };
-		}
+		screen(screen&& other) noexcept = default;
 		
 		void resize(std::uint32_t new_width, std::uint32_t new_height);
 		float get_screen_width() const;
@@ -99,16 +82,19 @@ namespace lycoris::render
 		void set_directional_light(DirectX::XMFLOAT3& light);
 		// Material を更新し、GPUへ転送する
 		void set_material(material& material);
-
+		// カリング設定
+		void set_culling_mode(D3D11_CULL_MODE culling_mode);
 		void draw_text(const std::wstring& text);
 
-		ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
-		ID3D11PixelShader& get_pixel_shader(int index);
+		//ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
+		//ID3D11PixelShader& get_pixel_shader(int index);
 
 		screen& get_screen();
 		camera& get_camera();
 
 	private:
+		// pointers
+		
 		winrt::com_ptr<ID3D11Device> device_;
 		winrt::com_ptr<ID3D11DeviceContext> immediate_context_;
 		winrt::com_ptr<IDXGISwapChain> swap_chain_;
@@ -116,8 +102,8 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 
-		std::vector<winrt::com_ptr<ID3D11VertexShader>> vertex_shader_;
-		std::vector<winrt::com_ptr<ID3D11PixelShader>> pixel_shader_;
+		shader::vertex_shader vertex_shader_;
+		shader::pixel_shader pixel_shader_;
 		winrt::com_ptr<ID3D11InputLayout> input_layout_;
 		winrt::com_ptr<ID3D11Buffer> constant_buffer_;
 		winrt::com_ptr<ID3D11Buffer> material_buffer_;
@@ -134,11 +120,16 @@ namespace lycoris::render
 		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_;
 		winrt::com_ptr<IDWriteTextFormat> d_write_text_format_;
 
-		DirectX::XMFLOAT4X4 world_matrix_ = {};
-		DirectX::XMFLOAT4X4 view_matrix_ = {};
-		DirectX::XMFLOAT4X4 projection_matrix_ = {};
-		DirectX::XMFLOAT4 directional_light_ = {};
+		// values
 
+		constant_buffer<DirectX::XMFLOAT4X4, 0> world_matrix_ = {};
+		constant_buffer<DirectX::XMFLOAT4X4, 1> view_matrix_ = {};
+		constant_buffer<DirectX::XMFLOAT4X4, 2> projection_matrix_ = {};
+		constant_buffer<material, 3> material_ = {};
+		constant_buffer<DirectX::XMFLOAT4, 4> directional_light_ = {};
+
+		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
+		
 		screen screen_;
 		camera camera_;
 	};

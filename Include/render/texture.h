@@ -7,7 +7,6 @@
 #include <wincodec.h>
 #include <d3d11.h>
 
-#include "game.h"
 #include "utility/cast.h"
 
 namespace lycoris::render::texture
@@ -55,7 +54,7 @@ namespace lycoris::render::texture
 	{
 	public:
 		// construct with nullptr
-		texture() noexcept : texture_(nullptr), shader_resource_view_(nullptr) {}
+		texture() = default;
 
 		// construct with pointers
 		texture(ID3D11ShaderResourceView* shader_resource_view, ID3D11Texture2D* texture) noexcept
@@ -64,23 +63,11 @@ namespace lycoris::render::texture
 			texture_.attach(texture);
 		}
 
-		// restricts copy constructor
-		texture(const texture&) = delete;
+		texture(const texture&) = default;
+		texture(texture&& other) = default;
 
-		// move constructor
-		texture(texture&& other) noexcept :
-			texture_(std::move(other.texture_)), shader_resource_view_(std::move(other.shader_resource_view_)) {}
-
-		// restricts copy operator
-		texture& operator=(const texture&) = delete;
-
-		// move operator
-		texture& operator=(texture&& other) noexcept
-		{
-			shader_resource_view_ = { std::move(other.shader_resource_view_) };
-			texture_ = { std::move(other.texture_) };
-			return *this;
-		}
+		texture& operator=(const texture&) = default;
+		texture& operator=(texture&& other) = default;
 
 		ID3D11Texture2D* get_texture() const noexcept
 		{
@@ -117,7 +104,9 @@ namespace lycoris::render::texture
 		void initialize();
 		image load_image_from_file(const std::filesystem::path& path);
 		texture create_texture_from_file(const std::filesystem::path& path);
+		void destroy();
 	private:
-		winrt::com_ptr<IWICImagingFactory> imaging_factory_;
+		//winrt::com_ptr<IWICImagingFactory> imaging_factory_;
+		IWICImagingFactory* imaging_factory_ = nullptr;
 	};
 }

@@ -18,9 +18,6 @@
     <ClInclude Include="Include\debug\logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\debug\overlay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Include\render\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -34,9 +31,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\render\texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\system\input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\system\settings.h">
@@ -57,15 +51,27 @@
     <ClInclude Include="Include\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\profiler\overlay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\profiler\logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\asset\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\render\shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\gamedef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\system\input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\debug\overlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Src\render\camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\render\modelloader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\render\renderer.cpp">
@@ -80,9 +86,6 @@
     <ClCompile Include="Src\render\textureloader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\system\input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Src\system\settings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,6 +93,33 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\profiler\overlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\asset\modelloader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\render\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\render\shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\profiler\logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\utility\timer.cpp">
+          <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\system\input\input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\system\input\keyboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\system\input\mouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

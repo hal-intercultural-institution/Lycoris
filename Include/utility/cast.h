@@ -7,4 +7,9 @@ namespace lycoris::utility::scast
 	{
 		return static_cast<std::uint64_t>(value);
 	}
+
+	inline std::uint32_t uint32_of(const std::uint64_t value)
+	{
+		return static_cast<std::uint32_t>(value);
+	}
 }

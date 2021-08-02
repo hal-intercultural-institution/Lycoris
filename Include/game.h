@@ -1,15 +1,18 @@
 #pragma once
 
-#include <chrono>
 #include <memory>
 
-#include "render/renderer.h"
+#include "gamedef.h"
+#include "render/texture.h"
 #include "system/settings.h"
+#include "system/input.h"
 #include "profiler/logger.h"
 #include "profiler/overlay.h"
+#include "render/renderer.h"
 
 namespace lycoris::game
 {
+
 	class scene
 	{
 	public:
@@ -46,6 +49,8 @@ namespace lycoris::game
 		
 		scene& get_current_scene() const;
 		render::renderer& get_renderer() noexcept;
+		render::texture::texture_loader& get_texture_loader() noexcept;
+		system::input::input& get_input_system() noexcept;
 		void initialize(HINSTANCE h_instance, int n_show_cmd, MSG* message);
 		void run();
 		void destroy();
@@ -54,21 +59,17 @@ namespace lycoris::game
 		void set_scene(std::unique_ptr<scene>&& scene);
 
 		game() = default;
-		// コピー禁止。
 		game(const game&) = delete;
 		game& operator=(const game&) = delete;
 
-		// ロガー
 		profiler::logger logger;
 
 	private:
-		// フレームカウント
 		std::uint64_t frame_count_ = 0;
-		// 現在のシーン
 		std::unique_ptr<scene> scene_ = nullptr;
-		// レンダラー
 		render::renderer renderer_;
-		// 設定
+		render::texture::texture_loader texture_loader_;
+		system::input::input input_system_;
 		system::settings settings_;
 
 		profiler::debug_overlay overlay_;
@@ -81,11 +82,9 @@ namespace lycoris::game
 		
 		static void set_game(game* ptr);
 
-		// FPSカウント用
 		LARGE_INTEGER per_second_{};
 		std::uint32_t frames_last_second_ = 0;
 		double frame_time_tick_ = 0.0, frame_time_draw_ = 0.0;
 	};
 	
-	game& get_game() noexcept;
 }

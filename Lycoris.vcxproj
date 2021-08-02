@@ -132,6 +132,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -161,13 +162,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Include\asset\model.h" />
     <ClInclude Include="Include\debug\logger.h" />
-    <ClInclude Include="Include\debug\overlay.h" />
     <ClInclude Include="Include\game.h" />
+    <ClInclude Include="Include\gamedef.h" />
+    <ClInclude Include="Include\profiler\logger.h" />
+    <ClInclude Include="Include\profiler\overlay.h" />
     <ClInclude Include="Include\render\camera.h" />
     <ClInclude Include="Include\render\constantbuffer.h" />
     <ClInclude Include="Include\render\model3d.h" />
     <ClInclude Include="Include\render\renderer.h" />
+    <ClInclude Include="Include\render\shader.h" />
     <ClInclude Include="Include\render\texture.h" />
     <ClInclude Include="Include\system\input.h" />
     <ClInclude Include="Include\system\settings.h" />
@@ -177,17 +182,23 @@
     <ClInclude Include="Include\utility\timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\debug\overlay.cpp" />
+    <ClCompile Include="Src\asset\modelloader.cpp" />
     <ClCompile Include="Src\game.cpp" />
+    <ClCompile Include="Src\profiler\logger.cpp" />
+    <ClCompile Include="Src\profiler\overlay.cpp" />
     <ClCompile Include="Src\render\camera.cpp" />
-    <ClCompile Include="Src\render\modelloader.cpp" />
+    <ClCompile Include="Src\render\model.cpp" />
     <ClCompile Include="Src\render\renderer.cpp" />
     <ClCompile Include="Src\render\screen.cpp" />
+    <ClCompile Include="Src\render\shader.cpp" />
     <ClCompile Include="Src\render\texture.cpp" />
     <ClCompile Include="Src\render\textureloader.cpp" />
-    <ClCompile Include="Src\system\input.cpp" />
+    <ClCompile Include="Src\system\input\input.cpp" />
+    <ClCompile Include="Src\system\input\keyboard.cpp" />
+    <ClCompile Include="Src\system\input\mouse.cpp" />
     <ClCompile Include="Src\system\settings.cpp" />
     <ClCompile Include="Src\utility\file.cpp" />
+    <ClCompile Include="Src\utility\timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

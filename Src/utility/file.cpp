@@ -4,18 +4,19 @@
 #include <stdexcept>
 #include <string>
 
-std::vector<std::string> lycoris::utility::file::load_text_file(const std::filesystem::path& path)
+#include "utility/string.h"
+
+bool lycoris::utility::file::text_file::next_line(std::string& line)
 {
-	std::ifstream ifs(path);
-	if (!ifs.is_open())
-	{
-		throw std::runtime_error("cannot open file: " + path.string());
-	}
-	std::string line;
-	std::vector<std::string> lines;
-	while (std::getline(ifs, line))
-	{
-		lines.emplace_back(line);
-	}
-	return lines;
+	if (!stream_) throw std::runtime_error("TextFile: file is not loaded");
+	return !std::getline(stream_, line).fail();
+}
+
+bool lycoris::utility::file::text_file::next_splitted_line(std::vector<std::string>& line)
+{
+	if (!stream_) throw std::runtime_error("TextFile: file is not loaded");
+	std::string l;
+	if (std::getline(stream_, l).fail()) return false;
+	line = string::split(l, " ");
+	return true;
 }

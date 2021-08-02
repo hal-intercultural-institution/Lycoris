@@ -1,25 +1,17 @@
 #pragma once
 
-#include <profileapi.h>
+#include <Windows.h>
 
 namespace lycoris::utility
 {
 	class timer
 	{
 	public:
-		void start()
-		{
-			QueryPerformanceCounter(&started_at_);
-		}
+		void start();
 
-		double stop()
-		{
-			LARGE_INTEGER stopped_at;
-			QueryPerformanceCounter(&stopped_at);
-			return static_cast<double>(stopped_at.QuadPart - started_at_.QuadPart) / static_cast<double>(frequency.QuadPart);
-		}
+		double stop();
 
-		inline static LARGE_INTEGER frequency{};
+		static LARGE_INTEGER frequency;
 	private:
 		LARGE_INTEGER started_at_{};
 	};

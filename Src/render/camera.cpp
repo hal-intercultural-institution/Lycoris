@@ -7,12 +7,13 @@
 #include "render/camera.h"
 
 #include "game.h"
+#include "gamedef.h"
 
 void lycoris::render::camera::initialize()
 {
 	looking_at_ = { 0.0f, 0.0f, 0.0 };
 	up_ = { 0.0f, 1.0f, 0.0f };
-	position_ = { 0.0f, 500.0f, -300.0f };
+	position_ = { 0.0f, 25.0f, 60.0f };
 	rotation_ = { 0.0f, 0.0f, 0.0f, 0.0f };
 }
 
