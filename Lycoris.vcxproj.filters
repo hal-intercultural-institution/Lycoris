@@ -111,7 +111,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\utility\timer.cpp">
-          <Filter>Source Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\system\input\input.cpp">
       <Filter>Source Files</Filter>
@@ -120,6 +120,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\system\input\mouse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\system\input\dinput_gamepad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\system\input\gamepad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -35,22 +35,30 @@ namespace lycoris::render
 	class screen
 	{
 	public:
-		screen() noexcept : screen_width_(1280), screen_height_(720) {}
+		screen() noexcept
+			: screen_width_(1280), screen_height_(720), window_handle_(nullptr) {}
 		
 		screen(const screen&) = delete;
 		screen& operator=(const screen&) = delete;
 		
 		screen(screen&& other) noexcept = default;
+		~screen() = default;
 		
 		void resize(std::uint32_t new_width, std::uint32_t new_height);
+		
+		void set_window_handle(HWND window_handle);
+		
 		float get_screen_width() const;
 		float get_screen_height() const;
 		ID3D11RenderTargetView* get_render_target_view();
+		HWND get_window_handle() const;
+	
 	private:
 		float screen_width_;
 		float screen_height_;
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
+		HWND window_handle_;
 	};
 
 	class renderer

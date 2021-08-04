@@ -120,6 +120,8 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 {
 	HRESULT hr = S_OK;
 
+	screen_.set_window_handle(hWnd);
+
 	// Device, SwapChain, ImmediateContext 生成
 	DXGI_SWAP_CHAIN_DESC   swap_chain_desc = {};
 	swap_chain_desc.BufferCount = 1;
@@ -203,7 +205,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 
 		immediate_context_->OMSetRenderTargets(1, render_targets.data(), depth_stencil_view_.get());
 	}
-
+	
 	// Viewport (= 0.0～1.0 でスクリーン上の座標を表す)
 	{
 		D3D11_VIEWPORT viewport = {};

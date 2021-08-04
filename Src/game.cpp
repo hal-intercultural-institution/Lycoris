@@ -169,6 +169,11 @@ void lycoris::game::game::destroy()
 	CoUninitialize();
 }
 
+HINSTANCE lycoris::game::game::get_instance_handle()
+{
+	return h_instance_;
+}
+
 lycoris::game::scene& lycoris::game::game::get_current_scene() const
 {
 	if (!scene_)

@@ -11,7 +11,7 @@ namespace lycoris::utility
 
 		double stop();
 
-		static LARGE_INTEGER frequency;
+		inline static LARGE_INTEGER frequency;
 	private:
 		LARGE_INTEGER started_at_{};
 	};
