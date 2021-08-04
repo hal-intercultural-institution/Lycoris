@@ -6,11 +6,24 @@
 #include <vector>
 
 #include "utility/cast.h"
+#include "game.h"
 
 using lycoris::utility::scast::uint32_of;
 
+constexpr auto joystick_range_max = 1000;
+constexpr auto joystick_range_min = -1000;
+constexpr auto trigger_pressure_min = 0;
+constexpr auto trigger_pressure_max = 1000;
+
+BOOL CALLBACK device_callback(LPCDIDEVICEINSTANCE instance, LPVOID ref)
+{
+	lycoris::game::get_game().get_input_system().register_direct_input_device(instance, ref);
+	return DIENUM_CONTINUE;
+}
+
 void lycoris::system::input::input::initialize()
 {
+	auto& game = game::get_game();
 	std::array<RAWINPUTDEVICE, 2> devices = {
 		{
 			{ 1, 2, 0, nullptr }, // mouse (2)
@@ -28,11 +41,19 @@ void lycoris::system::input::input::initialize()
 		throw std::runtime_error(str);
 	}
 
+	if (FAILED(DirectInput8Create(game.get_instance_handle(), DIRECTINPUT_VERSION,
+		IID_IDirectInput8, direct_input_.put_void(), nullptr)))
+		throw std::runtime_error("InputSystem: failed to initialize direct input");
+
+	direct_input_->EnumDevices(DI8DEVTYPE_GAMEPAD, device_callback, nullptr, DIEDFL_ATTACHEDONLY);
 }
 
 void lycoris::system::input::input::update()
 {
-
+	for (auto& game_pad : game_pads_)
+	{
+		game_pad->update();
+	}
 }
 
 void lycoris::system::input::input::post_update()
@@ -69,7 +90,11 @@ void lycoris::system::input::input::update_mouse_move(std::int64_t l_param)
 
 void lycoris::system::input::input::destroy()
 {
-	
+	for (auto& game_pad : game_pads_)
+	{
+		game_pad->destroy();
+	}
+	game_pads_.clear();
 }
 
 lycoris::system::input::keyboard& lycoris::system::input::input::get_keyboard()
@@ -80,4 +105,98 @@ lycoris::system::input::keyboard& lycoris::system::input::input::get_keyboard()
 lycoris::system::input::mouse& lycoris::system::input::input::get_mouse()
 {
 	return mouse_;
+}
+
+lycoris::system::input::game_pad& lycoris::system::input::input::get_game_pad(std::uint64_t index)
+{
+	if (game_pads_.size() < index)
+		throw std::out_of_range("Gamepad: index exceeds count of currently attached game-pads");
+	
+	return *game_pads_[index];
+}
+
+std::uint64_t lycoris::system::input::input::get_game_pad_count()
+{
+	return game_pads_.size();
+}
+
+void lycoris::system::input::input::register_direct_input_device(LPCDIDEVICEINSTANCE instance, void* ref)
+{
+	winrt::com_ptr<IDirectInputDevice8> device;
+
+	HRESULT hr = direct_input_->CreateDevice(instance->guidInstance, device.put(), nullptr);
+	if (FAILED(hr))
+		throw std::runtime_error("InputSystem: failed to register direct input device");
+
+	hr = device->SetDataFormat(&c_dfDIJoystick);
+	if (FAILED(hr))
+		throw std::runtime_error("InputSystem: failed to set data format");
+
+	const auto window_handle = game::get_game().get_renderer().get_screen().get_window_handle();
+	hr = device->SetCooperativeLevel(window_handle, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+	if (FAILED(hr))
+		throw std::runtime_error("InputSystem: failed to set cooperative level");
+
+	// joystick / trigger range
+	{
+		DIPROPRANGE prop;
+		prop.diph.dwSize = sizeof(prop);
+		prop.diph.dwHeaderSize = sizeof(prop.diph);
+		prop.diph.dwHow = DIPH_BYOFFSET;
+		prop.lMax = joystick_range_max;
+		prop.lMin = joystick_range_min;
+
+		prop.diph.dwObj = DIJOFS_X; // left x
+		device->SetProperty(DIPROP_RANGE, &prop.diph);
+
+		prop.diph.dwObj = DIJOFS_Y; // left y
+		device->SetProperty(DIPROP_RANGE, &prop.diph);
+
+		prop.diph.dwObj = DIJOFS_Z; // right x
+		device->SetProperty(DIPROP_RANGE, &prop.diph);
+		
+		prop.diph.dwObj = DIJOFS_RZ; // right y
+		device->SetProperty(DIPROP_RANGE, &prop.diph);
+
+		prop.lMax = trigger_pressure_max;
+		prop.lMin = trigger_pressure_min;
+
+		prop.diph.dwObj = DIJOFS_RX; // l trigger
+		device->SetProperty(DIPROP_RANGE, &prop.diph);
+
+		prop.diph.dwObj = DIJOFS_RY; // r trigger
+		device->SetProperty(DIPROP_RANGE, &prop.diph);
+		
+	}
+
+	// joystick dead zone
+	{
+		DIPROPDWORD prop;
+		prop.diph.dwSize = sizeof(prop);
+		prop.diph.dwHeaderSize = sizeof(prop.diph);
+		prop.diph.dwHow = DIPH_BYOFFSET;
+		prop.dwData = 0; // 0 value (ここではデッドゾーンの処理はしない)
+
+		prop.diph.dwObj = DIJOFS_X;
+		device->SetProperty(DIPROP_DEADZONE, &prop.diph);
+
+		prop.diph.dwObj = DIJOFS_Y;
+		device->SetProperty(DIPROP_DEADZONE, &prop.diph);
+
+		prop.diph.dwObj = DIJOFS_Z;
+		device->SetProperty(DIPROP_DEADZONE, &prop.diph);
+
+		prop.diph.dwObj = DIJOFS_RZ;
+		device->SetProperty(DIPROP_DEADZONE, &prop.diph);
+
+		prop.diph.dwObj = DIJOFS_RX;
+		device->SetProperty(DIPROP_DEADZONE, &prop.diph);
+
+		prop.diph.dwObj = DIJOFS_RY;
+		device->SetProperty(DIPROP_DEADZONE, &prop.diph);
+	}
+
+	device->Acquire();
+	
+	game_pads_.push_back(std::make_unique<d_game_pad>(std::move(device)));
 }
