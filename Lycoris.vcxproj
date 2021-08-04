@@ -166,6 +166,7 @@
     <ClInclude Include="Include\debug\logger.h" />
     <ClInclude Include="Include\game.h" />
     <ClInclude Include="Include\gamedef.h" />
+    <ClInclude Include="Include\game\scene.h" />
     <ClInclude Include="Include\profiler\logger.h" />
     <ClInclude Include="Include\profiler\overlay.h" />
     <ClInclude Include="Include\render\camera.h" />

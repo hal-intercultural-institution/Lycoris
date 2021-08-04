@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "gamedef.h"
+#include "game/scene.h"
 #include "render/texture.h"
 #include "system/settings.h"
 #include "system/input.h"
@@ -13,45 +14,19 @@
 namespace lycoris::game
 {
 
-	class scene
-	{
-	public:
-		virtual ~scene() = default;
-		virtual void on_initialize() = 0;
-		virtual void on_tick() = 0;
-		virtual void on_draw() = 0;
-		virtual void on_destroy() = 0;
-	};
-
 	class game
 	{
 	public:
-		
-		std::uint64_t get_frame_count() const
-		{
-			return frame_count_;
-		}
-
-		std::uint32_t get_fps_last_second() const
-		{
-			return frames_last_second_;
-		}
-		
-		double get_last_tick_time() const
-		{
-			return frame_time_tick_;
-		}
-		
-		double get_last_draw_time() const
-		{
-			return frame_time_draw_;
-		}
-
+		std::uint64_t get_frame_count() const;
+		std::uint32_t get_fps_last_second() const;
+		double get_last_tick_time() const;
+		double get_last_draw_time() const;
 		HINSTANCE get_instance_handle();
 		scene& get_current_scene() const;
 		render::renderer& get_renderer() noexcept;
 		render::texture::texture_loader& get_texture_loader() noexcept;
 		system::input::input& get_input_system() noexcept;
+		
 		void initialize(HINSTANCE h_instance, int n_show_cmd, MSG* message);
 		void run();
 		void destroy();

@@ -169,6 +169,26 @@ void lycoris::game::game::destroy()
 	CoUninitialize();
 }
 
+std::uint64_t lycoris::game::game::get_frame_count() const
+{
+	return frame_count_;
+}
+
+std::uint32_t lycoris::game::game::get_fps_last_second() const
+{
+	return frames_last_second_;
+}
+
+double lycoris::game::game::get_last_tick_time() const
+{
+	return frame_time_tick_;
+}
+
+double lycoris::game::game::get_last_draw_time() const
+{
+	return frame_time_draw_;
+}
+
 HINSTANCE lycoris::game::game::get_instance_handle()
 {
 	return h_instance_;
