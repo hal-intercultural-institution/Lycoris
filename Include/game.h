@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "gamedef.h"
+#include "game/load_screen.h"
 #include "game/scene.h"
 #include "render/texture.h"
 #include "system/settings.h"
@@ -33,6 +34,7 @@ namespace lycoris::game
 
 		void set_settings(system::settings& settings);
 		void set_scene(std::unique_ptr<scene>&& scene);
+		void set_load_screen(std::unique_ptr<load_screen>&& load_screen);
 
 		game() = default;
 		game(const game&) = delete;
@@ -43,6 +45,8 @@ namespace lycoris::game
 	private:
 		std::uint64_t frame_count_ = 0;
 		std::unique_ptr<scene> scene_ = nullptr;
+		std::unique_ptr<scene> next_scene_ = nullptr;
+		std::unique_ptr<load_screen> load_screen_ = nullptr;
 		render::renderer renderer_;
 		render::texture::texture_loader texture_loader_;
 		system::input::input input_system_;
