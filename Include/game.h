@@ -46,7 +46,8 @@ namespace lycoris::game
 		{
 			return frame_time_draw_;
 		}
-		
+
+		HINSTANCE get_instance_handle();
 		scene& get_current_scene() const;
 		render::renderer& get_renderer() noexcept;
 		render::texture::texture_loader& get_texture_loader() noexcept;
