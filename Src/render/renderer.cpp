@@ -55,7 +55,7 @@ void lycoris::render::renderer::set_world_view_projection_2d()
 	const auto width = screen_.get_screen_width();
 	
 	// Ortho (ê≥) éÀâeïœä∑çsóÒÇê∂ê¨Ç∑ÇÈ
-	const auto world_view_projection = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, height, width, 0.0f, 0.0f, 1.0f);
+	const auto world_view_projection = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, width, height, 0.0f, 0.0f, 1.0f);
 	XMStoreFloat4x4(&projection_matrix_.get(), XMMatrixTranspose(world_view_projection));
 	projection_matrix_.update();
 
