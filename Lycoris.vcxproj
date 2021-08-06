@@ -166,6 +166,8 @@
     <ClInclude Include="Include\debug\logger.h" />
     <ClInclude Include="Include\game.h" />
     <ClInclude Include="Include\gamedef.h" />
+    <ClInclude Include="Include\game\load_screen.h" />
+    <ClInclude Include="Include\game\scene.h" />
     <ClInclude Include="Include\profiler\logger.h" />
     <ClInclude Include="Include\profiler\overlay.h" />
     <ClInclude Include="Include\render\camera.h" />
@@ -184,6 +186,7 @@
   <ItemGroup>
     <ClCompile Include="Src\asset\modelloader.cpp" />
     <ClCompile Include="Src\game.cpp" />
+    <ClCompile Include="Src\game\load_screen.cpp" />
     <ClCompile Include="Src\profiler\logger.cpp" />
     <ClCompile Include="Src\profiler\overlay.cpp" />
     <ClCompile Include="Src\render\camera.cpp" />
