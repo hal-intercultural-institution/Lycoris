@@ -11,8 +11,10 @@ namespace lycoris::system::audio
 	{
 	public:
 		void initialize();
+		void destroy();
 	private:
-		winrt::com_ptr<IXAudio2> x_audio_;
+		//winrt::com_ptr<IXAudio2> x_audio_;
+		IXAudio2* x_audio_ = nullptr;
 		utility::xaudio2_voice<IXAudio2MasteringVoice> mastering_voice_;
 	};
 }
