@@ -81,6 +81,7 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 		renderer_.get_camera().initialize();
 		texture_loader_.initialize();
 		input_system_.initialize();
+		audio_system_.initialize();
 	}
 	catch (const std::runtime_error& e)
 	{
@@ -187,6 +188,7 @@ void lycoris::game::game::destroy()
 	renderer_.destroy();
 	texture_loader_.destroy();
 	input_system_.destroy();
+	audio_system_.destroy();
 	
 	UnregisterClass(class_name, h_instance_);
 	CoUninitialize();

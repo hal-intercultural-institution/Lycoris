@@ -11,6 +11,7 @@
 #include "profiler/logger.h"
 #include "profiler/overlay.h"
 #include "render/renderer.h"
+#include "system/audio.h"
 
 namespace lycoris::game
 {
@@ -50,6 +51,7 @@ namespace lycoris::game
 		render::renderer renderer_;
 		render::texture::texture_loader texture_loader_;
 		system::input::input input_system_;
+		system::audio::audio_system audio_system_;
 		system::settings settings_;
 
 		profiler::debug_overlay overlay_;
