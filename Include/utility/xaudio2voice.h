@@ -21,12 +21,12 @@ namespace lycoris::utility
 		xaudio2_voice& operator=(xaudio2_voice&&) = default;
 		xaudio2_voice& operator=(const xaudio2_voice&) = delete;
 
-		xaudio2_voice& operator*()
+		T& operator*()
 		{
 			return *ptr_;
 		}
 
-		xaudio2_voice* operator->()
+		T* operator->()
 		{
 			return ptr_;
 		}
@@ -44,7 +44,7 @@ namespace lycoris::utility
 	private:
 		void destroy()
 		{
-			std::exchange(ptr_, nullptr).DestroyVoice();
+			std::exchange(ptr_, nullptr)->DestroyVoice();
 		}
 		
 		T* ptr_ = nullptr;
