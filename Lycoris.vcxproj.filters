@@ -75,6 +75,9 @@
     <ClInclude Include="Include\game\load_screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\system\audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\render\camera.cpp">
@@ -135,6 +138,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\game\load_screen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\system\audio\audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
