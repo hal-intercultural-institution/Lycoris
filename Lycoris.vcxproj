@@ -191,6 +191,7 @@
     <ClInclude Include="Include\utility\file.h" />
     <ClInclude Include="Include\utility\string.h" />
     <ClInclude Include="Include\utility\timer.h" />
+    <ClInclude Include="Include\utility\xaudio2voice.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\asset\modelloader.cpp" />

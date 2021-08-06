@@ -78,6 +78,9 @@
     <ClInclude Include="Include\system\audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\utility\xaudio2voice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\render\camera.cpp">

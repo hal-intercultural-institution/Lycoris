@@ -3,4 +3,5 @@
 void lycoris::system::audio::audio_system::initialize()
 {
 	XAudio2Create(x_audio_.put());
+	x_audio_->CreateMasteringVoice(mastering_voice_.put());
 }
