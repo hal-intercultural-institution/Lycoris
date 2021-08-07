@@ -28,10 +28,13 @@ namespace lycoris::game
 		render::renderer& get_renderer() noexcept;
 		render::texture::texture_loader& get_texture_loader() noexcept;
 		system::input::input& get_input_system() noexcept;
+		system::audio::audio_system& get_audio_system() noexcept;
 		
 		void initialize(HINSTANCE h_instance, int n_show_cmd, MSG* message);
 		void run();
 		void destroy();
+
+		~game() noexcept;
 
 		void set_settings(system::settings& settings);
 		void set_scene(std::unique_ptr<scene>&& scene);

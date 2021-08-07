@@ -10,15 +10,36 @@ namespace lycoris::utility
 	public:
 		xaudio2_voice() = default;
 		
-		xaudio2_voice(xaudio2_voice&&) = default;
+		xaudio2_voice(xaudio2_voice&& other) noexcept
+		{
+			if (ptr_)
+			{
+				ptr_->DestroyVoice();
+			}
+			ptr_ = other.ptr_;
+			other.ptr_ = nullptr;
+		}
 		xaudio2_voice(const xaudio2_voice&) = delete;
 
-		~xaudio2_voice()
+		~xaudio2_voice() noexcept
 		{
-			destroy();
+			if (ptr_)
+			{
+				ptr_->DestroyVoice();
+				ptr_ = nullptr;
+			}
 		}
 
-		xaudio2_voice& operator=(xaudio2_voice&&) = default;
+		xaudio2_voice& operator=(xaudio2_voice&& other) noexcept
+		{
+			if (ptr_)
+			{
+				ptr_->DestroyVoice();
+			}
+			ptr_ = other.ptr_;
+			other.ptr_ = nullptr;
+			return *this;
+		}
 		xaudio2_voice& operator=(const xaudio2_voice&) = delete;
 
 		T& operator*()
@@ -42,11 +63,6 @@ namespace lycoris::utility
 		}
 	
 	private:
-		void destroy()
-		{
-			std::exchange(ptr_, nullptr)->DestroyVoice();
-		}
-		
 		T* ptr_ = nullptr;
 	};
 }

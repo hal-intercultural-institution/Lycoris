@@ -185,6 +185,7 @@
     <ClInclude Include="Include\render\shader.h" />
     <ClInclude Include="Include\render\texture.h" />
     <ClInclude Include="Include\system\audio.h" />
+    <ClInclude Include="Include\system\audioloader.h" />
     <ClInclude Include="Include\system\input.h" />
     <ClInclude Include="Include\system\settings.h" />
     <ClInclude Include="Include\utility\cast.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="Src\render\texture.cpp" />
     <ClCompile Include="Src\render\textureloader.cpp" />
     <ClCompile Include="Src\system\audio\audio.cpp" />
+    <ClCompile Include="Src\system\audio\wavloader.cpp" />
     <ClCompile Include="Src\system\input\dinput_gamepad.cpp" />
     <ClCompile Include="Src\system\input\gamepad.cpp" />
     <ClCompile Include="Src\system\input\input.cpp" />
