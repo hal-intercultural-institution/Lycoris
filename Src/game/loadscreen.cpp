@@ -1,4 +1,4 @@
-#include "game/load_screen.h"
+#include "game/loadscreen.h"
 
 void lycoris::game::load_screen::set_load_status(status status)
 {

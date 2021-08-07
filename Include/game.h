@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "gamedef.h"
-#include "game/load_screen.h"
+#include "game/loadscreen.h"
 #include "game/scene.h"
 #include "render/texture.h"
 #include "system/settings.h"
