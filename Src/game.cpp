@@ -81,6 +81,7 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 		renderer_.get_camera().initialize();
 		texture_loader_.initialize();
 		input_system_.initialize();
+		audio_system_.initialize();
 	}
 	catch (const std::runtime_error& e)
 	{
@@ -146,6 +147,26 @@ void lycoris::game::game::on_tick()
 {
 	input_system_.update();
 	if (scene_) scene_->on_tick();
+	if (load_screen_)
+	{
+		switch (load_screen_->get_load_status())
+		{
+		case load_screen::status::transition_in:
+			load_screen_->on_tick();
+			break;
+		case load_screen::status::loading:
+			if (scene_) scene_->on_destroy();
+			scene_ = std::move(next_scene_);
+			scene_->on_initialize();
+			load_screen_->set_load_status(load_screen::status::transition_out);
+			break;
+		case load_screen::status::transition_out:
+			load_screen_->on_tick();
+			break;
+		default:
+			break;
+		}
+	}
 	input_system_.post_update();
 }
 
@@ -154,19 +175,62 @@ void lycoris::game::game::on_draw()
 	renderer_.clear();
 	renderer_.get_camera().set();
 	if (scene_) scene_->on_draw();
+	if (load_screen_ && load_screen_->get_load_status() != load_screen::status::not_loading)
+		load_screen_->on_draw();
 	overlay_.on_draw();
 	renderer_.present();
 }
 
 void lycoris::game::game::destroy()
 {
-	if (scene_) scene_->on_destroy();
+	// デストラクタよりあとに解放されると都合が悪い
+	if (scene_)
+	{
+		scene_->on_destroy();
+		delete scene_.release();
+	}
+	if (load_screen_)
+	{
+		load_screen_->on_destroy();
+		delete load_screen_.release();
+	}
+	
 	renderer_.destroy();
 	texture_loader_.destroy();
 	input_system_.destroy();
+	audio_system_.destroy();
 	
 	UnregisterClass(class_name, h_instance_);
+}
+
+lycoris::game::game::~game() noexcept
+{
 	CoUninitialize();
+}
+
+std::uint64_t lycoris::game::game::get_frame_count() const
+{
+	return frame_count_;
+}
+
+std::uint32_t lycoris::game::game::get_fps_last_second() const
+{
+	return frames_last_second_;
+}
+
+double lycoris::game::game::get_last_tick_time() const
+{
+	return frame_time_tick_;
+}
+
+double lycoris::game::game::get_last_draw_time() const
+{
+	return frame_time_draw_;
+}
+
+HINSTANCE lycoris::game::game::get_instance_handle()
+{
+	return h_instance_;
 }
 
 lycoris::game::scene& lycoris::game::game::get_current_scene() const
@@ -178,9 +242,14 @@ lycoris::game::scene& lycoris::game::game::get_current_scene() const
 
 void lycoris::game::game::set_scene(std::unique_ptr<scene>&& scene)
 {
-	if (scene_) scene_->on_destroy();
-	scene_ = std::move(scene);
-	scene_->on_initialize();
+	load_screen_->set_load_status(load_screen::status::transition_in);
+	next_scene_ = std::move(scene);
+}
+
+void lycoris::game::game::set_load_screen(std::unique_ptr<load_screen>&& load_screen)
+{
+	load_screen_ = std::move(load_screen);
+	load_screen_->on_initialize();
 }
 
 void lycoris::game::game::set_settings(system::settings& settings)
@@ -201,6 +270,11 @@ lycoris::render::texture::texture_loader& lycoris::game::game::get_texture_loade
 lycoris::system::input::input& lycoris::game::game::get_input_system() noexcept
 {
 	return input_system_;
+}
+
+lycoris::system::audio::audio_system& lycoris::game::game::get_audio_system() noexcept
+{
+	return audio_system_;
 }
 
 lycoris::game::game& lycoris::game::get_game() noexcept

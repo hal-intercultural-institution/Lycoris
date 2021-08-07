@@ -139,6 +139,10 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -160,12 +164,18 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Include\asset\model.h" />
     <ClInclude Include="Include\debug\logger.h" />
     <ClInclude Include="Include\game.h" />
     <ClInclude Include="Include\gamedef.h" />
+    <ClInclude Include="Include\game\loadscreen.h" />
+    <ClInclude Include="Include\game\scene.h" />
     <ClInclude Include="Include\profiler\logger.h" />
     <ClInclude Include="Include\profiler\overlay.h" />
     <ClInclude Include="Include\render\camera.h" />
@@ -174,16 +184,20 @@
     <ClInclude Include="Include\render\renderer.h" />
     <ClInclude Include="Include\render\shader.h" />
     <ClInclude Include="Include\render\texture.h" />
+    <ClInclude Include="Include\system\audio.h" />
+    <ClInclude Include="Include\system\audioloader.h" />
     <ClInclude Include="Include\system\input.h" />
     <ClInclude Include="Include\system\settings.h" />
     <ClInclude Include="Include\utility\cast.h" />
     <ClInclude Include="Include\utility\file.h" />
     <ClInclude Include="Include\utility\string.h" />
     <ClInclude Include="Include\utility\timer.h" />
+    <ClInclude Include="Include\utility\xaudio2voice.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\asset\modelloader.cpp" />
     <ClCompile Include="Src\game.cpp" />
+    <ClCompile Include="Src\game\loadscreen.cpp" />
     <ClCompile Include="Src\profiler\logger.cpp" />
     <ClCompile Include="Src\profiler\overlay.cpp" />
     <ClCompile Include="Src\render\camera.cpp" />
@@ -193,6 +207,10 @@
     <ClCompile Include="Src\render\shader.cpp" />
     <ClCompile Include="Src\render\texture.cpp" />
     <ClCompile Include="Src\render\textureloader.cpp" />
+    <ClCompile Include="Src\system\audio\audio.cpp" />
+    <ClCompile Include="Src\system\audio\wavloader.cpp" />
+    <ClCompile Include="Src\system\input\dinput_gamepad.cpp" />
+    <ClCompile Include="Src\system\input\gamepad.cpp" />
     <ClCompile Include="Src\system\input\input.cpp" />
     <ClCompile Include="Src\system\input\keyboard.cpp" />
     <ClCompile Include="Src\system\input\mouse.cpp" />

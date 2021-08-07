@@ -1,9 +1,13 @@
 ﻿#pragma once
 
+#define DIRECTINPUT_VERSION 0x0800
+
 #include <array>
 #include <cstdint>
 
 #include <Windows.h>
+#include <dinput.h>
+#include <winrt/base.h>
 
 namespace lycoris::system::input
 {
@@ -57,6 +61,93 @@ namespace lycoris::system::input
 		std::int32_t screen_x_ = 0;
 		std::int32_t screen_y_ = 0;
 	};
+
+	class game_pad
+	{
+	public:
+		enum class keycode
+		{
+			left_west,
+			left_south,
+			left_east,
+			left_north,
+			
+			right_west,
+			right_south,
+			right_east,
+			right_north,
+			
+			left_button,
+			right_button,
+			
+			left_trigger,
+			right_trigger,
+
+			left_joystick,
+			right_joystick,
+
+			extra_1,
+			extra_2,
+			extra_3,
+			extra_4
+		};
+		
+		virtual void update() = 0;
+		bool is_triggered(keycode keycode);
+		bool is_released(keycode keycode);
+		bool is_pressed(keycode keycode);
+		std::int32_t get_left_x() const;
+		std::int32_t get_left_y() const;
+		std::int32_t get_right_x() const;
+		std::int32_t get_right_y() const;
+		float get_left_stick_tilt() const;
+		float get_right_stick_tilt() const;
+		float get_left_stick_angle() const;
+		float get_right_stick_angle() const;
+		std::int32_t get_left_trigger_pressure() const;
+		std::int32_t get_right_trigger_pressure() const;
+		float get_stick_dead_zone() const;
+		void set_stick_dead_zone(float dead_zone);
+		virtual void destroy() = 0;
+		virtual ~game_pad() = 0 {}
+	protected:
+		std::array<bool, 18> button_state_previous_{};
+		std::array<bool, 18> button_state_{};
+		std::int32_t left_x_ = 0;
+		std::int32_t left_y_ = 0;
+		std::int32_t right_x_ = 0;
+		std::int32_t right_y_ = 0;
+		std::int32_t trigger_pressure_left_ = 0;
+		std::int32_t trigger_pressure_right_ = 0;
+		float stick_tilt_left_ = 0.0f;
+		float stick_tilt_right_ = 0.0f;
+		float stick_angle_left_ = 0.0f;
+		float stick_angle_right_ = 0.0f;
+		float stick_dead_zone_ = 100.0f;
+	};
+	
+	class d_game_pad : public game_pad
+	{
+	public:
+		d_game_pad() = default;
+		explicit d_game_pad(winrt::com_ptr<IDirectInputDevice8> && ptr)
+		{
+			device_ = std::move(ptr);
+		}
+		d_game_pad(const d_game_pad&) = delete;
+		d_game_pad(d_game_pad&&) = default;
+		~d_game_pad() override = default;
+
+		d_game_pad& operator=(const d_game_pad&) = delete;
+		d_game_pad& operator=(d_game_pad&&) = default;
+
+		void update() override;
+		void destroy() override;
+	
+	private:
+		inline static std::uint64_t count_ = 0;
+		winrt::com_ptr<IDirectInputDevice8> device_;
+	};
 	
 	class input
 	{
@@ -67,12 +158,18 @@ namespace lycoris::system::input
 		void update_raw_input(std::int64_t l_param);
 		void update_mouse_move(std::int64_t l_param);
 		void destroy();
+		void register_direct_input_device(LPCDIDEVICEINSTANCE instance, void* ref);
 		keyboard& get_keyboard();
 		mouse& get_mouse();
+		game_pad& get_game_pad(std::uint64_t index);
+		std::uint64_t get_game_pad_count();
 	
 	private:
 		keyboard keyboard_;
 		mouse mouse_;
+		std::vector<std::unique_ptr<game_pad>> game_pads_;
+		
+		winrt::com_ptr<IDirectInput8> direct_input_;
 	};
 
 }

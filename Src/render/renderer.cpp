@@ -55,7 +55,7 @@ void lycoris::render::renderer::set_world_view_projection_2d()
 	const auto width = screen_.get_screen_width();
 	
 	// Ortho (正) 射影変換行列を生成する
-	const auto world_view_projection = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, height, width, 0.0f, 0.0f, 1.0f);
+	const auto world_view_projection = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, width, height, 0.0f, 0.0f, 1.0f);
 	XMStoreFloat4x4(&projection_matrix_.get(), XMMatrixTranspose(world_view_projection));
 	projection_matrix_.update();
 
@@ -119,6 +119,8 @@ void lycoris::render::renderer::draw_text(const std::wstring& text)
 void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 {
 	HRESULT hr = S_OK;
+
+	screen_.set_window_handle(hWnd);
 
 	// Device, SwapChain, ImmediateContext 生成
 	DXGI_SWAP_CHAIN_DESC   swap_chain_desc = {};
@@ -203,7 +205,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 
 		immediate_context_->OMSetRenderTargets(1, render_targets.data(), depth_stencil_view_.get());
 	}
-
+	
 	// Viewport (= 0.0～1.0 でスクリーン上の座標を表す)
 	{
 		D3D11_VIEWPORT viewport = {};
