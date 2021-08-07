@@ -81,6 +81,7 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 		renderer_.get_camera().initialize();
 		texture_loader_.initialize();
 		input_system_.initialize();
+		audio_system_.initialize();
 	}
 	catch (const std::runtime_error& e)
 	{
@@ -182,13 +183,28 @@ void lycoris::game::game::on_draw()
 
 void lycoris::game::game::destroy()
 {
-	if (scene_) scene_->on_destroy();
-	if (load_screen_) load_screen_->on_destroy();
+	// デストラクタよりあとに解放されると都合が悪い
+	if (scene_)
+	{
+		scene_->on_destroy();
+		delete scene_.release();
+	}
+	if (load_screen_)
+	{
+		load_screen_->on_destroy();
+		delete load_screen_.release();
+	}
+	
 	renderer_.destroy();
 	texture_loader_.destroy();
 	input_system_.destroy();
+	audio_system_.destroy();
 	
 	UnregisterClass(class_name, h_instance_);
+}
+
+lycoris::game::game::~game() noexcept
+{
 	CoUninitialize();
 }
 
@@ -254,6 +270,11 @@ lycoris::render::texture::texture_loader& lycoris::game::game::get_texture_loade
 lycoris::system::input::input& lycoris::game::game::get_input_system() noexcept
 {
 	return input_system_;
+}
+
+lycoris::system::audio::audio_system& lycoris::game::game::get_audio_system() noexcept
+{
+	return audio_system_;
 }
 
 lycoris::game::game& lycoris::game::get_game() noexcept

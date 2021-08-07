@@ -11,6 +11,7 @@
 #include "profiler/logger.h"
 #include "profiler/overlay.h"
 #include "render/renderer.h"
+#include "system/audio.h"
 
 namespace lycoris::game
 {
@@ -27,10 +28,13 @@ namespace lycoris::game
 		render::renderer& get_renderer() noexcept;
 		render::texture::texture_loader& get_texture_loader() noexcept;
 		system::input::input& get_input_system() noexcept;
+		system::audio::audio_system& get_audio_system() noexcept;
 		
 		void initialize(HINSTANCE h_instance, int n_show_cmd, MSG* message);
 		void run();
 		void destroy();
+
+		~game() noexcept;
 
 		void set_settings(system::settings& settings);
 		void set_scene(std::unique_ptr<scene>&& scene);
@@ -50,6 +54,7 @@ namespace lycoris::game
 		render::renderer renderer_;
 		render::texture::texture_loader texture_loader_;
 		system::input::input input_system_;
+		system::audio::audio_system audio_system_;
 		system::settings settings_;
 
 		profiler::debug_overlay overlay_;
