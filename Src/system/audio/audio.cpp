@@ -1,6 +1,9 @@
 #include "system/audio.h"
 
 #include "system/audioloader.h"
+#include "utility/cast.h"
+
+using lycoris::utility::scast::uint32_of;
 
 IXAudio2SourceVoice& lycoris::system::audio::sound::get_voice()
 {
@@ -64,7 +67,7 @@ void lycoris::system::audio::audio_system::play(sound& sound)
 	XAUDIO2_BUFFER buffer{};
 	buffer.pAudioData = reinterpret_cast<BYTE*>(file.buffer.data());
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
-	buffer.AudioBytes = file.buffer.size();
+	buffer.AudioBytes = uint32_of(file.buffer.size());
 	HRESULT hr = voice.SubmitSourceBuffer(&buffer);
 	if (FAILED(hr))
 	{
