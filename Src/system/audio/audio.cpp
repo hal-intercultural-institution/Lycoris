@@ -1,9 +1,15 @@
 #include "system/audio.h"
 
+#include "game.h"
 #include "system/audioloader.h"
 #include "utility/cast.h"
 
 using lycoris::utility::scast::uint32_of;
+
+lycoris::system::audio::sound::~sound()
+{
+	game::get_game().get_audio_system().stop(*this);
+}
 
 IXAudio2SourceVoice& lycoris::system::audio::sound::get_voice()
 {

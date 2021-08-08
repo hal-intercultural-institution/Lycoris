@@ -37,7 +37,7 @@ namespace lycoris::system::audio
 
 		sound(const sound&) = delete;
 		sound(sound&&) = default;
-		~sound() = default;
+		~sound();
 		
 		sound& operator=(const sound&) = delete;
 		sound& operator=(sound&&) = default;
