@@ -148,6 +148,29 @@ namespace lycoris::system::input
 		inline static std::uint64_t count_ = 0;
 		winrt::com_ptr<IDirectInputDevice8> device_;
 	};
+
+	class nintendo_game_pad final : public game_pad
+	{
+	public:
+		nintendo_game_pad() = default;
+		explicit nintendo_game_pad(winrt::com_ptr<IDirectInputDevice8>&& ptr)
+		{
+			device_ = std::move(ptr);
+		}
+		nintendo_game_pad(const nintendo_game_pad&) = delete;
+		nintendo_game_pad(nintendo_game_pad&&) = default;
+		~nintendo_game_pad() override = default;
+
+		nintendo_game_pad& operator=(const nintendo_game_pad&) = delete;
+		nintendo_game_pad& operator=(nintendo_game_pad&&) = default;
+
+		void update() override;
+		void destroy() override;
+
+	private:
+		inline static std::uint64_t count_ = 0;
+		winrt::com_ptr<IDirectInputDevice8> device_;
+	};
 	
 	class input
 	{
