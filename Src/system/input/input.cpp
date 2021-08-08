@@ -227,6 +227,11 @@ void lycoris::system::input::input::register_direct_input_device(LPCDIDEVICEINST
 	}
 
 	device->Acquire();
+
+	std::unique_ptr<game_pad> game_pad = nullptr;
 	
-	game_pads_.push_back(std::make_unique<sony_game_pad>(std::move(device)));
+	if (vendor_id == 0x057E) game_pad = std::make_unique<nintendo_game_pad>(std::move(device));
+	else if (vendor_id == 0x054C) game_pad = std::make_unique<sony_game_pad>(std::move(device));
+	
+	game_pads_.push_back(std::move(game_pad));
 }
