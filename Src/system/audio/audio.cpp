@@ -51,11 +51,11 @@ lycoris::system::audio::sound lycoris::system::audio::audio_system::load_sound_f
 	return sound(std::move(voice), std::move(wav_file));
 }
 
-void lycoris::system::audio::audio_system::play(sound& sound)
+void lycoris::system::audio::audio_system::play(sound& sound, std::uint32_t time, float volume)
 {
 	IXAudio2SourceVoice& voice = sound.get_voice();
 	wav_file& file = sound.get_file();
-	
+
 	XAUDIO2_VOICE_STATE state;
 	voice.GetState(&state);
 	if (state.BuffersQueued != 0)
@@ -63,16 +63,34 @@ void lycoris::system::audio::audio_system::play(sound& sound)
 		voice.Stop();
 		voice.FlushSourceBuffers();
 	}
-	
+
 	XAUDIO2_BUFFER buffer{};
 	buffer.pAudioData = reinterpret_cast<BYTE*>(file.buffer.data());
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
 	buffer.AudioBytes = uint32_of(file.buffer.size());
+	buffer.LoopCount = time;
+	
 	HRESULT hr = voice.SubmitSourceBuffer(&buffer);
 	if (FAILED(hr))
 	{
 		throw std::runtime_error("AudioSystem: failed to submit buffer");
 	}
 
+	hr = voice.SetVolume(volume);
+	if (FAILED(hr))
+	{
+		throw std::runtime_error("AudioSystem: failed to set volume");
+	}
+
 	voice.Start();
+}
+
+void lycoris::system::audio::audio_system::play(sound& sound, std::uint32_t time)
+{
+	play(sound, time, 1.0f);
+}
+
+void lycoris::system::audio::audio_system::play(sound& sound, float volume)
+{
+	play(sound, 1, volume);
 }
