@@ -1,6 +1,6 @@
 ﻿#include "system/input.h"
 
-void lycoris::system::input::d_game_pad::update()
+void lycoris::system::input::sony_game_pad::update()
 {
 	// copy prev state
 	button_state_previous_ = button_state_;
@@ -87,7 +87,7 @@ void lycoris::system::input::d_game_pad::update()
 	
 }
 
-void lycoris::system::input::d_game_pad::destroy()
+void lycoris::system::input::sony_game_pad::destroy()
 {
 	device_->Unacquire();
 }

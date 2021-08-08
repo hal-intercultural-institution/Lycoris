@@ -198,5 +198,5 @@ void lycoris::system::input::input::register_direct_input_device(LPCDIDEVICEINST
 
 	device->Acquire();
 	
-	game_pads_.push_back(std::make_unique<d_game_pad>(std::move(device)));
+	game_pads_.push_back(std::make_unique<sony_game_pad>(std::move(device)));
 }
