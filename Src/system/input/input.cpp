@@ -137,6 +137,15 @@ void lycoris::system::input::input::register_direct_input_device(LPCDIDEVICEINST
 	if (FAILED(hr))
 		throw std::runtime_error("InputSystem: failed to set cooperative level");
 
+	DIPROPDWORD data{};
+	data.diph.dwHeaderSize = sizeof(data.diph);
+	data.diph.dwSize = sizeof(data);
+	data.diph.dwHow = DIPH_DEVICE;
+	device->GetProperty(DIPROP_VIDPID, &data.diph);
+
+	const auto vendor_id = static_cast<std::uint16_t>(data.dwData);
+	const auto device_id = static_cast<std::uint16_t>(data.dwData >> 16);
+	
 	// joystick / trigger range
 	{
 		DIPROPRANGE prop;
@@ -146,27 +155,48 @@ void lycoris::system::input::input::register_direct_input_device(LPCDIDEVICEINST
 		prop.lMax = joystick_range_max;
 		prop.lMin = joystick_range_min;
 
-		prop.diph.dwObj = DIJOFS_X; // left x
-		device->SetProperty(DIPROP_RANGE, &prop.diph);
+		if (vendor_id == 0x057E) // Nintendo
+		{
+			prop.diph.dwObj = DIJOFS_X; // left x
+			device->SetProperty(DIPROP_RANGE, &prop.diph);
 
-		prop.diph.dwObj = DIJOFS_Y; // left y
-		device->SetProperty(DIPROP_RANGE, &prop.diph);
+			prop.diph.dwObj = DIJOFS_Y; // left y
+			device->SetProperty(DIPROP_RANGE, &prop.diph);
 
-		prop.diph.dwObj = DIJOFS_Z; // right x
-		device->SetProperty(DIPROP_RANGE, &prop.diph);
-		
-		prop.diph.dwObj = DIJOFS_RZ; // right y
-		device->SetProperty(DIPROP_RANGE, &prop.diph);
+			prop.diph.dwObj = DIJOFS_RX; // right x
+			device->SetProperty(DIPROP_RANGE, &prop.diph);
 
-		prop.lMax = trigger_pressure_max;
-		prop.lMin = trigger_pressure_min;
+			prop.diph.dwObj = DIJOFS_RY; // right y
+			device->SetProperty(DIPROP_RANGE, &prop.diph);
+		}
+		else if (vendor_id == 0x054C) // Sony
+		{
+			prop.diph.dwObj = DIJOFS_X; // left x
+			device->SetProperty(DIPROP_RANGE, &prop.diph);
 
-		prop.diph.dwObj = DIJOFS_RX; // l trigger
-		device->SetProperty(DIPROP_RANGE, &prop.diph);
+			prop.diph.dwObj = DIJOFS_Y; // left y
+			device->SetProperty(DIPROP_RANGE, &prop.diph);
 
-		prop.diph.dwObj = DIJOFS_RY; // r trigger
-		device->SetProperty(DIPROP_RANGE, &prop.diph);
-		
+			prop.diph.dwObj = DIJOFS_Z; // right x
+			device->SetProperty(DIPROP_RANGE, &prop.diph);
+
+			prop.diph.dwObj = DIJOFS_RZ; // right y
+			device->SetProperty(DIPROP_RANGE, &prop.diph);
+
+			prop.lMax = trigger_pressure_max;
+			prop.lMin = trigger_pressure_min;
+
+			prop.diph.dwObj = DIJOFS_RX; // l trigger
+			device->SetProperty(DIPROP_RANGE, &prop.diph);
+
+			prop.diph.dwObj = DIJOFS_RY; // r trigger
+			device->SetProperty(DIPROP_RANGE, &prop.diph);
+		}
+		else
+		{
+			return; // unsupported
+		}
+
 	}
 
 	// joystick dead zone
@@ -197,6 +227,11 @@ void lycoris::system::input::input::register_direct_input_device(LPCDIDEVICEINST
 	}
 
 	device->Acquire();
+
+	std::unique_ptr<game_pad> game_pad = nullptr;
 	
-	game_pads_.push_back(std::make_unique<d_game_pad>(std::move(device)));
+	if (vendor_id == 0x057E) game_pad = std::make_unique<nintendo_game_pad>(std::move(device));
+	else if (vendor_id == 0x054C) game_pad = std::make_unique<sony_game_pad>(std::move(device));
+	
+	game_pads_.push_back(std::move(game_pad));
 }
