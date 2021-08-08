@@ -1,9 +1,15 @@
 #include "system/audio.h"
 
+#include "game.h"
 #include "system/audioloader.h"
 #include "utility/cast.h"
 
 using lycoris::utility::scast::uint32_of;
+
+lycoris::system::audio::sound::~sound()
+{
+	game::get_game().get_audio_system().stop(*this);
+}
 
 IXAudio2SourceVoice& lycoris::system::audio::sound::get_voice()
 {
@@ -51,10 +57,63 @@ lycoris::system::audio::sound lycoris::system::audio::audio_system::load_sound_f
 	return sound(std::move(voice), std::move(wav_file));
 }
 
-void lycoris::system::audio::audio_system::play(sound& sound)
+void lycoris::system::audio::audio_system::play(sound& sound, std::uint32_t time, float volume)
 {
 	IXAudio2SourceVoice& voice = sound.get_voice();
 	wav_file& file = sound.get_file();
+
+	XAUDIO2_VOICE_STATE state;
+	voice.GetState(&state);
+	if (state.BuffersQueued != 0)
+	{
+		voice.Stop();
+		voice.FlushSourceBuffers();
+	}
+
+	XAUDIO2_BUFFER buffer{};
+	buffer.pAudioData = reinterpret_cast<BYTE*>(file.buffer.data());
+	buffer.Flags = XAUDIO2_END_OF_STREAM;
+	buffer.AudioBytes = uint32_of(file.buffer.size());
+	buffer.LoopCount = time;
+	
+	HRESULT hr = voice.SubmitSourceBuffer(&buffer);
+	if (FAILED(hr))
+	{
+		throw std::runtime_error("AudioSystem: failed to submit buffer");
+	}
+
+	hr = voice.SetVolume(volume);
+	if (FAILED(hr))
+	{
+		throw std::runtime_error("AudioSystem: failed to set volume");
+	}
+
+	voice.Start();
+}
+
+void lycoris::system::audio::audio_system::play(sound& sound, std::uint32_t time)
+{
+	play(sound, time, 1.0f);
+}
+
+void lycoris::system::audio::audio_system::play(sound& sound, float volume)
+{
+	play(sound, 1, volume);
+}
+
+void lycoris::system::audio::audio_system::play_looped(sound& sound)
+{
+	play(sound, XAUDIO2_LOOP_INFINITE, 1.0f);
+}
+
+void lycoris::system::audio::audio_system::play_looped(sound& sound, float volume)
+{
+	play(sound, XAUDIO2_LOOP_INFINITE, volume);
+}
+
+void lycoris::system::audio::audio_system::stop(sound& sound)
+{
+	IXAudio2SourceVoice& voice = sound.get_voice();
 	
 	XAUDIO2_VOICE_STATE state;
 	voice.GetState(&state);
@@ -63,16 +122,4 @@ void lycoris::system::audio::audio_system::play(sound& sound)
 		voice.Stop();
 		voice.FlushSourceBuffers();
 	}
-	
-	XAUDIO2_BUFFER buffer{};
-	buffer.pAudioData = reinterpret_cast<BYTE*>(file.buffer.data());
-	buffer.Flags = XAUDIO2_END_OF_STREAM;
-	buffer.AudioBytes = uint32_of(file.buffer.size());
-	HRESULT hr = voice.SubmitSourceBuffer(&buffer);
-	if (FAILED(hr))
-	{
-		throw std::runtime_error("AudioSystem: failed to submit buffer");
-	}
-
-	voice.Start();
 }
