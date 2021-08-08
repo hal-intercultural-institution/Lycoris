@@ -94,3 +94,26 @@ void lycoris::system::audio::audio_system::play(sound& sound, float volume)
 {
 	play(sound, 1, volume);
 }
+
+void lycoris::system::audio::audio_system::play_looped(sound& sound)
+{
+	play(sound, XAUDIO2_LOOP_INFINITE, 1.0f);
+}
+
+void lycoris::system::audio::audio_system::play_looped(sound& sound, float volume)
+{
+	play(sound, XAUDIO2_LOOP_INFINITE, volume);
+}
+
+void lycoris::system::audio::audio_system::stop(sound& sound)
+{
+	IXAudio2SourceVoice& voice = sound.get_voice();
+	
+	XAUDIO2_VOICE_STATE state;
+	voice.GetState(&state);
+	if (state.BuffersQueued != 0)
+	{
+		voice.Stop();
+		voice.FlushSourceBuffers();
+	}
+}

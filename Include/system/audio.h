@@ -59,6 +59,9 @@ namespace lycoris::system::audio
 		static void play(sound& sound, std::uint32_t time, float volume);
 		static void play(sound& sound, std::uint32_t time);
 		static void play(sound& sound, float volume);
+		static void play_looped(sound& sound);
+		static void play_looped(sound& sound, float volume);
+		static void stop(sound& sound);
 	
 	private:
 		//winrt::com_ptr<IXAudio2> x_audio_;
