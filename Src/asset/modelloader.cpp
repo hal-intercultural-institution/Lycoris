@@ -170,6 +170,7 @@ std::unordered_map<std::string, lycoris::render::model3d::model_material> lycori
 			diffuse.x = std::stof(line[1]);
 			diffuse.y = std::stof(line[2]);
 			diffuse.z = std::stof(line[3]);
+			diffuse.w = 1.0f;
 		}
 		else if (line[0] == "Ks") // specular
 		{
