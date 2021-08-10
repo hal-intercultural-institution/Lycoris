@@ -89,6 +89,11 @@ void lycoris::render::renderer::set_material(material& material)
 	material_.update(material);
 }
 
+void lycoris::render::renderer::set_uv_offset(DirectX::XMFLOAT2& offset)
+{
+	uv_offset_.update({ offset.x, offset.y, 0.0f, 0.0f });
+}
+
 void lycoris::render::renderer::set_culling_mode(D3D11_CULL_MODE culling_mode)
 {
 	if (culling_mode == culling_mode_) return;
@@ -310,6 +315,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		projection_matrix_ = constant_buffer<DirectX::XMFLOAT4X4, 2>::create();
 		material_ = constant_buffer<material, 3>::create();
 		directional_light_ = constant_buffer<DirectX::XMFLOAT4, 4>::create();
+		uv_offset_ = constant_buffer<DirectX::XMFLOAT4, 5>::create();
 	}
 	
 	{
