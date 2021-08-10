@@ -90,6 +90,8 @@ namespace lycoris::render
 		void set_directional_light(DirectX::XMFLOAT3& light);
 		// Material を更新し、GPUへ転送する
 		void set_material(material& material);
+		// UVオフセットを更新する
+		void set_uv_offset(DirectX::XMFLOAT2& offset);
 		// カリング設定
 		void set_culling_mode(D3D11_CULL_MODE culling_mode);
 		void draw_text(const std::wstring& text);
@@ -135,6 +137,7 @@ namespace lycoris::render
 		constant_buffer<DirectX::XMFLOAT4X4, 2> projection_matrix_ = {};
 		constant_buffer<material, 3> material_ = {};
 		constant_buffer<DirectX::XMFLOAT4, 4> directional_light_ = {};
+		constant_buffer<DirectX::XMFLOAT4, 5> uv_offset_ = {};
 
 		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
 		

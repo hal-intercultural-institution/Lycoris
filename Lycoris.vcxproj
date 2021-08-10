@@ -183,6 +183,7 @@
     <ClInclude Include="Include\render\model3d.h" />
     <ClInclude Include="Include\render\renderer.h" />
     <ClInclude Include="Include\render\shader.h" />
+    <ClInclude Include="Include\render\sprite.h" />
     <ClInclude Include="Include\render\texture.h" />
     <ClInclude Include="Include\system\audio.h" />
     <ClInclude Include="Include\system\audioloader.h" />
@@ -205,11 +206,13 @@
     <ClCompile Include="Src\render\renderer.cpp" />
     <ClCompile Include="Src\render\screen.cpp" />
     <ClCompile Include="Src\render\shader.cpp" />
+    <ClCompile Include="Src\render\sprite.cpp" />
     <ClCompile Include="Src\render\texture.cpp" />
     <ClCompile Include="Src\render\textureloader.cpp" />
     <ClCompile Include="Src\system\audio\audio.cpp" />
     <ClCompile Include="Src\system\audio\wavloader.cpp" />
-    <ClCompile Include="Src\system\input\dinput_gamepad.cpp" />
+    <ClCompile Include="Src\system\input\gamepadnintendo.cpp" />
+    <ClCompile Include="Src\system\input\gamepadsony.cpp" />
     <ClCompile Include="Src\system\input\gamepad.cpp" />
     <ClCompile Include="Src\system\input\input.cpp" />
     <ClCompile Include="Src\system\input\keyboard.cpp" />

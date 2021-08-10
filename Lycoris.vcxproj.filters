@@ -84,6 +84,9 @@
     <ClInclude Include="Include\system\audioloader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\render\sprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\render\camera.cpp">
@@ -137,7 +140,7 @@
     <ClCompile Include="Src\system\input\mouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\system\input\dinput_gamepad.cpp">
+    <ClCompile Include="Src\system\input\gamepadsony.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\system\input\gamepad.cpp">
@@ -150,6 +153,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\system\audio\wavloader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\system\input\gamepadnintendo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\render\sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

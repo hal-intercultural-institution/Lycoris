@@ -109,7 +109,7 @@ namespace lycoris::system::input
 		float get_stick_dead_zone() const;
 		void set_stick_dead_zone(float dead_zone);
 		virtual void destroy() = 0;
-		virtual ~game_pad() = 0 {}
+		virtual ~game_pad() = default;
 	protected:
 		std::array<bool, 18> button_state_previous_{};
 		std::array<bool, 18> button_state_{};
@@ -126,24 +126,47 @@ namespace lycoris::system::input
 		float stick_dead_zone_ = 100.0f;
 	};
 	
-	class d_game_pad : public game_pad
+	class sony_game_pad final : public game_pad
 	{
 	public:
-		d_game_pad() = default;
-		explicit d_game_pad(winrt::com_ptr<IDirectInputDevice8> && ptr)
+		sony_game_pad() = default;
+		explicit sony_game_pad(winrt::com_ptr<IDirectInputDevice8> && ptr)
 		{
 			device_ = std::move(ptr);
 		}
-		d_game_pad(const d_game_pad&) = delete;
-		d_game_pad(d_game_pad&&) = default;
-		~d_game_pad() override = default;
+		sony_game_pad(const sony_game_pad&) = delete;
+		sony_game_pad(sony_game_pad&&) = default;
+		~sony_game_pad() override = default;
 
-		d_game_pad& operator=(const d_game_pad&) = delete;
-		d_game_pad& operator=(d_game_pad&&) = default;
+		sony_game_pad& operator=(const sony_game_pad&) = delete;
+		sony_game_pad& operator=(sony_game_pad&&) = default;
 
 		void update() override;
 		void destroy() override;
 	
+	private:
+		inline static std::uint64_t count_ = 0;
+		winrt::com_ptr<IDirectInputDevice8> device_;
+	};
+
+	class nintendo_game_pad final : public game_pad
+	{
+	public:
+		nintendo_game_pad() = default;
+		explicit nintendo_game_pad(winrt::com_ptr<IDirectInputDevice8>&& ptr)
+		{
+			device_ = std::move(ptr);
+		}
+		nintendo_game_pad(const nintendo_game_pad&) = delete;
+		nintendo_game_pad(nintendo_game_pad&&) = default;
+		~nintendo_game_pad() override = default;
+
+		nintendo_game_pad& operator=(const nintendo_game_pad&) = delete;
+		nintendo_game_pad& operator=(nintendo_game_pad&&) = default;
+
+		void update() override;
+		void destroy() override;
+
 	private:
 		inline static std::uint64_t count_ = 0;
 		winrt::com_ptr<IDirectInputDevice8> device_;
