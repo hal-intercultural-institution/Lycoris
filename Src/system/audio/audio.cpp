@@ -8,7 +8,8 @@ using lycoris::utility::scast::uint32_of;
 
 lycoris::system::audio::sound::~sound()
 {
-	game::get_game().get_audio_system().stop(*this);
+	if (source_voice_)
+		game::get_game().get_audio_system().stop(*this);
 }
 
 IXAudio2SourceVoice& lycoris::system::audio::sound::get_voice()
