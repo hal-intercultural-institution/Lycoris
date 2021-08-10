@@ -7,7 +7,7 @@ ID3D11Buffer* lycoris::render::sprite::get_vertex_buffer()
 	return buffer_.get();
 }
 
-void lycoris::render::sprite::draw()
+void lycoris::render::sprite::draw(std::uint32_t u_index, std::uint32_t v_index)
 {
 	auto& renderer = game::get_game().get_renderer();
 
@@ -29,7 +29,7 @@ void lycoris::render::sprite::draw()
 	};
 	renderer.get_device_context().PSSetShaderResources(0, srvs.size(), srvs.data());
 	
-	DirectX::XMFLOAT2 uv_offset = { 0.0f, 0.0f };
+	DirectX::XMFLOAT2 uv_offset = { u_width_ * u_index, v_height_ * v_index };
 	renderer.set_uv_offset(uv_offset);
 	
 	renderer.get_device_context().Draw(4, 0);

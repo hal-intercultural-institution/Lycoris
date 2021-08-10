@@ -18,7 +18,7 @@ namespace lycoris::render
 		~sprite() = default;
 		
 		ID3D11Buffer* get_vertex_buffer();
-		void draw();
+		void draw(std::uint32_t u_index, std::uint32_t v_index);
 
 		static sprite create(float width, float height, std::uint32_t u, std::uint32_t v, texture::texture&& texture);
 	
@@ -28,6 +28,6 @@ namespace lycoris::render
 		texture::texture texture_;
 		material  material_{};
 		DirectX::XMFLOAT2 position_{};
-		float u_width_, v_height_;
+		float u_width_ = 1.0f, v_height_ = 1.0f;
 	};
 }
