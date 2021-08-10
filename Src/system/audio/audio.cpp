@@ -60,6 +60,7 @@ lycoris::system::audio::sound lycoris::system::audio::audio_system::load_sound_f
 
 void lycoris::system::audio::audio_system::play(sound& sound, std::uint32_t time, float volume)
 {
+	if (!sound) return;
 	IXAudio2SourceVoice& voice = sound.get_voice();
 	wav_file& file = sound.get_file();
 
@@ -114,6 +115,7 @@ void lycoris::system::audio::audio_system::play_looped(sound& sound, float volum
 
 void lycoris::system::audio::audio_system::stop(sound& sound)
 {
+	if (!sound) return;
 	IXAudio2SourceVoice& voice = sound.get_voice();
 	
 	XAUDIO2_VOICE_STATE state;

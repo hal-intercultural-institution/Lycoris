@@ -44,6 +44,11 @@ namespace lycoris::system::audio
 		
 		IXAudio2SourceVoice& get_voice();
 		wav_file& get_file();
+
+		explicit operator bool()
+		{
+			return static_cast<bool>(source_voice_);
+		}
 	
 	private:
 		utility::xaudio2_voice<IXAudio2SourceVoice> source_voice_;
