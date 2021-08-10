@@ -1,6 +1,9 @@
 ﻿#include "render/sprite.h"
 
+#include "utility/cast.h"
 #include "game.h"
+
+using lycoris::utility::scast::uint32_of;
 
 ID3D11Buffer* lycoris::render::sprite::get_vertex_buffer()
 {
@@ -21,13 +24,13 @@ void lycoris::render::sprite::draw(std::uint32_t u_index, std::uint32_t v_index)
 	std::array vertex_buffers = {
 		buffer_.get()
 	};
-	renderer.get_device_context().IASetVertexBuffers(0, vertex_buffers.size(), vertex_buffers.data(), &stride, &offset);
+	renderer.get_device_context().IASetVertexBuffers(0, uint32_of(vertex_buffers.size()), vertex_buffers.data(), &stride, &offset);
 	renderer.get_device_context().IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	std::array srvs = {
 		texture_.get_shader_resource_view()
 	};
-	renderer.get_device_context().PSSetShaderResources(0, srvs.size(), srvs.data());
+	renderer.get_device_context().PSSetShaderResources(0, uint32_of(srvs.size()), srvs.data());
 	
 	DirectX::XMFLOAT2 uv_offset = { u_width_ * u_index, v_height_ * v_index };
 	renderer.set_uv_offset(uv_offset);
