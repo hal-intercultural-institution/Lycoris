@@ -18,6 +18,9 @@ void lycoris::render::model3d::draw_model(model_3d& model)
 		device_context.IASetIndexBuffer(parts.model.get_index_buffer(), DXGI_FORMAT_R32_UINT, 0);
 
 		device_context.IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		DirectX::XMFLOAT2 uv_offset = { 0.0f, 0.0f };
+		renderer.set_uv_offset(uv_offset);
 		
 		for (auto& [texture, material, start_index, indices] : parts.materials)
 		{

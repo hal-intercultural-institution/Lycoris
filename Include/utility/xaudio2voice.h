@@ -42,6 +42,11 @@ namespace lycoris::utility
 		}
 		xaudio2_voice& operator=(const xaudio2_voice&) = delete;
 
+		explicit operator bool()
+		{
+			return ptr_ != nullptr;
+		}
+
 		T& operator*()
 		{
 			return *ptr_;
