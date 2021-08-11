@@ -78,13 +78,15 @@ namespace lycoris::render
 		void clear() const;
 		// レンダーターゲットをフロントバッファに転送
 		void present() const;
-		// 正射影変換行列を生成し、GPUへ転送する
+		// 正射影変換行列を生成し、World, View, Projection Matrix を更新し、GPUへ転送する
 		void set_world_view_projection_2d();
-		// World Matrix を更新し、射影変換行列を生成し、GPUへ転送する
+		// 正射影変換行列を生成し、View, Projection Matrix を更新し、GPUに転送する
+		void set_view_projection_2d();
+		// World Matrix を更新し、GPUへ転送する
 		void set_world_matrix(DirectX::XMFLOAT4X4& world_matrix);
-		// View Matrix を更新し、射影変換行列を生成し、GPUへ転送する
+		// View Matrix を更新し、GPUへ転送する
 		void set_view_matrix(DirectX::XMFLOAT4X4& view_matrix);
-		// Projection Matrix を更新し、射影変換行列を生成し、GPUへ転送する
+		// Projection Matrix を更新し、GPUへ転送する
 		void set_projection_matrix(DirectX::XMFLOAT4X4& projection_matrix);
 		// 平行光源を更新し、GPUへ転送する
 		void set_directional_light(DirectX::XMFLOAT3& light);

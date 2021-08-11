@@ -85,7 +85,7 @@ void lycoris::render::sprite::draw()
 	renderer.set_depth_enabled(false);
 	renderer.set_culling_mode(D3D11_CULL_BACK);
 
-	renderer.set_world_view_projection_2d();
+	renderer.set_view_projection_2d();
 
 	const auto identified_matrix = DirectX::XMMatrixIdentity();
 	const auto world_matrix = XMMatrixMultiply(identified_matrix, DirectX::XMMatrixTranslation(position_.x, position_.y, 0.0f));
