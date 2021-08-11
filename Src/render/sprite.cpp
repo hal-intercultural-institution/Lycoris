@@ -10,12 +10,49 @@ ID3D11Buffer* lycoris::render::sprite::get_vertex_buffer()
 	return buffer_.get();
 }
 
+DirectX::XMFLOAT2& lycoris::render::sprite::get_position()
+{
+	return position_;
+}
+
+std::int32_t& lycoris::render::sprite::get_u_index()
+{
+	return u_index_;
+}
+
+std::int32_t& lycoris::render::sprite::get_v_index()
+{
+	return v_index_;
+}
+
+void lycoris::render::sprite::set_position(const DirectX::XMFLOAT2& position)
+{
+	position_ = position;
+}
+
+void lycoris::render::sprite::set_u_index(const std::int32_t index)
+{
+	u_index_ = index;
+}
+
+void lycoris::render::sprite::set_v_index(const std::int32_t index)
+{
+	v_index_ = index;
+}
+
 void lycoris::render::sprite::draw(std::uint32_t u_index, std::uint32_t v_index)
 {
 	auto& renderer = game::get_game().get_renderer();
-
+	
 	renderer.set_depth_enabled(false);
+
 	renderer.set_world_view_projection_2d();
+
+	const auto identified_matrix = DirectX::XMMatrixIdentity();
+	const auto world_matrix = XMMatrixMultiply(identified_matrix, DirectX::XMMatrixTranslation(position_.x, position_.y, 0.0f));
+	DirectX::XMFLOAT4X4 world_matrix_float;
+	XMStoreFloat4x4(&world_matrix_float, world_matrix);
+	renderer.set_world_matrix(world_matrix_float);
 
 	renderer.set_material(material_);
 	
@@ -35,6 +72,45 @@ void lycoris::render::sprite::draw(std::uint32_t u_index, std::uint32_t v_index)
 	DirectX::XMFLOAT2 uv_offset = { u_width_ * u_index, v_height_ * v_index };
 	renderer.set_uv_offset(uv_offset);
 	
+	renderer.get_device_context().Draw(4, 0);
+}
+
+void lycoris::render::sprite::draw()
+{
+	if (u_index_ < 0) u_index_ = 0;
+	if (v_index_ < 0) v_index_ = 0;
+	
+	auto& renderer = game::get_game().get_renderer();
+
+	renderer.set_depth_enabled(false);
+	renderer.set_culling_mode(D3D11_CULL_BACK);
+
+	renderer.set_world_view_projection_2d();
+
+	const auto identified_matrix = DirectX::XMMatrixIdentity();
+	const auto world_matrix = XMMatrixMultiply(identified_matrix, DirectX::XMMatrixTranslation(position_.x, position_.y, 0.0f));
+	DirectX::XMFLOAT4X4 world_matrix_float;
+	XMStoreFloat4x4(&world_matrix_float, world_matrix);
+	renderer.set_world_matrix(world_matrix_float);
+
+	renderer.set_material(material_);
+
+	std::uint32_t stride = sizeof(vertex);
+	std::uint32_t offset = 0;
+	std::array vertex_buffers = {
+		buffer_.get()
+	};
+	renderer.get_device_context().IASetVertexBuffers(0, uint32_of(vertex_buffers.size()), vertex_buffers.data(), &stride, &offset);
+	renderer.get_device_context().IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	std::array srvs = {
+		texture_.get_shader_resource_view()
+	};
+	renderer.get_device_context().PSSetShaderResources(0, uint32_of(srvs.size()), srvs.data());
+
+	DirectX::XMFLOAT2 uv_offset = { u_width_ * u_index_, v_height_ * v_index_ };
+	renderer.set_uv_offset(uv_offset);
+
 	renderer.get_device_context().Draw(4, 0);
 }
 
@@ -81,4 +157,5 @@ lycoris::render::sprite::sprite(winrt::com_ptr<ID3D11Buffer>&& buffer, texture::
 	material_ = material;
 	u_width_ = u_width;
 	v_height_ = v_height;
+	u_index_ = v_index_ = 0;
 }
