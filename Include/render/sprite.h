@@ -30,6 +30,7 @@ namespace lycoris::render
 		void draw();
 
 		static sprite create(float width, float height, std::uint32_t u, std::uint32_t v, texture::texture&& texture);
+		static sprite create(float width, float height, std::uint32_t u, std::uint32_t v, const std::filesystem::path& path);
 	
 	private:
 		sprite(winrt::com_ptr<ID3D11Buffer>&& buffer, texture::texture&& texture, material& material, float u_width, float v_height);

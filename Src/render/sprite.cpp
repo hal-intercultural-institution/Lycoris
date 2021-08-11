@@ -150,6 +150,12 @@ lycoris::render::sprite lycoris::render::sprite::create(const float width, const
 	return sprite(std::move(buffer), std::move(texture), material, u_width, v_height);
 }
 
+lycoris::render::sprite lycoris::render::sprite::create(const float width, const float height, const std::uint32_t u, const std::uint32_t v,
+                                                        const std::filesystem::path& path)
+{
+	return create(width, height, u, v, game::get_game().get_texture_loader().create_texture_from_file(path));
+}
+
 lycoris::render::sprite::sprite(winrt::com_ptr<ID3D11Buffer>&& buffer, texture::texture&& texture, material& material, float u_width, float v_height)
 {
 	buffer_ = std::move(buffer);
