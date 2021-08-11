@@ -26,7 +26,6 @@ namespace lycoris::render
 		void set_u_index(std::int32_t index);
 		void set_v_index(std::int32_t index);
 		
-		[[deprecated]] void draw(std::uint32_t u_index, std::uint32_t v_index);
 		void draw();
 
 		static sprite create(float width, float height, std::uint32_t u, std::uint32_t v, texture::texture&& texture);
