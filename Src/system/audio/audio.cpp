@@ -40,7 +40,7 @@ void lycoris::system::audio::audio_system::destroy()
 	x_audio_->Release();
 }
 
-lycoris::system::audio::sound lycoris::system::audio::audio_system::load_sound_from_file(std::filesystem::path& path) const
+lycoris::system::audio::sound lycoris::system::audio::audio_system::load_sound_from_file(const std::filesystem::path& path) const
 {
 	const auto extension = path.extension().string();
 	wav_file wav_file;

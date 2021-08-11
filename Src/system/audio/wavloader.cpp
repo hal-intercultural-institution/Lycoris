@@ -5,7 +5,7 @@ constexpr bool failed(const MMRESULT mr)
 	return mr != MMSYSERR_NOERROR;
 }
 
-lycoris::system::audio::wav_file lycoris::system::audio::wav_loader::load_from_file(std::filesystem::path path)
+lycoris::system::audio::wav_file lycoris::system::audio::wav_loader::load_from_file(const std::filesystem::path& path)
 {
 	utility::xaudio2_voice<IXAudio2SourceVoice> voice;
 	const auto mmio = mmioOpen(const_cast<char*>(path.string().c_str()), nullptr, MMIO_READ);
