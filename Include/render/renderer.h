@@ -13,7 +13,13 @@
 #include "render/camera.h"
 
 namespace lycoris::render
-{	
+{
+
+	constexpr float color_of(const std::uint8_t color)
+	{
+		return static_cast<float>(color) / 255.0f;
+	}
+	
 	struct vertex
 	{
 		DirectX::XMFLOAT3 position;
@@ -96,6 +102,9 @@ namespace lycoris::render
 		void set_uv_offset(DirectX::XMFLOAT2& offset);
 		// カリング設定
 		void set_culling_mode(D3D11_CULL_MODE culling_mode);
+		// 背景色
+		void set_background_color(const DirectX::XMFLOAT4& color);
+		// テキスト描画 (DirectWrite)
 		void draw_text(const std::wstring& text);
 
 		//ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
@@ -142,6 +151,8 @@ namespace lycoris::render
 		constant_buffer<DirectX::XMFLOAT4, 5> uv_offset_ = {};
 
 		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
+
+		std::array<float, 4> background_color_ = { color_of(247), color_of(219), color_of(240), 1.0f };
 		
 		screen screen_;
 		camera camera_;

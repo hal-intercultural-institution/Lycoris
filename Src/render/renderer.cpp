@@ -127,6 +127,11 @@ void lycoris::render::renderer::set_culling_mode(D3D11_CULL_MODE culling_mode)
 	immediate_context_->RSSetState(rasterizer_state_.get());
 }
 
+void lycoris::render::renderer::set_background_color(const DirectX::XMFLOAT4& color)
+{
+	background_color_ = { color.x, color.y, color.z, color.w };
+}
+
 void lycoris::render::renderer::draw_text(const std::wstring& text)
 {
 	winrt::com_ptr<ID2D1SolidColorBrush> brush;
@@ -399,9 +404,8 @@ void lycoris::render::renderer::destroy() const
 
 void lycoris::render::renderer::clear() const
 {
-	std::array clear_color{ 0.0f, 0.5f, 0.5f, 1.0f };
 	// clear buffer
-	immediate_context_->ClearRenderTargetView(render_target_view_.get(), clear_color.data());
+	immediate_context_->ClearRenderTargetView(render_target_view_.get(), background_color_.data());
 	// clear depth & stencil
 	immediate_context_->ClearDepthStencilView(depth_stencil_view_.get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
