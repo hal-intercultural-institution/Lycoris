@@ -61,6 +61,22 @@ void lycoris::render::renderer::set_world_view_projection_2d()
 
 }
 
+void lycoris::render::renderer::set_view_projection_2d()
+{
+	const auto identified_matrix = DirectX::XMMatrixIdentity();
+	
+	XMStoreFloat4x4(&view_matrix_.get(), identified_matrix);
+	view_matrix_.update();
+
+	const auto height = screen_.get_screen_height();
+	const auto width = screen_.get_screen_width();
+
+	// Ortho (³) ŽË‰e•ÏŠ·s—ñ‚ð¶¬‚·‚é
+	const auto world_view_projection = DirectX::XMMatrixOrthographicOffCenterLH(0.0f, width, height, 0.0f, 0.0f, 1.0f);
+	XMStoreFloat4x4(&projection_matrix_.get(), XMMatrixTranspose(world_view_projection));
+	projection_matrix_.update();
+}
+
 void lycoris::render::renderer::set_world_matrix(DirectX::XMFLOAT4X4& world_matrix)
 {
 	XMStoreFloat4x4(&world_matrix_.get(), XMMatrixTranspose(XMLoadFloat4x4(&world_matrix)));
@@ -109,6 +125,11 @@ void lycoris::render::renderer::set_culling_mode(D3D11_CULL_MODE culling_mode)
 	rasterizer_state_ = std::move(rasterizer_state);
 	
 	immediate_context_->RSSetState(rasterizer_state_.get());
+}
+
+void lycoris::render::renderer::set_background_color(const DirectX::XMFLOAT4& color)
+{
+	background_color_ = { color.x, color.y, color.z, color.w };
 }
 
 void lycoris::render::renderer::draw_text(const std::wstring& text)
@@ -383,9 +404,8 @@ void lycoris::render::renderer::destroy() const
 
 void lycoris::render::renderer::clear() const
 {
-	std::array clear_color{ 0.0f, 0.5f, 0.5f, 1.0f };
 	// clear buffer
-	immediate_context_->ClearRenderTargetView(render_target_view_.get(), clear_color.data());
+	immediate_context_->ClearRenderTargetView(render_target_view_.get(), background_color_.data());
 	// clear depth & stencil
 	immediate_context_->ClearDepthStencilView(depth_stencil_view_.get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }

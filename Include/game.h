@@ -34,6 +34,8 @@ namespace lycoris::game
 		void run();
 		void destroy();
 
+		static bool is_initialized();
+
 		~game() noexcept;
 
 		void set_settings(system::settings& settings);
