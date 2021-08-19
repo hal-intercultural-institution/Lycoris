@@ -21,10 +21,12 @@ namespace lycoris::render
 		DirectX::XMFLOAT2& get_position();
 		std::int32_t& get_u_index();
 		std::int32_t& get_v_index();
+		material& get_material();
 		
 		void set_position(const DirectX::XMFLOAT2& position);
 		void set_u_index(std::int32_t index);
 		void set_v_index(std::int32_t index);
+		void set_material(const material& material);
 		
 		void draw();
 

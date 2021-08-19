@@ -25,6 +25,11 @@ std::int32_t& lycoris::render::sprite::get_v_index()
 	return v_index_;
 }
 
+lycoris::render::material& lycoris::render::sprite::get_material()
+{
+	return material_;
+}
+
 void lycoris::render::sprite::set_position(const DirectX::XMFLOAT2& position)
 {
 	position_ = position;
@@ -38,6 +43,11 @@ void lycoris::render::sprite::set_u_index(const std::int32_t index)
 void lycoris::render::sprite::set_v_index(const std::int32_t index)
 {
 	v_index_ = index;
+}
+
+void lycoris::render::sprite::set_material(const material& material)
+{
+	material_ = material;
 }
 
 void lycoris::render::sprite::draw()
