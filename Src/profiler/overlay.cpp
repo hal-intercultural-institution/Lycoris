@@ -6,11 +6,14 @@
 
 void lycoris::profiler::debug_overlay::on_tick()
 {
+	if (game::get_game().get_input_system().get_keyboard().is_triggered(VK_F3))
+		shown_ = !shown_;
 	
 }
 
 void lycoris::profiler::debug_overlay::on_draw()
 {
+	if (!shown_) return;
 	auto& game = game::get_game();
 	const auto text = std::format(
 		L"Lycoris\nfps: {}\nTick: {:f}\nDraw: {:f}\nMouse x: {}\nMouse y: {}",

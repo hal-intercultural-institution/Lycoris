@@ -11,7 +11,7 @@ namespace lycoris::render::shader
     {
     public:
         static void set(vertex_shader& shader);
-        static vertex_shader compile(std::filesystem::path path, std::string function_name,
+        static vertex_shader compile(const std::filesystem::path& path, std::string function_name,
             std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout);
     private:
         winrt::com_ptr<ID3D11VertexShader> vertex_shader_;
@@ -22,7 +22,7 @@ namespace lycoris::render::shader
 	{
 	public:
         static void set(pixel_shader& shader);
-        static pixel_shader compile(std::filesystem::path path, std::string function_name);
+        static pixel_shader compile(const std::filesystem::path& path, std::string function_name);
 	private:
         winrt::com_ptr<ID3D11PixelShader> pixel_shader_;
 	};

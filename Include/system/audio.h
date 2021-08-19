@@ -60,7 +60,7 @@ namespace lycoris::system::audio
 	public:
 		void initialize();
 		void destroy();
-		sound load_sound_from_file(std::filesystem::path& path) const;
+		sound load_sound_from_file(const std::filesystem::path& path) const;
 		static void play(sound& sound, std::uint32_t time, float volume);
 		static void play(sound& sound, std::uint32_t time);
 		static void play(sound& sound, float volume);

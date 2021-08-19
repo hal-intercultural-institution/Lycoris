@@ -13,7 +13,13 @@
 #include "render/camera.h"
 
 namespace lycoris::render
-{	
+{
+
+	constexpr float color_of(const std::uint8_t color)
+	{
+		return static_cast<float>(color) / 255.0f;
+	}
+	
 	struct vertex
 	{
 		DirectX::XMFLOAT3 position;
@@ -78,13 +84,15 @@ namespace lycoris::render
 		void clear() const;
 		// レンダーターゲットをフロントバッファに転送
 		void present() const;
-		// 正射影変換行列を生成し、GPUへ転送する
+		// 正射影変換行列を生成し、World, View, Projection Matrix を更新し、GPUへ転送する
 		void set_world_view_projection_2d();
-		// World Matrix を更新し、射影変換行列を生成し、GPUへ転送する
+		// 正射影変換行列を生成し、View, Projection Matrix を更新し、GPUに転送する
+		void set_view_projection_2d();
+		// World Matrix を更新し、GPUへ転送する
 		void set_world_matrix(DirectX::XMFLOAT4X4& world_matrix);
-		// View Matrix を更新し、射影変換行列を生成し、GPUへ転送する
+		// View Matrix を更新し、GPUへ転送する
 		void set_view_matrix(DirectX::XMFLOAT4X4& view_matrix);
-		// Projection Matrix を更新し、射影変換行列を生成し、GPUへ転送する
+		// Projection Matrix を更新し、GPUへ転送する
 		void set_projection_matrix(DirectX::XMFLOAT4X4& projection_matrix);
 		// 平行光源を更新し、GPUへ転送する
 		void set_directional_light(DirectX::XMFLOAT3& light);
@@ -94,6 +102,9 @@ namespace lycoris::render
 		void set_uv_offset(DirectX::XMFLOAT2& offset);
 		// カリング設定
 		void set_culling_mode(D3D11_CULL_MODE culling_mode);
+		// 背景色
+		void set_background_color(const DirectX::XMFLOAT4& color);
+		// テキスト描画 (DirectWrite)
 		void draw_text(const std::wstring& text);
 
 		//ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
@@ -140,6 +151,8 @@ namespace lycoris::render
 		constant_buffer<DirectX::XMFLOAT4, 5> uv_offset_ = {};
 
 		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
+
+		std::array<float, 4> background_color_ = { color_of(247), color_of(219), color_of(240), 1.0f };
 		
 		screen screen_;
 		camera camera_;

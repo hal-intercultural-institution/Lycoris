@@ -18,7 +18,8 @@ namespace
 {
 	// pointer of game instance
 	// DO NOT CALL delete AGAINST THIS!!!!!!!!!!!!!!!!!!!!!!!!
-	lycoris::game::game* instance;
+	lycoris::game::game* instance = nullptr;
+	bool initialized = false;
 }
 
 void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* message)
@@ -88,7 +89,7 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 		MessageBox(h_wnd, e.what(), "Game Initialization Failed", MB_ICONSTOP);
 		std::exit(EXIT_FAILURE);
 	}
-
+	initialized = true;
 }
 
 void lycoris::game::game::run()
@@ -167,6 +168,7 @@ void lycoris::game::game::on_tick()
 			break;
 		}
 	}
+	overlay_.on_tick();
 	input_system_.post_update();
 }
 
@@ -201,6 +203,11 @@ void lycoris::game::game::destroy()
 	audio_system_.destroy();
 	
 	UnregisterClass(class_name, h_instance_);
+}
+
+bool lycoris::game::game::is_initialized()
+{
+	return initialized;
 }
 
 lycoris::game::game::~game() noexcept
@@ -311,6 +318,7 @@ LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		lycoris::game::get_game().get_input_system().update_mouse_move(lParam);
 		break;
 	case WM_SIZE:
+		if (!lycoris::game::game::is_initialized()) break;
 		switch (wParam)
 		{
 		case 0: // restored, maximized

@@ -22,7 +22,7 @@ void lycoris::render::shader::vertex_shader::set(vertex_shader& shader)
     device_context.IASetInputLayout(shader.input_layout_.get());
 }
 
-lycoris::render::shader::vertex_shader lycoris::render::shader::vertex_shader::compile(const std::filesystem::path path, const std::string function_name,
+lycoris::render::shader::vertex_shader lycoris::render::shader::vertex_shader::compile(const std::filesystem::path& path, const std::string function_name,
     std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout)
 {
     auto shader = vertex_shader();
@@ -55,7 +55,7 @@ void lycoris::render::shader::pixel_shader::set(pixel_shader& shader)
     device_context.PSSetShader(shader.pixel_shader_.get(), nullptr, 0);
 }
 
-lycoris::render::shader::pixel_shader lycoris::render::shader::pixel_shader::compile(const std::filesystem::path path, const std::string function_name)
+lycoris::render::shader::pixel_shader lycoris::render::shader::pixel_shader::compile(const std::filesystem::path& path, const std::string function_name)
 {
     auto shader = pixel_shader();
     auto& renderer = game::get_game().get_renderer();

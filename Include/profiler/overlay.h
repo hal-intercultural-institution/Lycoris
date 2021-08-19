@@ -7,5 +7,7 @@ namespace lycoris::profiler
 	public:
 		void on_tick();
 		void on_draw();
+	private:
+		bool shown_ = false;
 	};
 }
