@@ -46,6 +46,9 @@ void lycoris::system::input::input::initialize()
 		throw std::runtime_error("InputSystem: failed to initialize direct input");
 
 	direct_input_->EnumDevices(DI8DEVTYPE_GAMEPAD, device_callback, nullptr, DIEDFL_ATTACHEDONLY);
+
+	if (game_pads_.size() == 0)
+		empty_pad_ = std::make_unique<empty_game_pad>();
 }
 
 void lycoris::system::input::input::update()
