@@ -161,5 +161,8 @@
     <ClCompile Include="Src\render\sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\system\input\gamepadempty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -211,6 +211,7 @@
     <ClCompile Include="Src\render\textureloader.cpp" />
     <ClCompile Include="Src\system\audio\audio.cpp" />
     <ClCompile Include="Src\system\audio\wavloader.cpp" />
+    <ClCompile Include="Src\system\input\gamepadempty.cpp" />
     <ClCompile Include="Src\system\input\gamepadnintendo.cpp" />
     <ClCompile Include="Src\system\input\gamepadsony.cpp" />
     <ClCompile Include="Src\system\input\gamepad.cpp" />

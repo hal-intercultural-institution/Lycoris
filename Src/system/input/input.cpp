@@ -46,6 +46,9 @@ void lycoris::system::input::input::initialize()
 		throw std::runtime_error("InputSystem: failed to initialize direct input");
 
 	direct_input_->EnumDevices(DI8DEVTYPE_GAMEPAD, device_callback, nullptr, DIEDFL_ATTACHEDONLY);
+
+	if (game_pads_.size() == 0)
+		empty_pad_ = std::make_unique<empty_game_pad>();
 }
 
 void lycoris::system::input::input::update()
@@ -109,7 +112,10 @@ lycoris::system::input::mouse& lycoris::system::input::input::get_mouse()
 
 lycoris::system::input::game_pad& lycoris::system::input::input::get_game_pad(std::uint64_t index)
 {
-	if (game_pads_.size() < index)
+	if (game_pads_.size() == 0)
+		return *empty_pad_;
+
+	if (game_pads_.size() <= index)
 		throw std::out_of_range("Gamepad: index exceeds count of currently attached game-pads");
 	
 	return *game_pads_[index];

@@ -125,7 +125,13 @@ namespace lycoris::system::input
 		float stick_angle_right_ = 0.0f;
 		float stick_dead_zone_ = 100.0f;
 	};
-	
+
+	class empty_game_pad final : public game_pad
+	{
+		void update() override;
+		void destroy() override;
+	};
+
 	class sony_game_pad final : public game_pad
 	{
 	public:
@@ -191,6 +197,7 @@ namespace lycoris::system::input
 		keyboard keyboard_;
 		mouse mouse_;
 		std::vector<std::unique_ptr<game_pad>> game_pads_;
+		std::unique_ptr<game_pad> empty_pad_;
 		
 		winrt::com_ptr<IDirectInput8> direct_input_;
 	};
