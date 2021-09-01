@@ -112,7 +112,7 @@ lycoris::system::input::game_pad& lycoris::system::input::input::get_game_pad(st
 	if (game_pads_.size() == 0)
 		return *empty_pad_;
 
-	if (game_pads_.size() < index)
+	if (game_pads_.size() <= index)
 		throw std::out_of_range("Gamepad: index exceeds count of currently attached game-pads");
 	
 	return *game_pads_[index];
