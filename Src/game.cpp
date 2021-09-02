@@ -168,6 +168,7 @@ void lycoris::game::game::on_tick()
 			break;
 		}
 	}
+	renderer_.get_camera().on_tick();
 	overlay_.on_tick();
 	input_system_.post_update();
 }

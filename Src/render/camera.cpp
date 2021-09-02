@@ -9,15 +9,69 @@
 #include "game.h"
 #include "gamedef.h"
 
-void lycoris::render::camera::initialize()
+const DirectX::XMFLOAT3& lycoris::render::camera::get_position() const noexcept
 {
-	looking_at_ = { 0.0f, 0.0f, 0.0 };
-	up_ = { 0.0f, 1.0f, 0.0f };
-	position_ = { 0.0f, 25.0f, 60.0f };
-	rotation_ = { 0.0f, 0.0f, 0.0f, 0.0f };
+	return position_;
 }
 
-void lycoris::render::camera::on_tick() { }
+const DirectX::XMFLOAT3& lycoris::render::camera::get_looking_at() const noexcept
+{
+	return looking_at_;
+}
+
+const DirectX::XMFLOAT3& lycoris::render::camera::get_rotation() const noexcept
+{
+	return rotation_;
+}
+
+float lycoris::render::camera::get_camera_distance() const noexcept
+{
+	return distance_;
+}
+
+void lycoris::render::camera::set_position(const DirectX::XMFLOAT3& position) noexcept
+{
+	position_ = position;
+}
+
+//void lycoris::render::camera::set_rotation(const DirectX::XMFLOAT4& rotation) noexcept
+//{
+//	rotation_ = rotation;
+//}
+
+void lycoris::render::camera::set_rotation(const DirectX::XMFLOAT3& rotation) noexcept
+{
+	//XMStoreFloat4(&rotation_, DirectX::XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z));
+	rotation_ = rotation;
+}
+
+void lycoris::render::camera::set_looking_at(const DirectX::XMFLOAT3& position) noexcept
+{
+	looking_at_ = position;
+}
+
+void lycoris::render::camera::set_distance(float distance) noexcept
+{
+	distance_ = distance;
+}
+
+void lycoris::render::camera::initialize()
+{
+	looking_at_ = { 0.0f, 0.0f, 0.0f };
+	up_ = { 0.0f, 1.0f, 0.0f };
+	position_ = { 0.0f, 0.0f, 0.0f };
+	rotation_ = { 0.0f, 0.0f, 0.0f };
+}
+
+void lycoris::render::camera::on_tick()
+{
+	if (rotation_.x > DirectX::XM_PI) rotation_.x = DirectX::XM_PI;
+	if (rotation_.x < 0.001f) rotation_.x = 0.001f;
+	const float x = distance_ * std::sinf(rotation_.x) * std::cosf(rotation_.y);
+	const float y = distance_ * std::cosf(rotation_.x);
+	const float z = distance_ * std::sinf(rotation_.x) * std::sinf(rotation_.y);
+	position_ = DirectX::XMFLOAT3(looking_at_.x + x, looking_at_.y + y, looking_at_.z + z);
+}
 
 void lycoris::render::camera::set()
 {
