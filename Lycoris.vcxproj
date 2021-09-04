@@ -178,6 +178,7 @@
     <ClInclude Include="Include\game\scene.h" />
     <ClInclude Include="Include\profiler\logger.h" />
     <ClInclude Include="Include\profiler\overlay.h" />
+    <ClInclude Include="Include\render\alignment.h" />
     <ClInclude Include="Include\render\camera.h" />
     <ClInclude Include="Include\render\constantbuffer.h" />
     <ClInclude Include="Include\render\model3d.h" />
