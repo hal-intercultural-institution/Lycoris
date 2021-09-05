@@ -18,7 +18,7 @@ namespace lycoris::render
 
 		~sprite() = default;
 		
-		ID3D11Buffer* get_vertex_buffer();
+		ID3D11Buffer* get_vertex_buffer() const;
 		DirectX::XMFLOAT2& get_position();
 		std::int32_t& get_u_index();
 		std::int32_t& get_v_index();
@@ -30,6 +30,7 @@ namespace lycoris::render
 		void set_material(const material& material);
 		void set_horizontal_alignment(horizontal_alignment alignment) noexcept;
 		void set_vertical_alignment(vertical_alignment alignment) noexcept;
+		void set_scale(const DirectX::XMFLOAT2& scale) noexcept;
 		
 		void draw();
 
@@ -41,6 +42,7 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11Buffer> buffer_;
 		texture::texture texture_;
 		material  material_{};
+		DirectX::XMFLOAT2 scale_ = { 1.0f, 1.0f };
 		DirectX::XMFLOAT2 position_{};
 		horizontal_alignment horizontal_alignment_ = horizontal_alignment::left;
 		vertical_alignment vertical_alignment_ = vertical_alignment::top;

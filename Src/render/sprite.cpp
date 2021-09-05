@@ -5,7 +5,7 @@
 
 using lycoris::utility::scast::uint32_of;
 
-ID3D11Buffer* lycoris::render::sprite::get_vertex_buffer()
+ID3D11Buffer* lycoris::render::sprite::get_vertex_buffer() const
 {
 	return buffer_.get();
 }
@@ -60,6 +60,11 @@ void lycoris::render::sprite::set_vertical_alignment(const vertical_alignment al
 	vertical_alignment_ = alignment;
 }
 
+void lycoris::render::sprite::set_scale(const DirectX::XMFLOAT2& scale) noexcept
+{
+	scale_ = scale;
+}
+
 void lycoris::render::sprite::draw()
 {
 	if (u_index_ < 0) u_index_ = 0;
@@ -77,10 +82,10 @@ void lycoris::render::sprite::draw()
 	switch (horizontal_alignment_)
 	{
 	case horizontal_alignment::right:
-		x_pos -= width_;
+		x_pos -= width_ * scale_.x;
 		break;
 	case horizontal_alignment::center:
-		x_pos -= width_* 0.5f;
+		x_pos -= width_ * scale_.x * 0.5f;
 		break;
 	default:
 		break;
@@ -89,15 +94,16 @@ void lycoris::render::sprite::draw()
 	switch (vertical_alignment_)
 	{
 	case vertical_alignment::bottom:
-		y_pos -= height_;
+		y_pos -= height_ * scale_.y;
 		break;
 	case vertical_alignment::middle:
-		y_pos -= height_ * 0.5f;
+		y_pos -= height_ * scale_.y * 0.5f;
 		break;
 	default:
 		break;
 	}
 
+	auto world_matrix = XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixScaling(scale_.x, scale_.y, 0.0f));
 	world_matrix = XMMatrixMultiply(world_matrix, DirectX::XMMatrixTranslation(x_pos, y_pos, 0.0f));
 
 	DirectX::XMFLOAT4X4 world_matrix_float{};
@@ -106,15 +112,15 @@ void lycoris::render::sprite::draw()
 
 	renderer.set_material(material_);
 
-	std::uint32_t stride = sizeof(vertex);
-	std::uint32_t offset = 0;
-	std::array vertex_buffers = {
+	constexpr std::uint32_t stride = sizeof(vertex);
+	constexpr std::uint32_t offset = 0;
+	const std::array vertex_buffers = {
 		buffer_.get()
 	};
 	renderer.get_device_context().IASetVertexBuffers(0, uint32_of(vertex_buffers.size()), vertex_buffers.data(), &stride, &offset);
 	renderer.get_device_context().IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	std::array srvs = {
+	const std::array srvs = {
 		texture_.get_shader_resource_view()
 	};
 	renderer.get_device_context().PSSetShaderResources(0, uint32_of(srvs.size()), srvs.data());
@@ -127,7 +133,7 @@ void lycoris::render::sprite::draw()
 
 lycoris::render::sprite lycoris::render::sprite::create(const float width, const float height, const std::uint32_t u, const std::uint32_t v, texture::texture&& texture)
 {
-	auto& renderer = game::get_game().get_renderer();
+	const auto& renderer = game::get_game().get_renderer();
 
 	material material{};
 	material.diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -144,7 +150,7 @@ lycoris::render::sprite lycoris::render::sprite::create(const float width, const
 	const auto u_width = 1.0f / u;
 	const auto v_height = 1.0f / v;
 	
-	std::array<vertex, vertex_count> vertices = {
+	const std::array<vertex, vertex_count> vertices = {
 		{
 			{ { 0.0f, 0.0f, 0.0f }, {},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f } },
 			{ { width, 0.0f, 0.0f }, {},  { 1.0f, 1.0f, 1.0f, 1.0f }, { u_width, 0.0f } },
