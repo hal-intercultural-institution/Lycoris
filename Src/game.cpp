@@ -90,6 +90,7 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 		std::exit(EXIT_FAILURE);
 	}
 	initialized = true;
+	renderer_.get_screen().set_activation(true);
 }
 
 void lycoris::game::game::run()
@@ -329,6 +330,10 @@ LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		default: // minimized, max show, max hide
 			break;
 		}
+		break;
+	case WM_ACTIVATE:
+		if (!lycoris::game::game::is_initialized()) break;
+		lycoris::game::get_game().get_renderer().get_screen().set_activation(LOWORD(wParam) != WA_INACTIVE);
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

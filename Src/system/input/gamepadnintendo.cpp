@@ -15,6 +15,7 @@ void lycoris::system::input::nintendo_game_pad::update()
 	if (FAILED(hr))
 	{
 		device_->Acquire();
+		return;
 	}
 
 	// ぼたん
