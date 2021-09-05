@@ -50,6 +50,16 @@ void lycoris::render::sprite::set_material(const material& material)
 	material_ = material;
 }
 
+void lycoris::render::sprite::set_horizontal_alignment(const horizontal_alignment alignment) noexcept
+{
+	horizontal_alignment_ = alignment;
+}
+
+void lycoris::render::sprite::set_vertical_alignment(const vertical_alignment alignment) noexcept
+{
+	vertical_alignment_ = alignment;
+}
+
 void lycoris::render::sprite::draw()
 {
 	if (u_index_ < 0) u_index_ = 0;
@@ -62,9 +72,35 @@ void lycoris::render::sprite::draw()
 
 	renderer.set_view_projection_2d();
 
-	const auto identified_matrix = DirectX::XMMatrixIdentity();
-	const auto world_matrix = XMMatrixMultiply(identified_matrix, DirectX::XMMatrixTranslation(position_.x, position_.y, 0.0f));
-	DirectX::XMFLOAT4X4 world_matrix_float;
+	float x_pos = position_.x, y_pos = position_.y;
+
+	switch (horizontal_alignment_)
+	{
+	case horizontal_alignment::right:
+		x_pos -= width_;
+		break;
+	case horizontal_alignment::center:
+		x_pos -= width_* 0.5f;
+		break;
+	default:
+		break;
+	}
+
+	switch (vertical_alignment_)
+	{
+	case vertical_alignment::bottom:
+		y_pos -= height_;
+		break;
+	case vertical_alignment::middle:
+		y_pos -= height_ * 0.5f;
+		break;
+	default:
+		break;
+	}
+
+	world_matrix = XMMatrixMultiply(world_matrix, DirectX::XMMatrixTranslation(x_pos, y_pos, 0.0f));
+
+	DirectX::XMFLOAT4X4 world_matrix_float{};
 	XMStoreFloat4x4(&world_matrix_float, world_matrix);
 	renderer.set_world_matrix(world_matrix_float);
 
@@ -122,7 +158,7 @@ lycoris::render::sprite lycoris::render::sprite::create(const float width, const
 
 	renderer.get_device().CreateBuffer(&desc, &sub_resource_data, buffer.put());
 	
-	return sprite(std::move(buffer), std::move(texture), material, u_width, v_height);
+	return sprite(std::move(buffer), std::move(texture), material, width, height, u_width, v_height);
 }
 
 lycoris::render::sprite lycoris::render::sprite::create(const float width, const float height, const std::uint32_t u, const std::uint32_t v,
@@ -131,12 +167,15 @@ lycoris::render::sprite lycoris::render::sprite::create(const float width, const
 	return create(width, height, u, v, game::get_game().get_texture_loader().create_texture_from_file(path));
 }
 
-lycoris::render::sprite::sprite(winrt::com_ptr<ID3D11Buffer>&& buffer, texture::texture&& texture, material& material, float u_width, float v_height)
+lycoris::render::sprite::sprite(winrt::com_ptr<ID3D11Buffer>&& buffer, texture::texture&& texture,
+	const material& material, const float width, const float height, const float u_width, const float v_height)
 {
 	buffer_ = std::move(buffer);
 	texture_ = std::move(texture);
 	material_ = material;
 	u_width_ = u_width;
 	v_height_ = v_height;
+	width_ = width;
+	height_ = height;
 	u_index_ = v_index_ = 0;
 }
