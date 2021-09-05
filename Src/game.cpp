@@ -41,7 +41,7 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 		h_instance,
 		nullptr,
 		LoadCursor(nullptr, IDC_ARROW),
-		reinterpret_cast<HBRUSH>((COLOR_WINDOW + 1)),
+		nullptr,
 		nullptr,
 		class_name,
 		nullptr
@@ -56,18 +56,28 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 	// windows class
 	RegisterClassEx(&wcex);
 
+	SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+
 	const HWND h_wnd = CreateWindow(class_name,
 		window_title,
-		WS_OVERLAPPEDWINDOW,
+		WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_BORDER,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		settings_.screen_width + GetSystemMetrics(SM_CXDLGFRAME) * 2,
-		settings_.screen_height + GetSystemMetrics(SM_CXDLGFRAME) * 2 +
-		GetSystemMetrics(SM_CYCAPTION),
-		NULL,
-		NULL,
+		settings_.screen_width,
+		settings_.screen_height,
+		nullptr,
+		nullptr,
 		h_instance,
-		NULL);
+		nullptr);
+
+	RECT window_size{}, client_size{};
+	GetWindowRect(h_wnd, &window_size);
+	GetClientRect(h_wnd, &client_size);
+	const int border_x = window_size.right - window_size.left - (client_size.right - client_size.left);
+	const int border_y = window_size.bottom - window_size.top - (client_size.bottom - client_size.top);
+
+	SetWindowPos(h_wnd, nullptr, CW_USEDEFAULT, CW_USEDEFAULT,
+		border_x + settings_.screen_width, border_y + settings_.screen_height, SWP_NOMOVE);
 
 	ShowWindow(h_wnd, n_show_cmd);
 	UpdateWindow(h_wnd);
