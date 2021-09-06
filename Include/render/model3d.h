@@ -3,8 +3,6 @@
 #include <vector>
 #include <cstdint>
 
-#include <DirectXMath.h>
-
 #include "render/renderer.h"
 #include "render/texture.h"
 
@@ -96,6 +94,8 @@ namespace lycoris::render::model3d
 		{
 			return part_;
 		}
+
+		void draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale, const DirectX::XMFLOAT3& rotation);
 	
 	private:
 		//std::vector<model_part> parts_;
