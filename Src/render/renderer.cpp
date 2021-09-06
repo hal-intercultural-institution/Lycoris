@@ -77,35 +77,35 @@ void lycoris::render::renderer::set_view_projection_2d()
 	projection_matrix_.update();
 }
 
-void lycoris::render::renderer::set_world_matrix(DirectX::XMFLOAT4X4& world_matrix)
+void lycoris::render::renderer::set_world_matrix(const DirectX::XMFLOAT4X4& world_matrix)
 {
 	XMStoreFloat4x4(&world_matrix_.get(), XMMatrixTranspose(XMLoadFloat4x4(&world_matrix)));
 	world_matrix_.update();
 }
 
-void lycoris::render::renderer::set_view_matrix(DirectX::XMFLOAT4X4& view_matrix)
+void lycoris::render::renderer::set_view_matrix(const DirectX::XMFLOAT4X4& view_matrix)
 {
 	XMStoreFloat4x4(&view_matrix_.get(), XMMatrixTranspose(XMLoadFloat4x4(&view_matrix)));
 	view_matrix_.update();
 }
 
-void lycoris::render::renderer::set_projection_matrix(DirectX::XMFLOAT4X4& projection_matrix)
+void lycoris::render::renderer::set_projection_matrix(const DirectX::XMFLOAT4X4& projection_matrix)
 {
 	XMStoreFloat4x4(&projection_matrix_.get(), XMMatrixTranspose(XMLoadFloat4x4(&projection_matrix)));
 	projection_matrix_.update();
 }
 
-void lycoris::render::renderer::set_directional_light(DirectX::XMFLOAT3& light)
+void lycoris::render::renderer::set_directional_light(const DirectX::XMFLOAT3& light)
 {
 	directional_light_.update({ light.x, light.y, light.z, 0.0f });
 }
 
-void lycoris::render::renderer::set_material(material& material)
+void lycoris::render::renderer::set_material(const material& material)
 {
 	material_.update(material);
 }
 
-void lycoris::render::renderer::set_uv_offset(DirectX::XMFLOAT2& offset)
+void lycoris::render::renderer::set_uv_offset(const DirectX::XMFLOAT2& offset)
 {
 	uv_offset_.update({ offset.x, offset.y, 0.0f, 0.0f });
 }

@@ -92,17 +92,17 @@ namespace lycoris::render
 		// 正射影変換行列を生成し、View, Projection Matrix を更新し、GPUに転送する
 		void set_view_projection_2d();
 		// World Matrix を更新し、GPUへ転送する
-		void set_world_matrix(DirectX::XMFLOAT4X4& world_matrix);
+		void set_world_matrix(const DirectX::XMFLOAT4X4& world_matrix);
 		// View Matrix を更新し、GPUへ転送する
-		void set_view_matrix(DirectX::XMFLOAT4X4& view_matrix);
+		void set_view_matrix(const DirectX::XMFLOAT4X4& view_matrix);
 		// Projection Matrix を更新し、GPUへ転送する
-		void set_projection_matrix(DirectX::XMFLOAT4X4& projection_matrix);
+		void set_projection_matrix(const DirectX::XMFLOAT4X4& projection_matrix);
 		// 平行光源を更新し、GPUへ転送する
-		void set_directional_light(DirectX::XMFLOAT3& light);
+		void set_directional_light(const DirectX::XMFLOAT3& light);
 		// Material を更新し、GPUへ転送する
-		void set_material(material& material);
+		void set_material(const material& material);
 		// UVオフセットを更新する
-		void set_uv_offset(DirectX::XMFLOAT2& offset);
+		void set_uv_offset(const DirectX::XMFLOAT2& offset);
 		// カリング設定
 		void set_culling_mode(D3D11_CULL_MODE culling_mode);
 		// 背景色
