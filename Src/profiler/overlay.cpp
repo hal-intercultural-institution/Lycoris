@@ -8,14 +8,10 @@ void lycoris::profiler::debug_overlay::on_tick()
 {
 	if (game::get_game().get_input_system().get_keyboard().is_triggered(VK_F3))
 		shown_ = !shown_;
-	
-}
-
-void lycoris::profiler::debug_overlay::on_draw()
-{
 	if (!shown_) return;
+
 	auto& game = game::get_game();
-	const auto text = std::format(
+	text_ = std::format(
 		L"Lycoris\nfps: {}\nTick: {:f}\nDraw: {:f}\nMouse x: {}\nMouse y: {}\nGame-pads: {}\nCamera pos: {} {} {}\nCamera rot: {} {}\nCamera distance: {}",
 		game.get_fps_last_second(),
 		game.get_last_tick_time(),
@@ -30,5 +26,11 @@ void lycoris::profiler::debug_overlay::on_draw()
 		game.get_renderer().get_camera().get_rotation().y,
 		game.get_renderer().get_camera().get_camera_distance()
 	);
-	game.get_renderer().draw_text(text);
+}
+
+void lycoris::profiler::debug_overlay::on_draw()
+{
+	if (!shown_) return;
+	auto& game = game::get_game();
+	game.get_renderer().draw_text(text_);
 }
