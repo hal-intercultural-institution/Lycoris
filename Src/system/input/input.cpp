@@ -57,6 +57,7 @@ void lycoris::system::input::input::update()
 	{
 		game_pad->update();
 	}
+	mouse_.update();
 }
 
 void lycoris::system::input::input::post_update()
@@ -84,11 +85,6 @@ void lycoris::system::input::input::update_raw_input(std::int64_t l_param)
 	{
 		mouse_.update(input->data.mouse);
 	}
-}
-
-void lycoris::system::input::input::update_mouse_move(std::int64_t l_param)
-{
-	mouse_.update(l_param);
 }
 
 void lycoris::system::input::input::destroy()
