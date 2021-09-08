@@ -69,13 +69,14 @@ void lycoris::system::input::input::post_update()
 void lycoris::system::input::input::update_raw_input(std::int64_t l_param)
 {
 	std::uint32_t buffer_size = 0;
+	std::array<std::byte, 1024> buffer;
 	const auto h_raw_input = reinterpret_cast<HRAWINPUT>(l_param);
 	
 	GetRawInputData(h_raw_input, RID_INPUT, nullptr, &buffer_size, sizeof(RAWINPUTHEADER));
-	std::vector<std::byte> buffer(buffer_size);
+	//std::vector<std::byte> buffer(buffer_size);
 	GetRawInputData(h_raw_input, RID_INPUT, buffer.data(), &buffer_size, sizeof(RAWINPUTHEADER));
 
-	auto input = reinterpret_cast<RAWINPUT*>(buffer.data());
+	const auto input = reinterpret_cast<RAWINPUT*>(buffer.data());
 
 	if (input->header.dwType == RIM_TYPEKEYBOARD)
 	{

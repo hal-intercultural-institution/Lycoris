@@ -107,6 +107,8 @@ void lycoris::game::game::run()
 {
 	while (true)
 	{
+		utility::timer tick_timer;
+		tick_timer.start();
 		if (PeekMessage(message_, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (message_->message == WM_QUIT) return;
@@ -119,7 +121,7 @@ void lycoris::game::game::run()
 			if (per_second_.QuadPart == 0)
 				QueryPerformanceCounter(&per_second_);
 
-			utility::timer frame_limiter, tick_timer, draw_timer;
+			utility::timer frame_limiter, draw_timer;
 			frame_limiter.start();
 
 			LARGE_INTEGER now;
@@ -134,7 +136,7 @@ void lycoris::game::game::run()
 			++frame_count_;
 			++temp_frame_count;
 
-			tick_timer.start();
+			//tick_timer.start();
 			on_tick();
 			frame_time_tick_ = tick_timer.stop();
 
@@ -315,13 +317,7 @@ LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// ウィンドウ破棄操作 (タイトルのバツ、Alt+F4)など を拾って、
 		PostQuitMessage(0);
 		break;
-
-	case WM_KEYDOWN:
-		//switch (wParam)
-		//{
-		//default:
-		//	break;
-		//}
+	case WM_SYSKEYDOWN:
 		break;
 	case WM_INPUT:
 		lycoris::game::get_game().get_input_system().update_raw_input(lParam);
