@@ -72,10 +72,10 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 			{
 				// Material‚ª2‚Â–ÚˆÈ~‚È‚çstart_index‚Íindex buffer‚Ì—v‘f”-1
 				auto& current = part.materials.back();
-				current.start_index = static_cast<std::uint32_t>(indices.size()) - 1;
+				current.start_index = static_cast<std::uint32_t>(indices.size());
 				auto& before = part.materials.at(part.materials.size() - 2);
 				// 1‚Â‘O‚ÌMaterial‚Ì’¸“_”‚ª‚í‚©‚é‚Ì‚ÅŒvZ‚µ‚Ä‘ã“ü
-				before.indices = before.start_index - current.start_index;
+				before.indices = current.start_index - before.start_index;
 			}
 		}
 		else if (line[0] == "f") // mesh
