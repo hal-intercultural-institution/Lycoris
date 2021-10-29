@@ -63,7 +63,7 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 				throw std::runtime_error("ModelLoader: material not found");
 			// “Ç‚İ‚ñ‚¾Material‚ğƒRƒs[‚µ‚Ä‚¢‚ê‚é
 			part.materials.push_back(materials[line[1]]);
-			if (materials.size() == 1)
+			if (part.materials.size() == 1)
 			{
 				// Material‚ª1‚Â–Ú‚È‚ç‚Îstart_index‚Í0
 				part.materials.back().start_index = 0;
