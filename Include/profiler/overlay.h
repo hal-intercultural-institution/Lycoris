@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 namespace lycoris::profiler
 {
@@ -9,5 +10,6 @@ namespace lycoris::profiler
 		void on_draw();
 	private:
 		bool shown_ = false;
+		std::wstring text_;
 	};
 }

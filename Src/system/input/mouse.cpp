@@ -2,6 +2,8 @@
 
 #include <Windowsx.h>
 
+#include "game.h"
+
 constexpr auto keycode_left = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::left);
 constexpr auto keycode_right = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::right);
 constexpr auto keycode_middle = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::middle);
@@ -58,10 +60,14 @@ void lycoris::system::input::mouse::update(RAWMOUSE& data)
 	}
 }
 
-void lycoris::system::input::mouse::update(std::int64_t l_param)
+void lycoris::system::input::mouse::update()
 {
-	screen_x_ = GET_X_LPARAM(l_param);
-	screen_y_ = GET_Y_LPARAM(l_param);
+	const auto& screen = game::get_game().get_renderer().get_screen();
+	GetCursorPos(&screen_pos_);
+	ScreenToClient(screen.get_window_handle(), &screen_pos_);
+	is_on_screen_ = !(screen_pos_.x < 0 || screen_pos_.y < 0
+		|| screen_pos_.x > static_cast<std::int32_t>(screen.get_screen_width()) - 1
+		|| screen_pos_.y > static_cast<std::int32_t>(screen.get_screen_height()) - 1);
 }
 
 void lycoris::system::input::mouse::post_update()
@@ -101,10 +107,15 @@ std::int32_t lycoris::system::input::mouse::get_move_y()
 
 std::int32_t lycoris::system::input::mouse::get_screen_x()
 {
-	return screen_x_;
+	return screen_pos_.x;
 }
 
 std::int32_t lycoris::system::input::mouse::get_screen_y()
 {
-	return screen_y_;
+	return screen_pos_.y;
+}
+
+bool lycoris::system::input::mouse::is_on_screen()
+{
+	return is_on_screen_;
 }

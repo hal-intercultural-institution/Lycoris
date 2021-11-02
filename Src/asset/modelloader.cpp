@@ -63,7 +63,7 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 				throw std::runtime_error("ModelLoader: material not found");
 			// 読み込んだMaterialをコピーしていれる
 			part.materials.push_back(materials[line[1]]);
-			if (materials.size() == 1)
+			if (part.materials.size() == 1)
 			{
 				// Materialが1つ目ならばstart_indexは0
 				part.materials.back().start_index = 0;
@@ -72,10 +72,10 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 			{
 				// Materialが2つ目以降ならstart_indexはindex bufferの要素数-1
 				auto& current = part.materials.back();
-				current.start_index = static_cast<std::uint32_t>(indices.size()) - 1;
+				current.start_index = static_cast<std::uint32_t>(indices.size());
 				auto& before = part.materials.at(part.materials.size() - 2);
 				// 1つ前のMaterialの頂点数がわかるので計算して代入
-				before.indices = before.start_index - current.start_index;
+				before.indices = current.start_index - before.start_index;
 			}
 		}
 		else if (line[0] == "f") // mesh

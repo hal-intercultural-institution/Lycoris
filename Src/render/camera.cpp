@@ -7,7 +7,22 @@
 #include "render/camera.h"
 
 #include "game.h"
-#include "gamedef.h"
+
+lycoris::render::viewport::viewport(const float width, const float height, const float top_left_x, const float top_left_y)
+{
+	const screen& screen = game::get_game().get_renderer().get_screen();
+	viewport_.Width = screen.get_screen_width() * width;
+	viewport_.Height = screen.get_screen_height() * height;
+	viewport_.MinDepth = 0.0f;
+	viewport_.MaxDepth = 1.0f;
+	viewport_.TopLeftX = screen.get_screen_width() * top_left_x;
+	viewport_.TopLeftY = screen.get_screen_height() * top_left_y;
+}
+
+const D3D11_VIEWPORT& lycoris::render::viewport::get_raw() const noexcept
+{
+	return viewport_;
+}
 
 const DirectX::XMFLOAT3& lycoris::render::camera::get_position() const noexcept
 {
@@ -27,6 +42,11 @@ const DirectX::XMFLOAT3& lycoris::render::camera::get_rotation() const noexcept
 float lycoris::render::camera::get_camera_distance() const noexcept
 {
 	return distance_;
+}
+
+const lycoris::render::viewport& lycoris::render::camera::get_viewport() const noexcept
+{
+	return viewport_;
 }
 
 void lycoris::render::camera::set_position(const DirectX::XMFLOAT3& position) noexcept
@@ -55,6 +75,21 @@ void lycoris::render::camera::set_distance(float distance) noexcept
 	distance_ = distance;
 }
 
+void lycoris::render::camera::set_viewport(const viewport& viewport) noexcept
+{
+	viewport_ = viewport;
+}
+
+bool lycoris::render::camera::is_used() const noexcept
+{
+	return used_;
+}
+
+void lycoris::render::camera::set_use(const bool use) noexcept
+{
+	used_ = use;
+}
+
 void lycoris::render::camera::initialize()
 {
 	looking_at_ = { 0.0f, 0.0f, 0.0f };
@@ -76,7 +111,8 @@ void lycoris::render::camera::on_tick()
 void lycoris::render::camera::set()
 {
 	auto& renderer = game::get_game().get_renderer();
-
+	renderer.set_viewport(viewport_);
+	
 	// view matrix
 	const auto view_matrix = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&position_), XMLoadFloat3(&looking_at_), XMLoadFloat3(&up_));
 	XMStoreFloat4x4(&view_matrix_, view_matrix);
@@ -87,7 +123,7 @@ void lycoris::render::camera::set()
 	XMStoreFloat4x4(&inverted_view_matrix_, inverted_view_matrix);
 
 	// projection matrix
-	const auto aspect_ratio = renderer.get_screen().get_screen_width() / renderer.get_screen().get_screen_height();
+	const auto aspect_ratio = viewport_.get_raw().Width / viewport_.get_raw().Height;
 	const auto projection_matrix = DirectX::XMMatrixPerspectiveFovLH(1.0f, aspect_ratio, 1.0f, 1000.0f);
 	XMStoreFloat4x4(&projection_matrix_, projection_matrix);
 	renderer.set_projection_matrix(projection_matrix_);
