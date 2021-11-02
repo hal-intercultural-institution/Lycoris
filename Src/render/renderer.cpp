@@ -25,6 +25,11 @@ ID3D11DeviceContext& lycoris::render::renderer::get_device_context() const
 
 lycoris::render::camera& lycoris::render::renderer::get_camera()
 {
+	return camera_.at(0);
+}
+
+std::array<lycoris::render::camera, 4>& lycoris::render::renderer::get_cameras()
+{
 	return camera_;
 }
 
@@ -132,6 +137,14 @@ void lycoris::render::renderer::set_background_color(const DirectX::XMFLOAT4& co
 	background_color_ = { color.x, color.y, color.z, color.w };
 }
 
+void lycoris::render::renderer::set_viewport(const viewport& viewport)
+{
+	const std::array viewports = {
+		viewport.get_raw()
+	};
+	immediate_context_->RSSetViewports(viewports.size(), viewports.data());
+}
+
 void lycoris::render::renderer::draw_text(const std::wstring& text)
 {
 	winrt::com_ptr<ID2D1SolidColorBrush> brush;
@@ -231,17 +244,12 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 
 		immediate_context_->OMSetRenderTargets(1, render_targets.data(), depth_stencil_view_.get());
 	}
-	
-	// Viewport (= 0.0～1.0 でスクリーン上の座標を表す)
+
+	// カメラとviewport
 	{
-		D3D11_VIEWPORT viewport = {};
-		viewport.Width = screen_.get_screen_width();
-		viewport.Height = screen_.get_screen_height();
-		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
-		viewport.TopLeftX = 0;
-		viewport.TopLeftY = 0;
-		immediate_context_->RSSetViewports(1, &viewport);
+		camera_[0].set_use(true);
+		camera_[0].set_viewport({ 1.0f, 1.0f, 0.0f, 0.0f });
+		set_viewport(camera_[0].get_viewport());
 	}
 
 	// Rasterizer State (ピクセルシェーダーの前に実行される、ラスタライズ)
@@ -393,6 +401,9 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	}
 
 	d_write_text_format_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+
+	camera_[0].set_use(true);
+
 }
 
 void lycoris::render::renderer::destroy() const

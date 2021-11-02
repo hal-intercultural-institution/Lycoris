@@ -58,6 +58,7 @@ namespace lycoris::game
 		system::input::input input_system_;
 		system::audio::audio_system audio_system_;
 		system::settings settings_;
+		render::viewport default_viewport_;
 
 		profiler::debug_overlay overlay_;
 
