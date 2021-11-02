@@ -8,10 +8,6 @@
 #include "utility/timer.h"
 #include "render/renderer.h"
 
-constexpr auto frame_limit = 60.0;
-constexpr auto window_title = "test";
-constexpr auto class_name = "AppClass";
-
 LRESULT CALLBACK wnd_proc(HWND, UINT, WPARAM, LPARAM);
 
 namespace
@@ -20,6 +16,10 @@ namespace
 	// DO NOT CALL delete AGAINST THIS!!!!!!!!!!!!!!!!!!!!!!!!
 	lycoris::game::game* instance = nullptr;
 	bool initialized = false;
+
+	constexpr auto frame_limit = 60.0;
+	constexpr auto window_title = "test";
+	constexpr auto class_name = "AppClass";
 }
 
 void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* message)
@@ -89,10 +89,14 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 	{
 		logger = profiler::logger("log.txt");
 		renderer_.initialize(h_instance, h_wnd, true);
-		renderer_.get_camera().initialize();
+		for (auto& camera : renderer_.get_cameras())
+		{
+			camera.initialize();
+		}
 		texture_loader_.initialize();
 		input_system_.initialize();
 		audio_system_.initialize();
+		default_viewport_ = render::viewport(1.0f, 1.0f, 0.0f, 0.0f);
 	}
 	catch (const std::runtime_error& e)
 	{
@@ -181,7 +185,12 @@ void lycoris::game::game::on_tick()
 			break;
 		}
 	}
-	renderer_.get_camera().on_tick();
+
+	for (auto& camera : renderer_.get_cameras())
+	{
+		if (!camera) continue;
+		camera.on_tick();
+	}
 	overlay_.on_tick();
 	input_system_.post_update();
 }
@@ -189,8 +198,14 @@ void lycoris::game::game::on_tick()
 void lycoris::game::game::on_draw()
 {
 	renderer_.clear();
-	renderer_.get_camera().set();
-	if (scene_) scene_->on_draw();
+	for (auto& camera : renderer_.get_cameras())
+	{
+		if (!scene_) break;
+		if (!camera) continue;
+		camera.set();
+		scene_->on_draw();
+	}
+	renderer_.set_viewport(default_viewport_);
 	if (load_screen_ && load_screen_->get_load_status() != load_screen::status::not_loading)
 		load_screen_->on_draw();
 	overlay_.on_draw();

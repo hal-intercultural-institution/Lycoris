@@ -107,6 +107,8 @@ namespace lycoris::render
 		void set_culling_mode(D3D11_CULL_MODE culling_mode);
 		// 背景色
 		void set_background_color(const DirectX::XMFLOAT4& color);
+		// ビューポート
+		void set_viewport(const viewport& viewport);
 		// テキスト描画 (DirectWrite)
 		void draw_text(const std::wstring& text);
 
@@ -114,7 +116,10 @@ namespace lycoris::render
 		//ID3D11PixelShader& get_pixel_shader(int index);
 
 		screen& get_screen();
+		// get the primary camera
 		camera& get_camera();
+		// get camera
+		std::array<camera, 4>& get_cameras();
 
 	private:
 		// pointers
@@ -158,6 +163,6 @@ namespace lycoris::render
 		std::array<float, 4> background_color_ = { color_of(247), color_of(219), color_of(240), 1.0f };
 		
 		screen screen_;
-		camera camera_;
+		std::array<camera, 4> camera_{};
 	};
 }
