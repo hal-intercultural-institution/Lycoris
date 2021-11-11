@@ -40,6 +40,8 @@ namespace lycoris::render
 		// viewport
 		const viewport& get_viewport() const noexcept;
 
+		const DirectX::XMFLOAT4X4& get_inverted_view_matrix() const noexcept;
+
 		// sets position
 		void set_position(const DirectX::XMFLOAT3& position) noexcept;
 		//// sets rotation (quaternion)
