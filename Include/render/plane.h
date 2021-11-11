@@ -20,13 +20,6 @@ namespace lycoris::render
 		ID3D11Buffer const* get_vertex_buffer() const;
 		material& get_material();
 
-		DirectX::XMFLOAT3& get_position();
-		DirectX::XMFLOAT3& get_rotation();
-		DirectX::XMFLOAT3& get_scale();
-
-		void set_position(const DirectX::XMFLOAT3& position);
-		void set_rotation(const DirectX::XMFLOAT3& rotation);
-		void set_scale(const DirectX::XMFLOAT3& scale);
 		void set_billboard(bool billboard);
 
 		void draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale, const DirectX::XMFLOAT3& rotation);
