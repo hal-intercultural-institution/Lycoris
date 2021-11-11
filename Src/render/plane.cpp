@@ -12,51 +12,21 @@ lycoris::render::material& lycoris::render::plane::get_material()
 	return material_;
 }
 
-DirectX::XMFLOAT3& lycoris::render::plane::get_position()
-{
-	return position_;
-}
-
-DirectX::XMFLOAT3& lycoris::render::plane::get_rotation()
-{
-	return rotation_;
-}
-
-DirectX::XMFLOAT3& lycoris::render::plane::get_scale()
-{
-	return scale_;
-}
-
-void lycoris::render::plane::set_position(const DirectX::XMFLOAT3& position)
-{
-	position_ = position;
-}
-
-void lycoris::render::plane::set_rotation(const DirectX::XMFLOAT3& rotation)
-{
-	rotation_ = rotation;
-}
-
-void lycoris::render::plane::set_scale(const DirectX::XMFLOAT3& scale)
-{
-	scale_ = scale;
-}
-
 void lycoris::render::plane::set_billboard(const bool billboard)
 {
 	billboard_ = billboard;
 }
 
-void lycoris::render::plane::draw()
+void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale, const DirectX::XMFLOAT3& rotation)
 {
 	auto& renderer = game::get_game().get_renderer();
 	auto& device_context = renderer.get_device_context();
 
-	auto world_matrix = XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&scale_)));
+	auto world_matrix = XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&scale)));
 	world_matrix = XMMatrixMultiply(world_matrix, 
 		billboard_ ? XMLoadFloat4x4(&renderer.get_camera().get_inverted_view_matrix()) :
-		DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rotation_)));
-	world_matrix = XMMatrixMultiply(world_matrix, DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&position_)));
+		DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rotation)));
+	world_matrix = XMMatrixMultiply(world_matrix, DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&position)));
 
 	DirectX::XMFLOAT4X4 world_matrix_float{};
 	XMStoreFloat4x4(&world_matrix_float, world_matrix);
