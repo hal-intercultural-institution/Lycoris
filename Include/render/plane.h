@@ -29,14 +29,13 @@ namespace lycoris::render
 		void set_scale(const DirectX::XMFLOAT3& scale);
 		void set_billboard(bool billboard);
 
-		void draw();
+		void draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale, const DirectX::XMFLOAT3& rotation);
 
 		static plane create(float width, float height, texture::texture&& texture);
 		static plane create(float width, float height, const std::filesystem::path& path);
 
 	private:
 		plane(winrt::com_ptr<ID3D11Buffer>&& buffer, texture::texture&& texture, const material& material, float width, float height);
-		DirectX::XMFLOAT3 position_{}, rotation_{}, scale_{1.0f, 1.0f, 1.0f};
 		winrt::com_ptr<ID3D11Buffer> buffer_;
 		texture::texture texture_;
 		material  material_{};
