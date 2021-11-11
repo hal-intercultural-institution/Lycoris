@@ -49,6 +49,11 @@ const lycoris::render::viewport& lycoris::render::camera::get_viewport() const n
 	return viewport_;
 }
 
+const DirectX::XMFLOAT4X4& lycoris::render::camera::get_inverted_view_matrix() const noexcept
+{
+	return inverted_view_matrix_;
+}
+
 void lycoris::render::camera::set_position(const DirectX::XMFLOAT3& position) noexcept
 {
 	position_ = position;
@@ -121,6 +126,8 @@ void lycoris::render::camera::set()
 	// view matrix (inverted)
 	const auto inverted_view_matrix = XMMatrixInverse(nullptr, view_matrix);
 	XMStoreFloat4x4(&inverted_view_matrix_, inverted_view_matrix);
+	auto& ivm = inverted_view_matrix_;
+	ivm._41 = ivm._42 = ivm._43 = 0.0f;
 
 	// projection matrix
 	const auto aspect_ratio = viewport_.get_raw().Width / viewport_.get_raw().Height;
