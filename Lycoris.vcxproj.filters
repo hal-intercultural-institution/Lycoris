@@ -90,6 +90,9 @@
     <ClInclude Include="Include\render\alignment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\render\plane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\render\camera.cpp">
@@ -165,6 +168,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\system\input\gamepadempty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\render\plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
