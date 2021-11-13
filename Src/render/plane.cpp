@@ -19,13 +19,14 @@ void lycoris::render::plane::set_billboard(const bool billboard)
 
 void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale, const DirectX::XMFLOAT3& rotation)
 {
+	constexpr DirectX::XMFLOAT3 compensation = { 0.0f, DirectX::XM_PI, 0.0f};
 	auto& renderer = game::get_game().get_renderer();
 	auto& device_context = renderer.get_device_context();
 
 	auto world_matrix = XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&scale)));
 	world_matrix = XMMatrixMultiply(world_matrix, 
 		billboard_ ? XMLoadFloat4x4(&renderer.get_camera().get_inverted_view_matrix()) :
-		DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rotation)));
+		DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorAdd(XMLoadFloat3(&rotation), XMLoadFloat3(&compensation))));
 	world_matrix = XMMatrixMultiply(world_matrix, DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&position)));
 
 	DirectX::XMFLOAT4X4 world_matrix_float{};
@@ -33,7 +34,7 @@ void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const Direc
 
 	renderer.set_depth_enabled(true);
 	renderer.set_world_matrix(world_matrix_float);
-	renderer.set_culling_mode(D3D11_CULL_NONE);
+	renderer.set_culling_mode(D3D11_CULL_BACK);
 	renderer.set_uv_offset({ 0.0f, 0.0f });
 
 	constexpr auto stride = static_cast<uint32_t>(sizeof(vertex));
@@ -71,10 +72,10 @@ lycoris::render::plane lycoris::render::plane::create(float width, float height,
 
 	const std::array<vertex, vertex_count> vertices = {
 		{
-			{ { 0.0f, 0.0f, 0.0f }, { .0f, 1.0f, .0f},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f } },
-			{ { width, 0.0f, 0.0f }, { .0f, 1.0f, .0f},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, 0.0f } },
-			{ { 0.0f, height, 0.0f }, { .0f, 1.0f, .0f},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
-			{ { width, height, 0.0f }, { .0f, 1.0f, .0f},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } },
+			{ { width * -0.5f, height * 0.5f, 0.0f }, { .0f, 1.0f, .0f},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f } },
+			{ { width * 0.5f, height * 0.5f, 0.0f }, { .0f, 1.0f, .0f},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, 0.0f } },
+			{ { width * -0.5f, height * -0.5f, 0.0f }, { .0f, 1.0f, .0f},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
+			{ { width * 0.5f, height * -0.5f, 0.0f }, { .0f, 1.0f, .0f},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f } },
 		}
 	};
 
