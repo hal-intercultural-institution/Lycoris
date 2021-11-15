@@ -93,6 +93,9 @@
     <ClInclude Include="Include\render\plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\render\camera.cpp">
