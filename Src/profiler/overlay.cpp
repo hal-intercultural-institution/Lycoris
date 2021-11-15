@@ -3,6 +3,7 @@
 #include <format>
 
 #include "game.h"
+#include "constants.h"
 
 void lycoris::profiler::debug_overlay::on_tick()
 {
@@ -12,7 +13,10 @@ void lycoris::profiler::debug_overlay::on_tick()
 
 	auto& game = game::get_game();
 	text_ = std::format(
-		L"Lycoris\nfps: {}\nTick: {:f}\nDraw: {:f}\nMouse x: {}\nMouse y: {}\nGame-pads: {}\nCamera pos: {} {} {}\nCamera rot: {} {}\nCamera distance: {}",
+		L"Lycoris {}-{}, {} build\nfps: {}\nTick: {:f}\nDraw: {:f}\nMouse x: {}\nMouse y: {}\nGame-pads: {}\nCamera pos: {} {} {}\nCamera rot: {} {}\nCamera distance: {}",
+		constants::branch_name,
+		constants::commit_id,
+		constants::configuration_name,
 		game.get_fps_last_second(),
 		game.get_last_tick_time(),
 		game.get_last_draw_time(),

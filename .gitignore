@@ -4,3 +4,4 @@ Release/
 .vs/
 *.exe
 *.vcxproj.user
+Include/constants.h

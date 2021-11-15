@@ -198,17 +198,22 @@ void lycoris::game::game::on_tick()
 void lycoris::game::game::on_draw()
 {
 	renderer_.clear();
-	for (auto& camera : renderer_.get_cameras())
+
+	if (scene_)
 	{
-		if (!scene_) break;
-		if (!camera) continue;
-		camera.set();
-		scene_->on_draw();
+		for (auto& camera : renderer_.get_cameras())
+		{
+			if (!camera) continue;
+			camera.set();
+			scene_->on_draw();
+		}
+		scene_->on_overlay();
 	}
 	renderer_.set_viewport(default_viewport_);
 	if (load_screen_ && load_screen_->get_load_status() != load_screen::status::not_loading)
 		load_screen_->on_draw();
 	overlay_.on_draw();
+
 	renderer_.present();
 }
 

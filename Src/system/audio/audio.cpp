@@ -76,7 +76,7 @@ void lycoris::system::audio::audio_system::play(sound& sound, std::uint32_t time
 	buffer.pAudioData = reinterpret_cast<BYTE*>(file.buffer.data());
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
 	buffer.AudioBytes = uint32_of(file.buffer.size());
-	buffer.LoopCount = time;
+	buffer.LoopCount = time - 1;
 	
 	HRESULT hr = voice.SubmitSourceBuffer(&buffer);
 	if (FAILED(hr))
