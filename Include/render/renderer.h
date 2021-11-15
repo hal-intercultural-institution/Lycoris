@@ -41,9 +41,8 @@ namespace lycoris::render
 	class screen
 	{
 	public:
-		screen() noexcept
-			: screen_width_(1280), screen_height_(720), window_handle_(nullptr) {}
-		
+		screen() noexcept : screen_width_(1280), screen_height_(720), activation_(false), window_handle_(nullptr) {}
+
 		screen(const screen&) = delete;
 		screen& operator=(const screen&) = delete;
 		
