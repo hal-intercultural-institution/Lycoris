@@ -131,7 +131,7 @@ void lycoris::render::camera::set()
 
 	// projection matrix
 	const auto aspect_ratio = viewport_.get_raw().Width / viewport_.get_raw().Height;
-	const auto projection_matrix = DirectX::XMMatrixPerspectiveFovLH(1.0f, aspect_ratio, 1.0f, 1000.0f);
+	const auto projection_matrix = DirectX::XMMatrixPerspectiveFovLH(1.0f, aspect_ratio, 1.0f, 10000.0f);
 	XMStoreFloat4x4(&projection_matrix_, projection_matrix);
 	renderer.set_projection_matrix(projection_matrix_);
 }
