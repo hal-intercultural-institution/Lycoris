@@ -7,6 +7,7 @@ namespace lycoris::render::animation
 	class keyframe
 	{
 	public:
+		keyframe() = default;
 		keyframe(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& rotation, const DirectX::XMFLOAT3& scale, const float frame)
 			: position_(position), rotation_(rotation), scale_(scale), frame_(frame) {}
 
@@ -28,6 +29,21 @@ namespace lycoris::render::animation
 		float get_frame() const
 		{
 			return frame_;
+		}
+
+		void set_position(const DirectX::XMFLOAT3& position)
+		{
+			position_ = position;
+		}
+
+		void set_rotation(const DirectX::XMFLOAT3& rotation)
+		{
+			rotation_ = rotation;
+		}
+
+		void set_scale(const DirectX::XMFLOAT3& scale)
+		{
+			scale_ = scale;
 		}
 
 	private:

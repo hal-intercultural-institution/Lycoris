@@ -2,6 +2,12 @@
 
 #include <cmath>
 
+lycoris::render::animation::animation::animation(std::vector<keyframe>&& keyframes, std::string_view name)
+{
+	keyframes_ = std::move(keyframes);
+	object_name_ = name;
+}
+
 const lycoris::render::animation::keyframe& lycoris::render::animation::animation::operator[](const std::size_t index) const
 {
 	return keyframes_[index];
@@ -19,7 +25,7 @@ const lycoris::render::animation::keyframe& lycoris::render::animation::animatio
 
 lycoris::render::animation::keyframe lycoris::render::animation::animation::interpolate()
 {
-	assert(keyframes_.size() > 1, "keyframes out of range");
+	assert(keyframes_.size() > 1);
 
 	const auto& keyframe1 = keyframes_.at(0);
 	const auto& keyframe2 = keyframes_.at(1);

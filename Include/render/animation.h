@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <filesystem>
 #include <vector>
 
 #include "render/keyframe.h"
@@ -11,6 +12,7 @@ namespace lycoris::render::animation
 	{
 	public:
 		animation() = default;
+		explicit animation(std::vector<keyframe>&& keyframes, std::string_view name);
 		~animation() = default;
 		animation(const animation&) = delete;
 		animation(animation&&) = default;
@@ -29,6 +31,7 @@ namespace lycoris::render::animation
 	private:
 		std::vector<keyframe> keyframes_{};
 		std::size_t current_index_ = 0;
+		std::string object_name_;
 		float frame_ = 0.0f;
 	};
 
@@ -53,7 +56,10 @@ namespace lycoris::render::animation
 		// set_frame(float) & get()
 		const std::vector<keyframe>& get(float frame);
 
+		static animator create(const std::filesystem::path& path);
+
 	private:
+		explicit animator(std::vector<animation>&& animations);
 		std::vector<animation> animations_{};
 		std::vector<keyframe> calculated_{0};
 		float frame_ = 0.0f;
