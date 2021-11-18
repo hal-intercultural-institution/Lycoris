@@ -22,6 +22,7 @@ namespace lycoris::render::animation
 		const std::vector<keyframe>* operator->() const;
 
 		const keyframe& at(std::size_t index) const;
+		keyframe interpolate();
 
 		void set_frame(float frame);
 
@@ -45,10 +46,16 @@ namespace lycoris::render::animation
 
 		explicit operator bool() const;
 
+		// sets frame and interpolate keyframes
 		void set_frame(float frame);
+		// gets calculated keyframes
+		const std::vector<keyframe>& get();
+		// set_frame(float) & get()
+		const std::vector<keyframe>& get(float frame);
 
 	private:
 		std::vector<animation> animations_{};
+		std::vector<keyframe> calculated_{0};
 		float frame_ = 0.0f;
 	};
 }

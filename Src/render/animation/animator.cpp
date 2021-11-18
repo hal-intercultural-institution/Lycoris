@@ -20,3 +20,21 @@ void lycoris::render::animation::animator::set_frame(const float frame)
 		animation.set_frame(frame);
 	}
 }
+
+const std::vector<lycoris::render::animation::keyframe>& lycoris::render::animation::animator::get()
+{
+	assert(calculated_.size() == animations_.size(), "something went wrong about calculated vector size");
+
+	for (std::size_t i = 0; i < animations_.size(); ++i)
+	{
+		calculated_.at(i) = animations_.at(i).interpolate();
+	}
+
+	return calculated_;
+}
+
+const std::vector<lycoris::render::animation::keyframe>& lycoris::render::animation::animator::get(const float frame)
+{
+	set_frame(frame);
+	return get();
+}

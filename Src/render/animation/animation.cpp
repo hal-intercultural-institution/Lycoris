@@ -17,6 +17,32 @@ const lycoris::render::animation::keyframe& lycoris::render::animation::animatio
 	return keyframes_.at(index);
 }
 
+lycoris::render::animation::keyframe lycoris::render::animation::animation::interpolate()
+{
+	assert(keyframes_.size() > 1, "keyframes out of range");
+
+	const auto& keyframe1 = keyframes_.at(0);
+	const auto& keyframe2 = keyframes_.at(1);
+	const auto factor = (frame_ - keyframe1.get_frame()) / (keyframe2.get_frame() - keyframe1.get_frame());
+
+	const auto position =
+		DirectX::XMVectorLerp(XMLoadFloat3(&keyframe1.get_position()), XMLoadFloat3(&keyframe2.get_position()), factor);
+
+	const auto rotation =
+		DirectX::XMVectorLerp(XMLoadFloat3(&keyframe1.get_rotation()), XMLoadFloat3(&keyframe2.get_rotation()), factor);
+
+	const auto scale =
+		DirectX::XMVectorLerp(XMLoadFloat3(&keyframe1.get_scale()), XMLoadFloat3(&keyframe2.get_scale()), factor);
+
+	DirectX::XMFLOAT3 position_f{}, rotation_f{}, scale_f{};
+
+	XMStoreFloat3(&position_f, position);
+	XMStoreFloat3(&rotation_f, rotation);
+	XMStoreFloat3(&scale_f, scale);
+
+	return keyframe(position_f, rotation_f, scale_f, frame_);
+}
+
 void lycoris::render::animation::animation::set_frame(const float frame)
 {
 	frame_ = frame;
