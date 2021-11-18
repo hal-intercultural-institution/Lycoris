@@ -186,8 +186,10 @@
     <ClInclude Include="Include\profiler\logger.h" />
     <ClInclude Include="Include\profiler\overlay.h" />
     <ClInclude Include="Include\render\alignment.h" />
+    <ClInclude Include="Include\render\animation.h" />
     <ClInclude Include="Include\render\camera.h" />
     <ClInclude Include="Include\render\constantbuffer.h" />
+    <ClInclude Include="Include\render\keyframe.h" />
     <ClInclude Include="Include\render\model3d.h" />
     <ClInclude Include="Include\render\plane.h" />
     <ClInclude Include="Include\render\renderer.h" />
@@ -210,6 +212,8 @@
     <ClCompile Include="Src\game\loadscreen.cpp" />
     <ClCompile Include="Src\profiler\logger.cpp" />
     <ClCompile Include="Src\profiler\overlay.cpp" />
+    <ClCompile Include="Src\render\animation\animation.cpp" />
+    <ClCompile Include="Src\render\animation\animator.cpp" />
     <ClCompile Include="Src\render\camera.cpp" />
     <ClCompile Include="Src\render\model.cpp" />
     <ClCompile Include="Src\render\plane.cpp" />

@@ -96,6 +96,12 @@
     <ClInclude Include="Include\constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\render\animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\render\keyframe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\render\camera.cpp">
@@ -174,6 +180,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\render\plane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\render\animation\animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\render\animation\animator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
