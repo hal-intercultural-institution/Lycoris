@@ -52,7 +52,7 @@ namespace lycoris::render::animation
 		// sets frame and interpolate keyframes
 		void set_frame(float frame);
 		// gets calculated keyframes
-		const std::vector<keyframe>& get();
+		const std::vector<keyframe>& get() const;
 		// set_frame(float) & get()
 		const std::vector<keyframe>& get(float frame);
 

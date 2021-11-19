@@ -15,23 +15,19 @@ void lycoris::render::animation::animator::set_frame(const float frame)
 	if (animations_.empty()) throw std::runtime_error("Animator: animation data are not loaded");
 	frame_ = frame;
 
-	for (auto& animation : animations_)
-	{
-		// キーフレが1つ以下なものはアニメーションではないので何もしない
-		if (animation->size() <= 1) continue;
-		animation.set_frame(frame);
-	}
-}
-
-const std::vector<lycoris::render::animation::keyframe>& lycoris::render::animation::animator::get()
-{
 	assert(calculated_.size() == animations_.size());
 
 	for (std::size_t i = 0; i < animations_.size(); ++i)
 	{
+		// キーフレが1個以下のときは、補間位置の計算は必要ない。
+		if (animations_.at(i)->size() <= 1)
+			animations_.at(i).set_frame(frame);
 		calculated_.at(i) = animations_.at(i).interpolate();
 	}
+}
 
+const std::vector<lycoris::render::animation::keyframe>& lycoris::render::animation::animator::get() const
+{
 	return calculated_;
 }
 
