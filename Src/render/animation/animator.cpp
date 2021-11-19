@@ -106,4 +106,5 @@ lycoris::render::animation::animator lycoris::render::animation::animator::load_
 lycoris::render::animation::animator::animator(std::vector<animation>&& animations)
 {
 	animations_ = std::move(animations);
+	calculated_ = std::vector<keyframe>(animations_.size());
 }
