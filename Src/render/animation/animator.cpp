@@ -41,7 +41,7 @@ const std::vector<lycoris::render::animation::keyframe>& lycoris::render::animat
 	return get();
 }
 
-lycoris::render::animation::animator lycoris::render::animation::animator::create(const std::filesystem::path& path)
+lycoris::render::animation::animator lycoris::render::animation::animator::load_from_file(const std::filesystem::path& path)
 {
 	auto file = utility::file::text_file(path.string());
 

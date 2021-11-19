@@ -56,7 +56,7 @@ namespace lycoris::render::animation
 		// set_frame(float) & get()
 		const std::vector<keyframe>& get(float frame);
 
-		static animator create(const std::filesystem::path& path);
+		[[nodiscard]] static animator load_from_file(const std::filesystem::path& path);
 
 	private:
 		explicit animator(std::vector<animation>&& animations);
