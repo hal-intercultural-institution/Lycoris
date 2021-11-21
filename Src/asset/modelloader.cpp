@@ -13,18 +13,17 @@ constexpr auto model_scale = 10.0f;
 
 lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesystem::path& path)
 {
-	// filename, used for caching
-	// const auto name = path.filename().string();
-
-	auto part = render::model3d::model_part();
-	
+	// cache
 	std::vector<DirectX::XMFLOAT3> positions;
 	std::vector<DirectX::XMFLOAT3> normals;
 	std::vector<DirectX::XMFLOAT2> uv;
 	std::vector<render::vertex> vertices;
 	std::vector<std::uint32_t> indices;
+	std::unordered_map<std::string, render::model3d::model_material> material_cache;
 
-	std::unordered_map<std::string, render::model3d::model_material> materials;
+	// output
+	std::vector<render::model3d::model_material> materials;
+	winrt::com_ptr<ID3D11Buffer> vertex_buffer, index_buffer;
 	
 	auto file = utility::file::text_file(path);
 	std::vector<std::string> line;
@@ -55,25 +54,25 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 			auto mtl_path = path;
 			mtl_path.replace_filename(line[1]);
 			auto material = load_material(mtl_path);
-			materials.insert(material.begin(), material.end());
+			material_cache.insert(material.begin(), material.end());
 		}
 		else if (line[0] == "usemtl") // specify mtl
 		{
-			if (!materials.contains(line[1]))
+			if (!material_cache.contains(line[1]))
 				throw std::runtime_error("ModelLoader: material not found");
 			// 読み込んだMaterialをコピーしていれる
-			part.materials.push_back(materials[line[1]]);
-			if (part.materials.size() == 1)
+			materials.push_back(material_cache[line[1]]);
+			if (materials.size() == 1)
 			{
 				// Materialが1つ目ならばstart_indexは0
-				part.materials.back().start_index = 0;
+				materials.back().start_index = 0;
 			}
 			else
 			{
 				// Materialが2つ目以降ならstart_indexはindex bufferの要素数-1
-				auto& current = part.materials.back();
+				auto& current = materials.back();
 				current.start_index = static_cast<std::uint32_t>(indices.size());
-				auto& before = part.materials.at(part.materials.size() - 2);
+				auto& before = materials.at(materials.size() - 2);
 				// 1つ前のMaterialの頂点数がわかるので計算して代入
 				before.indices = current.start_index - before.start_index;
 			}
@@ -104,14 +103,14 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 	}
 
 	// まだ一番うしろのMaterialが使う頂点数が指定できていないのでここでする
-	if (part.materials.size() == 1)
+	if (materials.size() == 1)
 	{
 		// Materialが1個しか無いときはindex bufferの数をそのまま入れる
-		part.materials.back().indices = static_cast<std::uint32_t>(indices.size());
+		materials.back().indices = static_cast<std::uint32_t>(indices.size());
 	}
 	else
 	{
-		auto& last = part.materials.back();
+		auto& last = materials.back();
 		last.indices = static_cast<std::uint32_t>(indices.size()) - last.start_index;
 	}
 
@@ -126,7 +125,7 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 		D3D11_SUBRESOURCE_DATA sub_resource_data{};
 		sub_resource_data.pSysMem = vertices.data();
 
-		renderer.get_device().CreateBuffer(&buffer_desc, &sub_resource_data, part.model.put_vertex_buffer());
+		renderer.get_device().CreateBuffer(&buffer_desc, &sub_resource_data, vertex_buffer.put());
 	}
 
 	{
@@ -139,9 +138,9 @@ lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesys
 		D3D11_SUBRESOURCE_DATA sub_resource_data{};
 		sub_resource_data.pSysMem = indices.data();
 
-		renderer.get_device().CreateBuffer(&buffer_desc, &sub_resource_data, part.model.put_index_buffer());
+		renderer.get_device().CreateBuffer(&buffer_desc, &sub_resource_data, index_buffer.put());
 	}
-	return render::model3d::model_3d(std::move(part));
+	return render::model3d::model_3d(std::move(vertex_buffer), std::move(index_buffer), std::move(materials));
 }
 
 std::unordered_map<std::string, lycoris::render::model3d::model_material> lycoris::asset::load_material(const std::filesystem::path& path)
