@@ -27,8 +27,8 @@ lycoris::render::animation::keyframe lycoris::render::animation::animation::inte
 {
 	assert(keyframes_.size() > 1);
 
-	const auto& keyframe1 = keyframes_.at(0);
-	const auto& keyframe2 = keyframes_.at(1);
+	const auto& keyframe1 = keyframes_.at(current_index_);
+	const auto& keyframe2 = keyframes_.at(current_index_ + 1);
 	const auto factor = (frame_ - keyframe1.get_frame()) / (keyframe2.get_frame() - keyframe1.get_frame());
 
 	const auto position =
