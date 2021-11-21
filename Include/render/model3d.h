@@ -8,15 +8,6 @@
 
 namespace lycoris::render::model3d
 {
-	namespace temp
-	{
-		struct model_vertex
-		{
-			std::uint32_t vertex_index;
-			std::uint32_t uv_index;
-			std::uint32_t normal_index;
-		};
-	}
 
 	struct model_material
 	{
