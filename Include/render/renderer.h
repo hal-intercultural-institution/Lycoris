@@ -131,6 +131,7 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 
 		shader::vertex_shader vertex_shader_;
+		shader::vertex_shader anim_vertex_shader_;
 		shader::pixel_shader pixel_shader_;
 
 		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_enabled_;
@@ -153,6 +154,7 @@ namespace lycoris::render
 		constant_buffer<material, 3> material_ = {};
 		constant_buffer<DirectX::XMFLOAT4, 4> directional_light_ = {};
 		constant_buffer<DirectX::XMFLOAT4, 5> uv_offset_ = {};
+		constant_buffer<std::array<DirectX::XMFLOAT4X4, 16>, 6> anim_matrix_ = {};
 
 		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
 
