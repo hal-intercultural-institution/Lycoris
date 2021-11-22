@@ -144,7 +144,7 @@
       </AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>call pre-build-task.bat $(ProjectDir) $(ConfigurationName)</Command>
+      <Command>call pre-build-task.bat "$(ProjectDir)" $(ConfigurationName)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -172,7 +172,7 @@
       </AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>call pre-build-task.bat $(ProjectDir) $(ConfigurationName)</Command>
+      <Command>call pre-build-task.bat "$(ProjectDir)" $(ConfigurationName)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
