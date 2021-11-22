@@ -17,6 +17,7 @@ void lycoris::render::model3d::model_3d::draw(const DirectX::XMFLOAT3& position,
 	renderer.set_depth_enabled(true);
 	renderer.set_world_matrix(world_matrix_float);
 	renderer.set_culling_mode(D3D11_CULL_NONE);
+	renderer.set_blend_state(blend_state::none);
 	renderer.set_uv_offset({ 0.0f, 0.0f });
 
 	// for (parts) ...

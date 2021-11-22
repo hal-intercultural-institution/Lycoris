@@ -23,6 +23,7 @@ namespace lycoris::render
 		std::int32_t& get_u_index();
 		std::int32_t& get_v_index();
 		material& get_material();
+		blend_state get_blend_state() const;
 		
 		void set_position(const DirectX::XMFLOAT2& position);
 		void set_u_index(std::int32_t index);
@@ -31,6 +32,7 @@ namespace lycoris::render
 		void set_horizontal_alignment(horizontal_alignment alignment) noexcept;
 		void set_vertical_alignment(vertical_alignment alignment) noexcept;
 		void set_scale(const DirectX::XMFLOAT2& scale) noexcept;
+		void set_blend_state(blend_state state);
 		
 		void draw();
 
@@ -49,5 +51,6 @@ namespace lycoris::render
 		float u_width_ = 1.0f, v_height_ = 1.0f;
 		float width_ = 0.0f, height_ = 0.0f;
 		std::int32_t u_index_ = 0, v_index_ = 0;
+		blend_state blend_state_ = blend_state::none;
 	};
 }

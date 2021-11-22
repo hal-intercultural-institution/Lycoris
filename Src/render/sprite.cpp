@@ -30,6 +30,11 @@ lycoris::render::material& lycoris::render::sprite::get_material()
 	return material_;
 }
 
+lycoris::render::blend_state lycoris::render::sprite::get_blend_state() const
+{
+	return blend_state_;
+}
+
 void lycoris::render::sprite::set_position(const DirectX::XMFLOAT2& position)
 {
 	position_ = position;
@@ -63,6 +68,11 @@ void lycoris::render::sprite::set_vertical_alignment(const vertical_alignment al
 void lycoris::render::sprite::set_scale(const DirectX::XMFLOAT2& scale) noexcept
 {
 	scale_ = scale;
+}
+
+void lycoris::render::sprite::set_blend_state(const blend_state state)
+{
+	blend_state_ = state;
 }
 
 void lycoris::render::sprite::draw()
@@ -111,6 +121,7 @@ void lycoris::render::sprite::draw()
 	renderer.set_world_matrix(world_matrix_float);
 
 	renderer.set_material(material_);
+	renderer.set_blend_state(blend_state_);
 
 	constexpr std::uint32_t stride = sizeof(vertex);
 	constexpr std::uint32_t offset = 0;

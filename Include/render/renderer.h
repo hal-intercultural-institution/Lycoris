@@ -14,6 +14,13 @@
 
 namespace lycoris::render
 {
+	enum class blend_state
+	{
+		none,
+		alpha,
+		add,
+		subtract
+	};
 
 	constexpr float color_of(const std::uint8_t color)
 	{
@@ -108,6 +115,8 @@ namespace lycoris::render
 		void set_background_color(const DirectX::XMFLOAT4& color);
 		// ビューポート
 		void set_viewport(const viewport& viewport);
+		// ぶれんどすてーと
+		void set_blend_state(blend_state state);
 		// テキスト描画 (DirectWrite)
 		void draw_text(const std::wstring& text);
 
@@ -140,7 +149,7 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_disabled_;
 		winrt::com_ptr<ID3D11Texture2D> depth_stencil_texture_;
 		winrt::com_ptr<ID3D11RasterizerState> rasterizer_state_;
-		winrt::com_ptr<ID3D11BlendState> blend_state_;
+		std::array<winrt::com_ptr<ID3D11BlendState>, 4> blend_states_;
 		winrt::com_ptr<ID3D11SamplerState> sampler_state_;
 
 		winrt::com_ptr<ID2D1Device> d2d_device_;

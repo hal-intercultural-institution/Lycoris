@@ -13,6 +13,8 @@
 
 #include "game.h"
 
+constexpr std::array blend_factor = { 0.0f, 0.0f, 0.0f, 0.0f };
+
 ID3D11Device& lycoris::render::renderer::get_device() const
 {
 	return *device_.get();
@@ -145,6 +147,12 @@ void lycoris::render::renderer::set_viewport(const viewport& viewport)
 	immediate_context_->RSSetViewports(viewports.size(), viewports.data());
 }
 
+void lycoris::render::renderer::set_blend_state(blend_state state)
+{
+	immediate_context_->OMSetBlendState(blend_states_[static_cast<std::size_t>(state)].get(),
+		blend_factor.data(), 0xffffffff);
+}
+
 void lycoris::render::renderer::draw_text(const std::wstring& text)
 {
 	winrt::com_ptr<ID2D1SolidColorBrush> brush;
@@ -267,20 +275,40 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	// Blend State (ピクセルシェーダーの後 既にあるピクセルの値とのブレンドの仕方を決定する)
 	{
 		D3D11_BLEND_DESC blend_desc = {};
-		blend_desc.AlphaToCoverageEnable = false;
+		blend_desc.AlphaToCoverageEnable = true;
 		blend_desc.IndependentBlendEnable = false;
 		blend_desc.RenderTarget[0].BlendEnable = true;
-		blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-		blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-		blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 		blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		blend_desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-		std::array blendFactor = { 0.0f, 0.0f, 0.0f, 0.0f };
-		device_->CreateBlendState(&blend_desc, blend_state_.put());
-		immediate_context_->OMSetBlendState(blend_state_.get(), blendFactor.data(), 0xffffffff);
+		// blend state: none
+		blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+		blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		device_->CreateBlendState(&blend_desc, blend_states_[static_cast<std::size_t>(blend_state::none)].put());
+
+		// blend state: alpha
+		blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		device_->CreateBlendState(&blend_desc, blend_states_[static_cast<std::size_t>(blend_state::alpha)].put());
+
+		// blend state: add
+		blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+		blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		device_->CreateBlendState(&blend_desc, blend_states_[static_cast<std::size_t>(blend_state::add)].put());
+
+		// blend state: subtract
+		blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+		blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_REV_SUBTRACT;
+		device_->CreateBlendState(&blend_desc, blend_states_[static_cast<std::size_t>(blend_state::subtract)].put());
+
+		immediate_context_->OMSetBlendState(blend_states_[static_cast<std::size_t>(blend_state::alpha)].get(),
+			blend_factor.data(), 0xffffffff);
 	}
 
 	// Depth Stencil State
