@@ -19,8 +19,10 @@ namespace lycoris::render
 
 		ID3D11Buffer const* get_vertex_buffer() const;
 		material& get_material();
+		blend_state get_blend_state() const;
 
 		void set_billboard(bool billboard);
+		void set_blend_state(blend_state state);
 
 		void draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale, const DirectX::XMFLOAT3& rotation);
 
@@ -32,6 +34,7 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11Buffer> buffer_;
 		texture::texture texture_;
 		material  material_{};
+		blend_state blend_state_ = blend_state::none;
 		bool billboard_ = false;
 	};
 }

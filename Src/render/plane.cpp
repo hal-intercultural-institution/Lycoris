@@ -12,9 +12,19 @@ lycoris::render::material& lycoris::render::plane::get_material()
 	return material_;
 }
 
+lycoris::render::blend_state lycoris::render::plane::get_blend_state() const
+{
+	return blend_state_;
+}
+
 void lycoris::render::plane::set_billboard(const bool billboard)
 {
 	billboard_ = billboard;
+}
+
+void lycoris::render::plane::set_blend_state(const blend_state state)
+{
+	blend_state_ = state;
 }
 
 void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale, const DirectX::XMFLOAT3& rotation)
@@ -35,6 +45,7 @@ void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const Direc
 	renderer.set_depth_enabled(true);
 	renderer.set_world_matrix(world_matrix_float);
 	renderer.set_culling_mode(D3D11_CULL_BACK);
+	renderer.set_blend_state(blend_state_);
 	renderer.set_uv_offset({ 0.0f, 0.0f });
 
 	constexpr auto stride = static_cast<uint32_t>(sizeof(vertex));
