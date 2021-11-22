@@ -132,9 +132,6 @@ namespace lycoris::render
 
 		shader::vertex_shader vertex_shader_;
 		shader::pixel_shader pixel_shader_;
-		winrt::com_ptr<ID3D11InputLayout> input_layout_;
-		winrt::com_ptr<ID3D11Buffer> constant_buffer_;
-		winrt::com_ptr<ID3D11Buffer> material_buffer_;
 
 		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_enabled_;
 		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_disabled_;
