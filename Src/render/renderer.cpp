@@ -275,7 +275,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	// Blend State (ピクセルシェーダーの後 既にあるピクセルの値とのブレンドの仕方を決定する)
 	{
 		D3D11_BLEND_DESC blend_desc = {};
-		blend_desc.AlphaToCoverageEnable = false;
+		blend_desc.AlphaToCoverageEnable = true;
 		blend_desc.IndependentBlendEnable = false;
 		blend_desc.RenderTarget[0].BlendEnable = true;
 		blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
