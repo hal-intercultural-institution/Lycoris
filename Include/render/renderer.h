@@ -8,12 +8,14 @@
 #include <DirectXMath.h>
 #include <winrt/base.h>
 
+#include "animation.h"
 #include "render/constantbuffer.h"
 #include "render/shader.h"
 #include "render/camera.h"
 
 namespace lycoris::render
 {
+	constexpr auto animation_max = 16;
 
 	constexpr float color_of(const std::uint8_t color)
 	{
@@ -113,6 +115,10 @@ namespace lycoris::render
 		void set_background_color(const DirectX::XMFLOAT4& color);
 		// ビューポート
 		void set_viewport(const viewport& viewport);
+		// アニメーション用
+		void set_animation_matrix(std::size_t index, const DirectX::XMFLOAT4X4& matrix);
+		// アニメーション用 (一括)
+		void set_animation(const animation::animator& animator);
 		// テキスト描画 (DirectWrite)
 		void draw_text(const std::wstring& text);
 
@@ -159,7 +165,7 @@ namespace lycoris::render
 		constant_buffer<material, 3> material_ = {};
 		constant_buffer<DirectX::XMFLOAT4, 4> directional_light_ = {};
 		constant_buffer<DirectX::XMFLOAT4, 5> uv_offset_ = {};
-		constant_buffer<std::array<DirectX::XMFLOAT4X4, 16>, 6> anim_matrix_ = {};
+		constant_buffer<std::array<DirectX::XMFLOAT4X4, animation_max>, 6> anim_matrix_ = {};
 
 		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
 

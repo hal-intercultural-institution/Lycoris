@@ -145,6 +145,30 @@ void lycoris::render::renderer::set_viewport(const viewport& viewport)
 	immediate_context_->RSSetViewports(viewports.size(), viewports.data());
 }
 
+void lycoris::render::renderer::set_animation_matrix(const std::size_t index, const DirectX::XMFLOAT4X4& matrix)
+{
+	anim_matrix_.get()[index] = matrix;
+	anim_matrix_.update();
+}
+
+void lycoris::render::renderer::set_animation(const animation::animator& animator)
+{
+	assert(animator.get().size() <= animation_max);
+
+	for (std::size_t i = 0; i < animator.get().size(); ++i)
+	{
+		const auto& animation = animator.get().at(i);
+		auto matrix = XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&animation.get_scale())));
+		matrix = XMMatrixMultiply(matrix, DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&animation.get_rotation())));
+		matrix = XMMatrixMultiply(matrix, DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&animation.get_position())));
+		DirectX::XMFLOAT4X4 matrix_f{};
+		XMStoreFloat4x4(&matrix_f, matrix);
+		anim_matrix_.get()[i] = matrix_f;
+	}
+
+	anim_matrix_.update();
+}
+
 void lycoris::render::renderer::draw_text(const std::wstring& text)
 {
 	winrt::com_ptr<ID2D1SolidColorBrush> brush;
