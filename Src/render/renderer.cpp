@@ -351,8 +351,9 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		vertex_shader_ = shader::vertex_shader::compile("data/shader.hlsl", "vs_main", layout);
-		shader::vertex_shader::set(vertex_shader_);
+		auto& shader = vertex_shaders_[static_cast<std::size_t>(shader::vertex::normal)];
+		shader = shader::vertex_shader::compile("data/shader.hlsl", "vs_main", layout);
+		shader::vertex_shader::set(shader);
 	}
 
 	// Vertex Shader, Input Layout (animated)
@@ -364,7 +365,8 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 				{ "BLENDINDICES", 0, DXGI_FORMAT_R32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		anim_vertex_shader_ = shader::vertex_shader::compile("data/shader.hlsl", "vs_anim", layout);
+		auto& shader = vertex_shaders_[static_cast<std::size_t>(shader::vertex::animated)];
+		shader = shader::vertex_shader::compile("data/shader.hlsl", "vs_anim", layout);
 	}
 
 	// PixelShader

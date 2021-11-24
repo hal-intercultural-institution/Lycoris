@@ -7,7 +7,14 @@
 
 namespace lycoris::render::shader
 {
-    class vertex_shader
+    enum class vertex
+    {
+	    normal,
+        animated,
+        max
+    };
+
+	class vertex_shader
     {
     public:
         static void set(vertex_shader& shader);

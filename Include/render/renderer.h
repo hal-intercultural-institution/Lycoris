@@ -141,8 +141,7 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 
-		shader::vertex_shader vertex_shader_;
-		shader::vertex_shader anim_vertex_shader_;
+		std::array<shader::vertex_shader, static_cast<std::size_t>(shader::vertex::max)> vertex_shaders_;
 		shader::pixel_shader pixel_shader_;
 
 		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_enabled_;
