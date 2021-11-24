@@ -28,6 +28,11 @@ namespace lycoris::render
 		DirectX::XMFLOAT2 tex_coord;
 	};
 
+	struct animated_vertex : vertex
+	{
+		std::uint32_t anim_index;
+	};
+
 	struct material
 	{
 		DirectX::XMFLOAT4 ambient;
