@@ -119,6 +119,8 @@ namespace lycoris::render
 		void set_animation_matrix(std::size_t index, const DirectX::XMFLOAT4X4& matrix);
 		// アニメーション用 (一括)
 		void set_animation(const animation::animator& animator);
+		// 頂点シェーダー設定
+		void set_vertex_shader(shader::vertex shader);
 		// テキスト描画 (DirectWrite)
 		void draw_text(const std::wstring& text);
 

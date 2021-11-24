@@ -169,6 +169,11 @@ void lycoris::render::renderer::set_animation(const animation::animator& animato
 	anim_matrix_.update();
 }
 
+void lycoris::render::renderer::set_vertex_shader(shader::vertex shader)
+{
+	shader::vertex_shader::set(vertex_shaders_[static_cast<std::size_t>(shader)]);
+}
+
 void lycoris::render::renderer::draw_text(const std::wstring& text)
 {
 	winrt::com_ptr<ID2D1SolidColorBrush> brush;
