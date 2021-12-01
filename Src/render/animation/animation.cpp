@@ -56,7 +56,7 @@ void lycoris::render::animation::animation::set_frame(const float frame)
 	// indexが最後の1つ前だったとき、最後のキーフレをオーバーしているときは、最初に戻す。
 	if (last_frame <= frame_)
 	{
-		frame_ -= std::ceilf(frame_ / last_frame) * last_frame;
+		frame_ -= std::floorf(frame_ / last_frame) * last_frame;
 		current_index_ = 0;
 		return;
 	}
