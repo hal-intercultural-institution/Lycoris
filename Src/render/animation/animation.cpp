@@ -57,8 +57,6 @@ void lycoris::render::animation::animation::set_frame(const float frame)
 	if (last_frame <= frame_)
 	{
 		frame_ -= std::floorf(frame_ / last_frame) * last_frame;
-		current_index_ = 0;
-		return;
 	}
 
 	const auto next_frame = keyframes_.at(current_index_ + 1).get_frame();
