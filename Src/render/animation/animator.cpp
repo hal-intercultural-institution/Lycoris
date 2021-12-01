@@ -11,7 +11,7 @@ lycoris::render::animation::animator::operator bool() const
 
 void lycoris::render::animation::animator::set_frame(const float frame)
 {
-	if (frame >= 0.0f) throw std::invalid_argument("Animator: negative value is not allowed here");
+	if (frame < 0.0f) throw std::invalid_argument("Animator: negative value is not allowed here");
 	if (animations_.empty()) throw std::runtime_error("Animator: animation data are not loaded");
 	frame_ = frame;
 
@@ -19,9 +19,7 @@ void lycoris::render::animation::animator::set_frame(const float frame)
 
 	for (std::size_t i = 0; i < animations_.size(); ++i)
 	{
-		// キーフレが1個以下のときは、補間位置の計算は必要ない。
-		if (animations_.at(i)->size() <= 1)
-			animations_.at(i).set_frame(frame);
+		animations_.at(i).set_frame(frame);
 		calculated_.at(i) = animations_.at(i).interpolate();
 	}
 }
