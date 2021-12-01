@@ -30,8 +30,13 @@ namespace lycoris::render
 		DirectX::XMFLOAT2 tex_coord;
 	};
 
-	struct animated_vertex : vertex
+	struct animated_vertex
 	{
+
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT3 normal;
+		DirectX::XMFLOAT4 diffuse;
+		DirectX::XMFLOAT2 tex_coord;
 		std::uint32_t anim_index;
 	};
 
