@@ -161,9 +161,8 @@ void lycoris::render::renderer::set_animation(const animation::animator& animato
 		auto matrix = XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&animation.get_scale())));
 		matrix = XMMatrixMultiply(matrix, DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&animation.get_rotation())));
 		matrix = XMMatrixMultiply(matrix, DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&animation.get_position())));
-		DirectX::XMFLOAT4X4 matrix_f{};
-		XMStoreFloat4x4(&matrix_f, matrix);
-		anim_matrix_.get()[i] = matrix_f;
+		matrix = XMMatrixTranspose(matrix);
+		XMStoreFloat4x4(&anim_matrix_.get()[i], matrix);
 	}
 
 	anim_matrix_.update();
