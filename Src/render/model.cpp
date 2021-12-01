@@ -18,6 +18,7 @@ void lycoris::render::model3d::model_3d::draw(const DirectX::XMFLOAT3& position,
 	renderer.set_world_matrix(world_matrix_float);
 	renderer.set_culling_mode(D3D11_CULL_NONE);
 	renderer.set_uv_offset({ 0.0f, 0.0f });
+	renderer.set_vertex_shader(shader::vertex::normal);
 
 	// for (parts) ...
 	{

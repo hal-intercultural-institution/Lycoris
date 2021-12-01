@@ -36,6 +36,7 @@ void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const Direc
 	renderer.set_world_matrix(world_matrix_float);
 	renderer.set_culling_mode(D3D11_CULL_BACK);
 	renderer.set_uv_offset({ 0.0f, 0.0f });
+	renderer.set_vertex_shader(shader::vertex::normal);
 
 	constexpr auto stride = static_cast<uint32_t>(sizeof(vertex));
 	constexpr std::uint32_t offset = 0;
