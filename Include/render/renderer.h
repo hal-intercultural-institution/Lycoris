@@ -8,12 +8,20 @@
 #include <DirectXMath.h>
 #include <winrt/base.h>
 
+#include "animation.h"
 #include "render/constantbuffer.h"
 #include "render/shader.h"
 #include "render/camera.h"
 
 namespace lycoris::render
 {
+	constexpr auto animation_max = 16;
+
+	constexpr float color_of(const std::uint8_t color)
+	{
+		return static_cast<float>(color) / 255.0f;
+	}
+	
 	enum class blend_state
 	{
 		none,
@@ -22,17 +30,22 @@ namespace lycoris::render
 		subtract
 	};
 
-	constexpr float color_of(const std::uint8_t color)
-	{
-		return static_cast<float>(color) / 255.0f;
-	}
-	
 	struct vertex
 	{
 		DirectX::XMFLOAT3 position;
 		DirectX::XMFLOAT3 normal;
 		DirectX::XMFLOAT4 diffuse;
 		DirectX::XMFLOAT2 tex_coord;
+	};
+
+	struct animated_vertex
+	{
+
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT3 normal;
+		DirectX::XMFLOAT4 diffuse;
+		DirectX::XMFLOAT2 tex_coord;
+		std::uint32_t anim_index;
 	};
 
 	struct material
@@ -117,6 +130,12 @@ namespace lycoris::render
 		void set_viewport(const viewport& viewport);
 		// ぶれんどすてーと
 		void set_blend_state(blend_state state);
+		// アニメーション用
+		void set_animation_matrix(std::size_t index, const DirectX::XMFLOAT4X4& matrix);
+		// アニメーション用 (一括)
+		void set_animation(const animation::animator& animator);
+		// 頂点シェーダー設定
+		void set_vertex_shader(shader::vertex shader);
 		// テキスト描画 (DirectWrite)
 		void draw_text(const std::wstring& text);
 
@@ -139,11 +158,8 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 
-		shader::vertex_shader vertex_shader_;
+		std::array<shader::vertex_shader, static_cast<std::size_t>(shader::vertex::max)> vertex_shaders_;
 		shader::pixel_shader pixel_shader_;
-		winrt::com_ptr<ID3D11InputLayout> input_layout_;
-		winrt::com_ptr<ID3D11Buffer> constant_buffer_;
-		winrt::com_ptr<ID3D11Buffer> material_buffer_;
 
 		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_enabled_;
 		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_disabled_;
@@ -165,6 +181,7 @@ namespace lycoris::render
 		constant_buffer<material, 3> material_ = {};
 		constant_buffer<DirectX::XMFLOAT4, 4> directional_light_ = {};
 		constant_buffer<DirectX::XMFLOAT4, 5> uv_offset_ = {};
+		constant_buffer<std::array<DirectX::XMFLOAT4X4, animation_max>, 6> anim_matrix_ = {};
 
 		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
 

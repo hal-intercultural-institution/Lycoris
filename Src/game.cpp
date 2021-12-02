@@ -207,9 +207,10 @@ void lycoris::game::game::on_draw()
 			camera.set();
 			scene_->on_draw();
 		}
-		scene_->on_overlay();
 	}
 	renderer_.set_viewport(default_viewport_);
+	if (scene_) scene_->on_overlay();
+
 	if (load_screen_ && load_screen_->get_load_status() != load_screen::status::not_loading)
 		load_screen_->on_draw();
 	overlay_.on_draw();
