@@ -153,6 +153,34 @@ void lycoris::render::renderer::set_blend_state(blend_state state)
 		blend_factor.data(), 0xffffffff);
 }
 
+void lycoris::render::renderer::set_animation_matrix(const std::size_t index, const DirectX::XMFLOAT4X4& matrix)
+{
+	anim_matrix_.get()[index] = matrix;
+	anim_matrix_.update();
+}
+
+void lycoris::render::renderer::set_animation(const animation::animator& animator)
+{
+	assert(animator.get().size() <= animation_max);
+
+	for (std::size_t i = 0; i < animator.get().size(); ++i)
+	{
+		const auto& animation = animator.get().at(i);
+		auto matrix = XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&animation.get_scale())));
+		matrix = XMMatrixMultiply(matrix, DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&animation.get_rotation())));
+		matrix = XMMatrixMultiply(matrix, DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&animation.get_position())));
+		matrix = XMMatrixTranspose(matrix);
+		XMStoreFloat4x4(&anim_matrix_.get()[i], matrix);
+	}
+
+	anim_matrix_.update();
+}
+
+void lycoris::render::renderer::set_vertex_shader(shader::vertex shader)
+{
+	shader::vertex_shader::set(vertex_shaders_[static_cast<std::size_t>(shader)]);
+}
+
 void lycoris::render::renderer::draw_text(const std::wstring& text)
 {
 	winrt::com_ptr<ID2D1SolidColorBrush> brush;
@@ -347,7 +375,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		immediate_context_->PSSetSamplers(0, 1, samplerState);
 	}
 
-	// Vertex Shader, Input Layout
+	// Vertex Shader, Input Layout (normal)
 	{
 		std::initializer_list<D3D11_INPUT_ELEMENT_DESC> layout = {
 				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -355,8 +383,22 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		vertex_shader_ = shader::vertex_shader::compile("data/shader.hlsl", "vs_main", layout);
-		shader::vertex_shader::set(vertex_shader_);
+		auto& shader = vertex_shaders_[static_cast<std::size_t>(shader::vertex::normal)];
+		shader = shader::vertex_shader::compile("data/shader.hlsl", "vs_main", layout);
+		shader::vertex_shader::set(shader);
+	}
+
+	// Vertex Shader, Input Layout (animated)
+	{
+		std::initializer_list<D3D11_INPUT_ELEMENT_DESC> layout = {
+				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "BLENDINDICES", 0, DXGI_FORMAT_R32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+		auto& shader = vertex_shaders_[static_cast<std::size_t>(shader::vertex::animated)];
+		shader = shader::vertex_shader::compile("data/shader.hlsl", "vs_anim", layout);
 	}
 
 	// PixelShader
@@ -373,6 +415,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		material_ = constant_buffer<material, 3>::create();
 		directional_light_ = constant_buffer<DirectX::XMFLOAT4, 4>::create();
 		uv_offset_ = constant_buffer<DirectX::XMFLOAT4, 5>::create();
+		anim_matrix_ = constant_buffer<std::array<DirectX::XMFLOAT4X4, 16>, 6>::create();
 	}
 	
 	{

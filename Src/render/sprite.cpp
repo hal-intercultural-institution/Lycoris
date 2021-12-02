@@ -122,6 +122,7 @@ void lycoris::render::sprite::draw()
 
 	renderer.set_material(material_);
 	renderer.set_blend_state(blend_state_);
+	renderer.set_vertex_shader(shader::vertex::normal);
 
 	constexpr std::uint32_t stride = sizeof(vertex);
 	constexpr std::uint32_t offset = 0;
