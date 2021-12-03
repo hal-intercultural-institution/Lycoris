@@ -46,6 +46,13 @@ lycoris::render::text_format lycoris::render::renderer::create_text_format(const
 	return text_format(std::move(format));
 }
 
+lycoris::render::text_color lycoris::render::renderer::create_text_color(const DirectX::XMFLOAT4& color) const
+{
+	winrt::com_ptr<ID2D1SolidColorBrush> brush;
+	d2d_device_context_->CreateSolidColorBrush(D2D1::ColorF(color.x, color.y, color.z, color.w), brush.put());
+	return text_color(std::move(brush));
+}
+
 lycoris::render::screen& lycoris::render::renderer::get_screen()
 {
 	return screen_;

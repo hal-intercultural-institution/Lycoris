@@ -152,6 +152,9 @@ namespace lycoris::render
 		[[nodiscard("Ignoring value returned wastes resources.")]]
 		// creates text format object used by text renderer
 		text_format create_text_format(const std::wstring& font_name, float size) const;
+		[[nodiscard("Ignoring value returned wastes resources.")]]
+		// creates text color object used by text renderer
+		text_color create_text_color(const DirectX::XMFLOAT4& color) const;
 
 	private:
 		// pointers
