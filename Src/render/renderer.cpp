@@ -209,6 +209,14 @@ void lycoris::render::renderer::draw_text(const std::wstring& text)
 	d2d_device_context_->EndDraw();
 }
 
+void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
+	const text_canvas& canvas) const
+{
+	d2d_device_context_->BeginDraw();
+	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), &format.get(), &canvas.get(), &color.get());
+	d2d_device_context_->EndDraw();
+}
+
 void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 {
 	HRESULT hr = S_OK;

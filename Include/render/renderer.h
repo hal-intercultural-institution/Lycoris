@@ -138,7 +138,8 @@ namespace lycoris::render
 		// 頂点シェーダー設定
 		void set_vertex_shader(shader::vertex shader);
 		// テキスト描画 (DirectWrite)
-		void draw_text(const std::wstring& text);
+		[[deprecated]] void draw_text(const std::wstring& text);
+		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas) const;
 
 		//ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
 		//ID3D11PixelShader& get_pixel_shader(int index);
