@@ -14,6 +14,7 @@
 #include "game.h"
 
 constexpr std::array blend_factor = { 0.0f, 0.0f, 0.0f, 0.0f };
+constexpr auto locale = L"ja-JP";
 
 ID3D11Device& lycoris::render::renderer::get_device() const
 {
@@ -33,6 +34,16 @@ lycoris::render::camera& lycoris::render::renderer::get_camera()
 std::array<lycoris::render::camera, 4>& lycoris::render::renderer::get_cameras()
 {
 	return camera_;
+}
+
+lycoris::render::text_format lycoris::render::renderer::create_text_format(const std::wstring& font_name, const float size) const
+{
+	winrt::com_ptr<IDWriteTextFormat> format;
+	d_write_factory_->CreateTextFormat(
+		font_name.c_str(), nullptr,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		size, locale, format.put());
+	return text_format(std::move(format));
 }
 
 lycoris::render::screen& lycoris::render::renderer::get_screen()
@@ -462,10 +473,9 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	}
 
 	{
-		winrt::com_ptr<IDWriteFactory> d_write_factory;
-		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(d_write_factory.get()), reinterpret_cast<IUnknown**>(d_write_factory.put()));
+		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(d_write_factory_.get()), reinterpret_cast<IUnknown**>(d_write_factory_.put()));
 
-		d_write_factory->CreateTextFormat(
+		d_write_factory_->CreateTextFormat(
 			L"Consolas", nullptr,
 			DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
 			16.0f, L"ja-JP", d_write_text_format_.put());

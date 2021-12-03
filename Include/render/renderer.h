@@ -12,6 +12,7 @@
 #include "render/constantbuffer.h"
 #include "render/shader.h"
 #include "render/camera.h"
+#include "render/text.h"
 
 namespace lycoris::render
 {
@@ -148,6 +149,10 @@ namespace lycoris::render
 		// get camera
 		std::array<camera, 4>& get_cameras();
 
+		[[nodiscard("Ignoring value returned wastes resources.")]]
+		// creates text format object used by text renderer
+		text_format create_text_format(const std::wstring& font_name, float size) const;
+
 	private:
 		// pointers
 		
@@ -171,6 +176,8 @@ namespace lycoris::render
 		winrt::com_ptr<ID2D1Device> d2d_device_;
 		winrt::com_ptr<ID2D1DeviceContext> d2d_device_context_;
 		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_;
+
+		winrt::com_ptr<IDWriteFactory> d_write_factory_;
 		winrt::com_ptr<IDWriteTextFormat> d_write_text_format_;
 
 		// values
