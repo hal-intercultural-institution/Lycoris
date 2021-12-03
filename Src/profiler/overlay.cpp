@@ -5,6 +5,14 @@
 #include "game.h"
 #include "constants.h"
 
+void lycoris::profiler::debug_overlay::initialize()
+{
+	const auto& renderer = game::get_game().get_renderer();
+	format_ = renderer.create_text_format(L"Consolas", 16.0f);
+	color_ = renderer.create_text_color({ 1.0f, 1.0f, 1.0f, 1.0f });
+	canvas_ = render::text_canvas(0.0f, 0.0f, 600.0f, 400.0f);
+}
+
 void lycoris::profiler::debug_overlay::on_tick()
 {
 	if (game::get_game().get_input_system().get_keyboard().is_triggered(VK_F3))
@@ -36,5 +44,5 @@ void lycoris::profiler::debug_overlay::on_draw()
 {
 	if (!shown_) return;
 	auto& game = game::get_game();
-	game.get_renderer().draw_text(text_);
+	game.get_renderer().draw_text(text_, format_, color_, canvas_);
 }
