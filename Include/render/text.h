@@ -30,4 +30,17 @@ namespace lycoris::render
 		winrt::com_ptr<ID2D1SolidColorBrush> brush_;
 	};
 
+	class text_canvas
+	{
+	public:
+		text_canvas() = default;
+		text_canvas(float left, float top, float right, float bottom);
+
+		const D2D1_RECT_F& get() const;
+		D2D1_RECT_F& get();
+
+	private:
+		D2D1_RECT_F rectangle_{};
+	};
+
 }
