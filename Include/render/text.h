@@ -39,6 +39,12 @@ namespace lycoris::render
 		const D2D1_RECT_F& get() const;
 		D2D1_RECT_F& get();
 
+		text_canvas operator+(const DirectX::XMFLOAT2& m) const;
+		text_canvas operator-(const DirectX::XMFLOAT2& m) const;
+
+		text_canvas& operator+=(const DirectX::XMFLOAT2& m);
+		text_canvas& operator-=(const DirectX::XMFLOAT2& m);
+
 	private:
 		D2D1_RECT_F rectangle_{};
 	};

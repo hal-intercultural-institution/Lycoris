@@ -39,3 +39,31 @@ D2D1_RECT_F& lycoris::render::text_canvas::get()
 {
 	return rectangle_;
 }
+
+lycoris::render::text_canvas lycoris::render::text_canvas::operator+(const DirectX::XMFLOAT2& m) const
+{
+	return text_canvas(rectangle_.left + m.x, rectangle_.top + m.y, rectangle_.right + m.x, rectangle_.bottom + m.y);
+}
+
+lycoris::render::text_canvas lycoris::render::text_canvas::operator-(const DirectX::XMFLOAT2& m) const
+{
+	return text_canvas(rectangle_.left - m.x, rectangle_.top - m.y, rectangle_.right - m.x, rectangle_.bottom - m.y);
+}
+
+lycoris::render::text_canvas& lycoris::render::text_canvas::operator+=(const DirectX::XMFLOAT2& m)
+{
+	rectangle_.left += m.x;
+	rectangle_.top += m.y;
+	rectangle_.right += m.x;
+	rectangle_.bottom += m.y;
+	return *this;
+}
+
+lycoris::render::text_canvas& lycoris::render::text_canvas::operator-=(const DirectX::XMFLOAT2& m)
+{
+	rectangle_.left -= m.x;
+	rectangle_.top -= m.y;
+	rectangle_.right -= m.x;
+	rectangle_.bottom -= m.y;
+	return *this;
+}
