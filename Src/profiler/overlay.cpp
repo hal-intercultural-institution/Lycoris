@@ -21,7 +21,7 @@ void lycoris::profiler::debug_overlay::on_tick()
 
 	auto& game = game::get_game();
 	text_ = std::format(
-		L"Lycoris {}-{}, {} build\nfps: {}\nTick: {:f}\nDraw: {:f}\nMouse x: {}\nMouse y: {}\nGame-pads: {}\nCamera pos: {} {} {}\nCamera rot: {} {}\nCamera distance: {}",
+		L"Lycoris {}-{}, {} build\nfps: {}\nTick: {:f}\nDraw: {:f}\nMouse x: {}\nMouse y: {}\nGame-pads: {}\nCamera pos: {} {} {}\nCamera rot: {} {}\nCamera distance: {}\nDrawCalls: {}",
 		constants::branch_name,
 		constants::commit_id,
 		constants::configuration_name,
@@ -36,7 +36,8 @@ void lycoris::profiler::debug_overlay::on_tick()
 		game.get_renderer().get_camera().get_position().z,
 		game.get_renderer().get_camera().get_rotation().x,
 		game.get_renderer().get_camera().get_rotation().y,
-		game.get_renderer().get_camera().get_camera_distance()
+		game.get_renderer().get_camera().get_camera_distance(),
+		game.get_draw_call_count()
 	);
 }
 
