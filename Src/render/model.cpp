@@ -4,7 +4,8 @@
 void lycoris::render::model3d::model_3d::draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale,
 	const DirectX::XMFLOAT3& rotation)
 {
-	auto& renderer = game::get_game().get_renderer();
+	auto& game = game::get_game();
+	auto& renderer = game.get_renderer();
 	auto& device_context = renderer.get_device_context();
 
 	auto world_matrix = XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&scale)));
@@ -43,6 +44,7 @@ void lycoris::render::model3d::model_3d::draw(const DirectX::XMFLOAT3& position,
 			};
 			device_context.PSSetShaderResources(0, static_cast<std::uint32_t>(srvs.size()), srvs.data());
 			device_context.DrawIndexed(indices, start_index, 0);
+			game.increment_draw_call_count();
 		}
 	}
 
@@ -51,7 +53,8 @@ void lycoris::render::model3d::model_3d::draw(const DirectX::XMFLOAT3& position,
 void lycoris::render::model3d::animated_model::draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale,
 	const DirectX::XMFLOAT3& rotation, const animation::animator& animator)
 {
-	auto& renderer = game::get_game().get_renderer();
+	auto& game = game::get_game();
+	auto& renderer = game.get_renderer();
 	auto& device_context = renderer.get_device_context();
 
 	auto world_matrix = XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&scale)));
@@ -88,6 +91,7 @@ void lycoris::render::model3d::animated_model::draw(const DirectX::XMFLOAT3& pos
 		};
 		device_context.PSSetShaderResources(0, static_cast<std::uint32_t>(srvs.size()), srvs.data());
 		device_context.DrawIndexed(indices, start_index, 0);
+		game.increment_draw_call_count();
 	}
 }
 
