@@ -23,6 +23,7 @@ namespace lycoris::game
 		std::uint32_t get_fps_last_second() const;
 		double get_last_tick_time() const;
 		double get_last_draw_time() const;
+		std::uint32_t get_draw_call_count() const noexcept;
 		HINSTANCE get_instance_handle();
 		scene& get_current_scene() const;
 		render::renderer& get_renderer() noexcept;
@@ -33,6 +34,8 @@ namespace lycoris::game
 		void initialize(HINSTANCE h_instance, int n_show_cmd, MSG* message);
 		void run();
 		void destroy();
+
+		void increment_draw_call_count();
 
 		static bool is_initialized();
 
@@ -71,7 +74,7 @@ namespace lycoris::game
 		static void set_game(game* ptr);
 
 		LARGE_INTEGER per_second_{};
-		std::uint32_t frames_last_second_ = 0;
+		std::uint32_t frames_last_second_ = 0, internal_draw_calls_ = 0;
 		double frame_time_tick_ = 0.0, frame_time_draw_ = 0.0;
 	};
 	
