@@ -203,6 +203,7 @@ void lycoris::render::renderer::draw_text(const std::wstring& text)
 {
 	winrt::com_ptr<ID2D1SolidColorBrush> brush;
 	d2d_device_context_->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brush.put());
+	d2d_device_context_->SetTarget(d2d_bitmap_screen_.get());
 	d2d_device_context_->BeginDraw();
 	const auto rect = D2D1::RectF(0, 0, 600, 400);
 	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), d_write_text_format_.get(), &rect, brush.get());
@@ -212,6 +213,7 @@ void lycoris::render::renderer::draw_text(const std::wstring& text)
 void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
 	const text_canvas& canvas) const
 {
+	d2d_device_context_->SetTarget(d2d_bitmap_screen_.get());
 	d2d_device_context_->BeginDraw();
 	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), &format.get(), &canvas.get(), &color.get());
 	d2d_device_context_->EndDraw();
@@ -511,8 +513,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 			dpi, dpi
 		);
 
-		hr = d2d_device_context_->CreateBitmapFromDxgiSurface(dxgi_surface.get(), &bitmap_properties, d2d_bitmap_.put());
-		d2d_device_context_->SetTarget(d2d_bitmap_.get());
+		hr = d2d_device_context_->CreateBitmapFromDxgiSurface(dxgi_surface.get(), &bitmap_properties, d2d_bitmap_screen_.put());
 	}
 
 	{

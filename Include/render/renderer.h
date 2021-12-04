@@ -181,7 +181,7 @@ namespace lycoris::render
 
 		winrt::com_ptr<ID2D1Device> d2d_device_;
 		winrt::com_ptr<ID2D1DeviceContext> d2d_device_context_;
-		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_;
+		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_screen_;
 
 		winrt::com_ptr<IDWriteFactory> d_write_factory_;
 		winrt::com_ptr<IDWriteTextFormat> d_write_text_format_;
