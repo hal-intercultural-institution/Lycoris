@@ -425,10 +425,13 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		sampler_desc.MinLOD = 0;
 		sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
 
-		const auto& samplerState = sampler_state_.put();
-		device_->CreateSamplerState(&sampler_desc, samplerState);
+		device_->CreateSamplerState(&sampler_desc, sampler_state_.put());
 
-		immediate_context_->PSSetSamplers(0, 1, samplerState);
+		std::array samplers = {
+			sampler_state_.get()
+		};
+
+		immediate_context_->PSSetSamplers(0, static_cast<std::uint32_t>(samplers.size()), samplers.data());
 	}
 
 	// Vertex Shader, Input Layout (normal)
