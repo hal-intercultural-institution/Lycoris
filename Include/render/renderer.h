@@ -138,9 +138,9 @@ namespace lycoris::render
 		void set_animation(const animation::animator& animator);
 		// 頂点シェーダー設定
 		void set_vertex_shader(shader::vertex shader);
-		// テキスト描画 (DirectWrite)
-		[[deprecated]] void draw_text(const std::wstring& text);
+		// テキスト描画 (画面) (DirectWrite)
 		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas) const;
+		// テキスト描画 (テクスチャ) (DirectWrite)
 		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas, const texture::texture& texture) const;
 
 		//ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
@@ -184,7 +184,6 @@ namespace lycoris::render
 		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_screen_;
 
 		winrt::com_ptr<IDWriteFactory> d_write_factory_;
-		winrt::com_ptr<IDWriteTextFormat> d_write_text_format_;
 
 		// values
 

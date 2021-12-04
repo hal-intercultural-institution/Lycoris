@@ -521,14 +521,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 
 	{
 		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(d_write_factory_.get()), reinterpret_cast<IUnknown**>(d_write_factory_.put()));
-
-		d_write_factory_->CreateTextFormat(
-			L"Consolas", nullptr,
-			DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-			16.0f, L"ja-JP", d_write_text_format_.put());
 	}
-
-	d_write_text_format_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 
 	camera_[0].set_use(true);
 
