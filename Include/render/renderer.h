@@ -9,6 +9,7 @@
 #include <winrt/base.h>
 
 #include "animation.h"
+#include "render/texture.h"
 #include "render/constantbuffer.h"
 #include "render/shader.h"
 #include "render/camera.h"
@@ -140,6 +141,7 @@ namespace lycoris::render
 		// テキスト描画 (DirectWrite)
 		[[deprecated]] void draw_text(const std::wstring& text);
 		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas) const;
+		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas, const texture::texture& texture) const;
 
 		//ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
 		//ID3D11PixelShader& get_pixel_shader(int index);

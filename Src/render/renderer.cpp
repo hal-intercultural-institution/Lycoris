@@ -217,6 +217,34 @@ void lycoris::render::renderer::draw_text(const std::wstring& text, const text_f
 	d2d_device_context_->EndDraw();
 }
 
+void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
+	const text_canvas& canvas, const texture::texture& texture) const
+{
+	winrt::com_ptr<IDXGISurface> surface;
+	winrt::com_ptr<ID2D1Bitmap1> bitmap;
+
+	HRESULT result = texture.get_texture()->QueryInterface(IID_PPV_ARGS(surface.put()));
+	if (FAILED(result))
+		throw std::runtime_error("TextRenderer: failed to create DXGI Surface from Direct3D Texture");
+
+	const auto dpi = static_cast<float>(GetDpiForWindow(screen_.get_window_handle()));
+	const D2D1_BITMAP_PROPERTIES1 bitmap_properties = D2D1::BitmapProperties1(
+		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+		D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+		dpi, dpi
+	);
+
+	result = d2d_device_context_->CreateBitmapFromDxgiSurface(surface.get(), &bitmap_properties, bitmap.put());
+	if (FAILED(result))
+		throw std::runtime_error("TextRenderer: failed to create Direct2D Bitmap from DXGI Surface");
+	d2d_device_context_->SetTarget(bitmap.get());
+
+	d2d_device_context_->BeginDraw();
+	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), &format.get(), &canvas.get(), &color.get());
+	d2d_device_context_->EndDraw();
+
+}
+
 void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 {
 	HRESULT hr = S_OK;
