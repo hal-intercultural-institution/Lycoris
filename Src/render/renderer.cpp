@@ -509,7 +509,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		winrt::com_ptr<IDXGISurface> dxgi_surface;
 		hr = swap_chain_->GetBuffer(0, IID_PPV_ARGS(dxgi_surface.put()));
 
-		float dpi = static_cast<float>(GetDpiForWindow(hWnd));
+		const auto dpi = static_cast<float>(GetDpiForWindow(hWnd));
 		D2D1_BITMAP_PROPERTIES1 bitmap_properties = D2D1::BitmapProperties1(
 			D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
 			D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
