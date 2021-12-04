@@ -242,12 +242,12 @@ void lycoris::game::game::destroy()
 	UnregisterClass(class_name, h_instance_);
 }
 
-void lycoris::game::game::increment_draw_call_count()
+void lycoris::game::game::increment_draw_call_count() noexcept
 {
 	internal_draw_calls_++;
 }
 
-bool lycoris::game::game::is_initialized()
+bool lycoris::game::game::is_initialized() noexcept
 {
 	return initialized;
 }
@@ -257,22 +257,22 @@ lycoris::game::game::~game() noexcept
 	CoUninitialize();
 }
 
-std::uint64_t lycoris::game::game::get_frame_count() const
+std::uint64_t lycoris::game::game::get_frame_count() const noexcept
 {
 	return frame_count_;
 }
 
-std::uint32_t lycoris::game::game::get_fps_last_second() const
+std::uint32_t lycoris::game::game::get_fps_last_second() const noexcept
 {
 	return frames_last_second_;
 }
 
-double lycoris::game::game::get_last_tick_time() const
+double lycoris::game::game::get_last_tick_time() const noexcept
 {
 	return frame_time_tick_;
 }
 
-double lycoris::game::game::get_last_draw_time() const
+double lycoris::game::game::get_last_draw_time() const noexcept
 {
 	return frame_time_draw_;
 }
@@ -282,7 +282,7 @@ std::uint32_t lycoris::game::game::get_draw_call_count() const noexcept
 	return internal_draw_calls_;
 }
 
-HINSTANCE lycoris::game::game::get_instance_handle()
+HINSTANCE lycoris::game::game::get_instance_handle() const noexcept
 {
 	return h_instance_;
 }
