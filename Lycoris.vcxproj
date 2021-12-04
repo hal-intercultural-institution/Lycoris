@@ -189,6 +189,7 @@
     <ClInclude Include="Include\render\animation.h" />
     <ClInclude Include="Include\render\camera.h" />
     <ClInclude Include="Include\render\constantbuffer.h" />
+    <ClInclude Include="Include\render\text.h" />
     <ClInclude Include="Include\render\keyframe.h" />
     <ClInclude Include="Include\render\model3d.h" />
     <ClInclude Include="Include\render\plane.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="Src\render\screen.cpp" />
     <ClCompile Include="Src\render\shader.cpp" />
     <ClCompile Include="Src\render\sprite.cpp" />
+    <ClCompile Include="Src\render\text.cpp" />
     <ClCompile Include="Src\render\texture.cpp" />
     <ClCompile Include="Src\render\textureloader.cpp" />
     <ClCompile Include="Src\system\audio\audio.cpp" />

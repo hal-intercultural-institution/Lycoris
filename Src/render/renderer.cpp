@@ -14,6 +14,7 @@
 #include "game.h"
 
 constexpr std::array blend_factor = { 0.0f, 0.0f, 0.0f, 0.0f };
+constexpr auto locale = L"ja-JP";
 
 ID3D11Device& lycoris::render::renderer::get_device() const
 {
@@ -33,6 +34,23 @@ lycoris::render::camera& lycoris::render::renderer::get_camera()
 std::array<lycoris::render::camera, 4>& lycoris::render::renderer::get_cameras()
 {
 	return camera_;
+}
+
+lycoris::render::text_format lycoris::render::renderer::create_text_format(const std::wstring& font_name, const float size) const
+{
+	winrt::com_ptr<IDWriteTextFormat> format;
+	d_write_factory_->CreateTextFormat(
+		font_name.c_str(), nullptr,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		size, locale, format.put());
+	return text_format(std::move(format));
+}
+
+lycoris::render::text_color lycoris::render::renderer::create_text_color(const DirectX::XMFLOAT4& color) const
+{
+	winrt::com_ptr<ID2D1SolidColorBrush> brush;
+	d2d_device_context_->CreateSolidColorBrush(D2D1::ColorF(color.x, color.y, color.z, color.w), brush.put());
+	return text_color(std::move(brush));
 }
 
 lycoris::render::screen& lycoris::render::renderer::get_screen()
@@ -185,10 +203,48 @@ void lycoris::render::renderer::draw_text(const std::wstring& text)
 {
 	winrt::com_ptr<ID2D1SolidColorBrush> brush;
 	d2d_device_context_->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brush.put());
+	d2d_device_context_->SetTarget(d2d_bitmap_screen_.get());
 	d2d_device_context_->BeginDraw();
 	const auto rect = D2D1::RectF(0, 0, 600, 400);
 	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), d_write_text_format_.get(), &rect, brush.get());
 	d2d_device_context_->EndDraw();
+}
+
+void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
+	const text_canvas& canvas) const
+{
+	d2d_device_context_->SetTarget(d2d_bitmap_screen_.get());
+	d2d_device_context_->BeginDraw();
+	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), &format.get(), &canvas.get(), &color.get());
+	d2d_device_context_->EndDraw();
+}
+
+void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
+	const text_canvas& canvas, const texture::texture& texture) const
+{
+	winrt::com_ptr<IDXGISurface> surface;
+	winrt::com_ptr<ID2D1Bitmap1> bitmap;
+
+	HRESULT result = texture.get_texture()->QueryInterface(IID_PPV_ARGS(surface.put()));
+	if (FAILED(result))
+		throw std::runtime_error("TextRenderer: failed to create DXGI Surface from Direct3D Texture");
+
+	const auto dpi = static_cast<float>(GetDpiForWindow(screen_.get_window_handle()));
+	const D2D1_BITMAP_PROPERTIES1 bitmap_properties = D2D1::BitmapProperties1(
+		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+		D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+		dpi, dpi
+	);
+
+	result = d2d_device_context_->CreateBitmapFromDxgiSurface(surface.get(), &bitmap_properties, bitmap.put());
+	if (FAILED(result))
+		throw std::runtime_error("TextRenderer: failed to create Direct2D Bitmap from DXGI Surface");
+	d2d_device_context_->SetTarget(bitmap.get());
+
+	d2d_device_context_->BeginDraw();
+	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), &format.get(), &canvas.get(), &color.get());
+	d2d_device_context_->EndDraw();
+
 }
 
 void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool bWindow)
@@ -457,15 +513,13 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 			dpi, dpi
 		);
 
-		hr = d2d_device_context_->CreateBitmapFromDxgiSurface(dxgi_surface.get(), &bitmap_properties, d2d_bitmap_.put());
-		d2d_device_context_->SetTarget(d2d_bitmap_.get());
+		hr = d2d_device_context_->CreateBitmapFromDxgiSurface(dxgi_surface.get(), &bitmap_properties, d2d_bitmap_screen_.put());
 	}
 
 	{
-		winrt::com_ptr<IDWriteFactory> d_write_factory;
-		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(d_write_factory.get()), reinterpret_cast<IUnknown**>(d_write_factory.put()));
+		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(d_write_factory_.get()), reinterpret_cast<IUnknown**>(d_write_factory_.put()));
 
-		d_write_factory->CreateTextFormat(
+		d_write_factory_->CreateTextFormat(
 			L"Consolas", nullptr,
 			DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
 			16.0f, L"ja-JP", d_write_text_format_.put());

@@ -9,9 +9,11 @@
 #include <winrt/base.h>
 
 #include "animation.h"
+#include "render/texture.h"
 #include "render/constantbuffer.h"
 #include "render/shader.h"
 #include "render/camera.h"
+#include "render/text.h"
 
 namespace lycoris::render
 {
@@ -137,7 +139,9 @@ namespace lycoris::render
 		// 頂点シェーダー設定
 		void set_vertex_shader(shader::vertex shader);
 		// テキスト描画 (DirectWrite)
-		void draw_text(const std::wstring& text);
+		[[deprecated]] void draw_text(const std::wstring& text);
+		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas) const;
+		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas, const texture::texture& texture) const;
 
 		//ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
 		//ID3D11PixelShader& get_pixel_shader(int index);
@@ -147,6 +151,13 @@ namespace lycoris::render
 		camera& get_camera();
 		// get camera
 		std::array<camera, 4>& get_cameras();
+
+		[[nodiscard("Ignoring value returned wastes resources.")]]
+		// creates text format object used by text renderer
+		text_format create_text_format(const std::wstring& font_name, float size) const;
+		[[nodiscard("Ignoring value returned wastes resources.")]]
+		// creates text color object used by text renderer
+		text_color create_text_color(const DirectX::XMFLOAT4& color) const;
 
 	private:
 		// pointers
@@ -170,7 +181,9 @@ namespace lycoris::render
 
 		winrt::com_ptr<ID2D1Device> d2d_device_;
 		winrt::com_ptr<ID2D1DeviceContext> d2d_device_context_;
-		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_;
+		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_screen_;
+
+		winrt::com_ptr<IDWriteFactory> d_write_factory_;
 		winrt::com_ptr<IDWriteTextFormat> d_write_text_format_;
 
 		// values

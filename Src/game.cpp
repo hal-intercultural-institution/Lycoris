@@ -96,6 +96,7 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 		texture_loader_.initialize();
 		input_system_.initialize();
 		audio_system_.initialize();
+		overlay_.initialize();
 		default_viewport_ = render::viewport(1.0f, 1.0f, 0.0f, 0.0f);
 	}
 	catch (const std::runtime_error& e)
