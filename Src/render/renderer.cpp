@@ -199,17 +199,6 @@ void lycoris::render::renderer::set_vertex_shader(shader::vertex shader)
 	shader::vertex_shader::set(vertex_shaders_[static_cast<std::size_t>(shader)]);
 }
 
-void lycoris::render::renderer::draw_text(const std::wstring& text)
-{
-	winrt::com_ptr<ID2D1SolidColorBrush> brush;
-	d2d_device_context_->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brush.put());
-	d2d_device_context_->SetTarget(d2d_bitmap_screen_.get());
-	d2d_device_context_->BeginDraw();
-	const auto rect = D2D1::RectF(0, 0, 600, 400);
-	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), d_write_text_format_.get(), &rect, brush.get());
-	d2d_device_context_->EndDraw();
-}
-
 void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
 	const text_canvas& canvas) const
 {
