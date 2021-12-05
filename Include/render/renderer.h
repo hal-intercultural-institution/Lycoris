@@ -23,7 +23,8 @@ namespace lycoris::render
 	{
 		return static_cast<float>(color) / 255.0f;
 	}
-	
+
+	constexpr auto blend_state_count = 4;
 	enum class blend_state
 	{
 		none,
@@ -189,7 +190,7 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11Texture2D> depth_stencil_texture_;
 		std::array<winrt::com_ptr<ID3D11RasterizerState>, culling_mode_count> rasterizer_states_;
 		culling_mode culling_mode_ = culling_mode::back;
-		std::array<winrt::com_ptr<ID3D11BlendState>, 4> blend_states_;
+		std::array<winrt::com_ptr<ID3D11BlendState>, blend_state_count> blend_states_;
 		blend_state blend_state_ = blend_state::alpha;
 		winrt::com_ptr<ID3D11SamplerState> sampler_state_;
 
