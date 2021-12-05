@@ -32,6 +32,14 @@ namespace lycoris::render
 		subtract
 	};
 
+	constexpr auto culling_mode_count = 3;
+	enum class culling_mode
+	{
+		none,
+		front,
+		back
+	};
+
 	struct vertex
 	{
 		DirectX::XMFLOAT3 position;
@@ -124,7 +132,7 @@ namespace lycoris::render
 		// UVオフセットを更新する
 		void set_uv_offset(const DirectX::XMFLOAT2& offset);
 		// カリング設定
-		void set_culling_mode(D3D11_CULL_MODE culling_mode);
+		void set_culling_mode(culling_mode culling_mode);
 		// 背景色
 		void set_background_color(const DirectX::XMFLOAT4& color);
 		// ビューポート
@@ -171,7 +179,8 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_enabled_;
 		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_disabled_;
 		winrt::com_ptr<ID3D11Texture2D> depth_stencil_texture_;
-		winrt::com_ptr<ID3D11RasterizerState> rasterizer_state_;
+		std::array<winrt::com_ptr<ID3D11RasterizerState>, culling_mode_count> rasterizer_states_;
+		culling_mode culling_mode_ = culling_mode::back;
 		std::array<winrt::com_ptr<ID3D11BlendState>, 4> blend_states_;
 		winrt::com_ptr<ID3D11SamplerState> sampler_state_;
 
@@ -190,8 +199,6 @@ namespace lycoris::render
 		constant_buffer<DirectX::XMFLOAT4, 4> directional_light_ = {};
 		constant_buffer<DirectX::XMFLOAT4, 5> uv_offset_ = {};
 		constant_buffer<std::array<DirectX::XMFLOAT4X4, animation_max>, 6> anim_matrix_ = {};
-
-		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
 
 		std::array<float, 4> background_color_ = { color_of(247), color_of(219), color_of(240), 1.0f };
 		

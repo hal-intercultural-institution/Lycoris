@@ -129,21 +129,12 @@ void lycoris::render::renderer::set_uv_offset(const DirectX::XMFLOAT2& offset)
 	uv_offset_.update({ offset.x, offset.y, 0.0f, 0.0f });
 }
 
-void lycoris::render::renderer::set_culling_mode(D3D11_CULL_MODE culling_mode)
+void lycoris::render::renderer::set_culling_mode(const culling_mode culling_mode)
 {
-	if (culling_mode == culling_mode_) return;
+	if (culling_mode_ == culling_mode) return;
 	culling_mode_ = culling_mode;
 	
-	D3D11_RASTERIZER_DESC rasterizer_desc = {};
-	rasterizer_desc.FillMode = D3D11_FILL_SOLID; // D3D11_FILL_WIREFRAME
-	rasterizer_desc.CullMode = culling_mode;
-	rasterizer_desc.DepthClipEnable = true;
-	rasterizer_desc.MultisampleEnable = false;
-	winrt::com_ptr<ID3D11RasterizerState> rasterizer_state;
-	device_->CreateRasterizerState(&rasterizer_desc, rasterizer_state.put());
-	rasterizer_state_ = std::move(rasterizer_state);
-	
-	immediate_context_->RSSetState(rasterizer_state_.get());
+	immediate_context_->RSSetState(rasterizer_states_[static_cast<std::size_t>(culling_mode_)].get());
 }
 
 void lycoris::render::renderer::set_background_color(const DirectX::XMFLOAT4& color)
@@ -331,12 +322,18 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	{
 		D3D11_RASTERIZER_DESC rasterizer_desc = {};
 		rasterizer_desc.FillMode = D3D11_FILL_SOLID; // D3D11_FILL_WIREFRAME
-		rasterizer_desc.CullMode = D3D11_CULL_BACK;
+		rasterizer_desc.CullMode = D3D11_CULL_NONE;
 		rasterizer_desc.DepthClipEnable = true;
 		rasterizer_desc.MultisampleEnable = false;
-		device_->CreateRasterizerState(&rasterizer_desc, rasterizer_state_.put());
-		
-		immediate_context_->RSSetState(rasterizer_state_.get());
+		device_->CreateRasterizerState(&rasterizer_desc, rasterizer_states_[static_cast<std::size_t>(culling_mode::none)].put());
+
+		rasterizer_desc.CullMode = D3D11_CULL_FRONT;
+		device_->CreateRasterizerState(&rasterizer_desc, rasterizer_states_[static_cast<std::size_t>(culling_mode::front)].put());
+
+		rasterizer_desc.CullMode = D3D11_CULL_BACK;
+		device_->CreateRasterizerState(&rasterizer_desc, rasterizer_states_[static_cast<std::size_t>(culling_mode::back)].put());
+
+		immediate_context_->RSSetState(rasterizer_states_[static_cast<std::size_t>(culling_mode::back)].get());
 	}
 
 	// Blend State (ピクセルシェーダーの後 既にあるピクセルの値とのブレンドの仕方を決定する)

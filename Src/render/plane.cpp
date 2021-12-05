@@ -45,7 +45,7 @@ void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const Direc
 
 	renderer.set_depth_enabled(true);
 	renderer.set_world_matrix(world_matrix_float);
-	renderer.set_culling_mode(D3D11_CULL_BACK);
+	renderer.set_culling_mode(culling_mode::back);
 	renderer.set_blend_state(blend_state_);
 	renderer.set_uv_offset({ 0.0f, 0.0f });
 	renderer.set_vertex_shader(shader::vertex::normal);

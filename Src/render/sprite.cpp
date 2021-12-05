@@ -84,7 +84,7 @@ void lycoris::render::sprite::draw()
 	auto& renderer = game.get_renderer();
 
 	renderer.set_depth_enabled(false);
-	renderer.set_culling_mode(D3D11_CULL_BACK);
+	renderer.set_culling_mode(culling_mode::back);
 
 	renderer.set_view_projection_2d();
 
