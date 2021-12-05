@@ -1,17 +1,15 @@
 ﻿#pragma once
 
-#include <filesystem>
-
 #include <d3d11.h>
 #include <winrt/base.h>
 
 namespace lycoris::render::shader
 {
+    constexpr auto vertex_shader_count = 2;
     enum class vertex
     {
 	    normal,
         animated,
-        max
     };
 
 	class vertex_shader

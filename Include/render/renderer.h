@@ -180,7 +180,7 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 
-		std::array<shader::vertex_shader, static_cast<std::size_t>(shader::vertex::max)> vertex_shaders_;
+		std::array<shader::vertex_shader, shader::vertex_shader_count> vertex_shaders_;
 		shader::vertex vertex_shader_ = shader::vertex::normal;
 		std::array<shader::pixel_shader, shader::pixel_shader_count> pixel_shaders_;
 		shader::pixel pixel_shader_ = shader::pixel::normal;
