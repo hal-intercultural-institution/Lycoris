@@ -30,6 +30,7 @@ void lycoris::render::plane::set_blend_state(const blend_state state)
 void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale, const DirectX::XMFLOAT3& rotation)
 {
 	constexpr DirectX::XMFLOAT3 compensation = { 0.0f, DirectX::XM_PI, 0.0f};
+	auto& game = game::get_game();
 	auto& renderer = game::get_game().get_renderer();
 	auto& device_context = renderer.get_device_context();
 
@@ -44,7 +45,7 @@ void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const Direc
 
 	renderer.set_depth_enabled(true);
 	renderer.set_world_matrix(world_matrix_float);
-	renderer.set_culling_mode(D3D11_CULL_BACK);
+	renderer.set_culling_mode(culling_mode::back);
 	renderer.set_blend_state(blend_state_);
 	renderer.set_uv_offset({ 0.0f, 0.0f });
 	renderer.set_vertex_shader(shader::vertex::normal);
@@ -64,6 +65,7 @@ void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const Direc
 	};
 	device_context.PSSetShaderResources(0, static_cast<std::uint32_t>(srvs.size()), srvs.data());
 	device_context.Draw(4, 0);
+	game.increment_draw_call_count();
 }
 
 lycoris::render::plane lycoris::render::plane::create(float width, float height, texture::texture&& texture)

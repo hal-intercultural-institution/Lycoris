@@ -10,10 +10,13 @@
 
 using lycoris::utility::scast::uint32_of;
 
-constexpr auto joystick_range_max = 1000;
-constexpr auto joystick_range_min = -1000;
-constexpr auto trigger_pressure_min = 0;
-constexpr auto trigger_pressure_max = 1000;
+namespace
+{
+	constexpr auto joystick_range_max = 1000;
+	constexpr auto joystick_range_min = -1000;
+	constexpr auto trigger_pressure_min = 0;
+	constexpr auto trigger_pressure_max = 1000;
+}
 
 BOOL CALLBACK device_callback(LPCDIDEVICEINSTANCE instance, LPVOID ref)
 {

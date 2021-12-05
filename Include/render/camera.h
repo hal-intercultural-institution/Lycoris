@@ -44,8 +44,6 @@ namespace lycoris::render
 
 		// sets position
 		void set_position(const DirectX::XMFLOAT3& position) noexcept;
-		//// sets rotation (quaternion)
-		//void set_rotation(const DirectX::XMFLOAT4& rotation) noexcept;
 		// sets rotation (eular)
 		void set_rotation(const DirectX::XMFLOAT3& rotation) noexcept;
 		// sets position where looking at

@@ -100,6 +100,4 @@ namespace lycoris::render::model3d
 		std::vector<model_material> materials_{};
 	};
 
-	void draw_model(const model_3d& model);
-	
 }

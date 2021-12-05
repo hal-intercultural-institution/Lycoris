@@ -1,9 +1,3 @@
-//=============================================================================
-//
-// ÉJÉÅÉâèàóù [camera.cpp]
-// Author : 
-//
-//=============================================================================
 #include "render/camera.h"
 
 #include "game.h"
@@ -59,14 +53,8 @@ void lycoris::render::camera::set_position(const DirectX::XMFLOAT3& position) no
 	position_ = position;
 }
 
-//void lycoris::render::camera::set_rotation(const DirectX::XMFLOAT4& rotation) noexcept
-//{
-//	rotation_ = rotation;
-//}
-
 void lycoris::render::camera::set_rotation(const DirectX::XMFLOAT3& rotation) noexcept
 {
-	//XMStoreFloat4(&rotation_, DirectX::XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z));
 	rotation_ = rotation;
 }
 
