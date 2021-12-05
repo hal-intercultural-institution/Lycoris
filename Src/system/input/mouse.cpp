@@ -4,13 +4,16 @@
 
 #include "game.h"
 
-constexpr auto keycode_left = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::left);
-constexpr auto keycode_right = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::right);
-constexpr auto keycode_middle = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::middle);
-constexpr auto keycode_forward = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::forward);
-constexpr auto keycode_back = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::back);
-constexpr auto keycode_wheel_up = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::wheel_up);
-constexpr auto keycode_wheel_down = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::wheel_down);
+namespace
+{
+	constexpr auto keycode_left = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::left);
+	constexpr auto keycode_right = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::right);
+	constexpr auto keycode_middle = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::middle);
+	constexpr auto keycode_forward = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::forward);
+	constexpr auto keycode_back = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::back);
+	constexpr auto keycode_wheel_up = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::wheel_up);
+	constexpr auto keycode_wheel_down = static_cast<std::uint64_t>(lycoris::system::input::mouse::keycode::wheel_down);
+}
 
 void lycoris::system::input::mouse::update(RAWMOUSE& data)
 {

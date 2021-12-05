@@ -8,8 +8,11 @@
 
 namespace strutil = lycoris::utility::string;
 
-constexpr auto diffuse = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-constexpr auto model_scale = 1.0f;
+namespace
+{
+	constexpr auto diffuse = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	constexpr auto model_scale = 1.0f;
+}
 
 lycoris::render::model3d::model_3d lycoris::asset::load_model(const std::filesystem::path& path)
 {

@@ -7,9 +7,6 @@
 
 #include "game.h"
 
-constexpr std::array blend_factor = { 0.0f, 0.0f, 0.0f, 0.0f };
-constexpr auto locale = L"ja-JP";
-
 namespace
 {
 #ifdef _DEBUG
@@ -19,6 +16,10 @@ namespace
 #endif
 	constexpr auto vertex_shader_version = "vs_4_0";
 	constexpr auto pixel_shader_version = "ps_4_0";
+
+	constexpr std::array blend_factor = { 0.0f, 0.0f, 0.0f, 0.0f };
+	constexpr auto locale = L"ja-JP";
+
 }
 
 ID3D11Device& lycoris::render::renderer::get_device() const
