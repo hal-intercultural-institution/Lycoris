@@ -182,6 +182,7 @@ namespace lycoris::render
 		std::array<winrt::com_ptr<ID3D11RasterizerState>, culling_mode_count> rasterizer_states_;
 		culling_mode culling_mode_ = culling_mode::back;
 		std::array<winrt::com_ptr<ID3D11BlendState>, 4> blend_states_;
+		blend_state blend_state_ = blend_state::alpha;
 		winrt::com_ptr<ID3D11SamplerState> sampler_state_;
 
 		winrt::com_ptr<ID2D1Device> d2d_device_;

@@ -150,9 +150,12 @@ void lycoris::render::renderer::set_viewport(const viewport& viewport)
 	immediate_context_->RSSetViewports(viewports.size(), viewports.data());
 }
 
-void lycoris::render::renderer::set_blend_state(blend_state state)
+void lycoris::render::renderer::set_blend_state(const blend_state state)
 {
-	immediate_context_->OMSetBlendState(blend_states_[static_cast<std::size_t>(state)].get(),
+	if (blend_state_ == state) return;
+	blend_state_ = state;
+
+	immediate_context_->OMSetBlendState(blend_states_[static_cast<std::size_t>(blend_state_)].get(),
 		blend_factor.data(), 0xffffffff);
 }
 
