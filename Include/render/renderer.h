@@ -41,6 +41,13 @@ namespace lycoris::render
 		back
 	};
 
+	constexpr auto depth_stencil_state_count = 2;
+	enum class depth_stencil_state
+	{
+		none,
+		depth
+	};
+
 	struct vertex
 	{
 		DirectX::XMFLOAT3 position;
@@ -111,7 +118,9 @@ namespace lycoris::render
 		// DeviceContextを取得
 		ID3D11DeviceContext& get_device_context() const;
 		// Depth (Z) buffer を使用するかどうか
-		void set_depth_enabled(bool flag) const;
+		void set_depth_enabled(bool flag);
+		// Depth, Stencil の設定
+		void set_depth_stencil_state(depth_stencil_state state);
 		// 画面クリア
 		void clear() const;
 		// レンダーターゲットをフロントバッファに転送
@@ -185,8 +194,8 @@ namespace lycoris::render
 		std::array<shader::pixel_shader, shader::pixel_shader_count> pixel_shaders_;
 		shader::pixel pixel_shader_ = shader::pixel::normal;
 
-		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_enabled_;
-		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_disabled_;
+		std::array<winrt::com_ptr<ID3D11DepthStencilState>, depth_stencil_state_count> depth_stencil_states_;
+		depth_stencil_state depth_stencil_state_ = depth_stencil_state::depth;
 		winrt::com_ptr<ID3D11Texture2D> depth_stencil_texture_;
 		std::array<winrt::com_ptr<ID3D11RasterizerState>, culling_mode_count> rasterizer_states_;
 		culling_mode culling_mode_ = culling_mode::back;

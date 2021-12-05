@@ -107,12 +107,18 @@ lycoris::render::screen& lycoris::render::renderer::get_screen()
 	return screen_;
 }
 
-void lycoris::render::renderer::set_depth_enabled(bool flag) const
+void lycoris::render::renderer::set_depth_enabled(const bool flag)
 {
-	if (flag)
-		immediate_context_->OMSetDepthStencilState(depth_stencil_state_enabled_.get(), 0);
-	else
-		immediate_context_->OMSetDepthStencilState(depth_stencil_state_disabled_.get(), 0);
+	const auto state = flag ? depth_stencil_state::depth : depth_stencil_state::none;
+	set_depth_stencil_state(state);
+}
+
+void lycoris::render::renderer::set_depth_stencil_state(const depth_stencil_state state)
+{
+	if (depth_stencil_state_ == state) return;
+
+	depth_stencil_state_ = state;
+	immediate_context_->OMSetDepthStencilState(depth_stencil_states_[static_cast<std::size_t>(depth_stencil_state_)].get(), 0);
 }
 
 void lycoris::render::renderer::set_world_view_projection_2d()
@@ -454,13 +460,15 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		depth_stencil_desc.DepthFunc = D3D11_COMPARISON_LESS;
 		depth_stencil_desc.StencilEnable = false;
 
-		device_->CreateDepthStencilState(&depth_stencil_desc, depth_stencil_state_enabled_.put()); // 深度有効ステート
+		device_->CreateDepthStencilState(&depth_stencil_desc,
+			depth_stencil_states_[static_cast<std::size_t>(depth_stencil_state::depth)].put()); // 深度有効ステート
 
-		depth_stencil_desc.DepthEnable = FALSE;
+		depth_stencil_desc.DepthEnable = false;
 		depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-		device_->CreateDepthStencilState(&depth_stencil_desc, depth_stencil_state_disabled_.put()); // 深度無効ステート
+		device_->CreateDepthStencilState(&depth_stencil_desc,
+			depth_stencil_states_[static_cast<std::size_t>(depth_stencil_state::none)].put()); // 深度無効ステート
 
-		immediate_context_->OMSetDepthStencilState(depth_stencil_state_enabled_.get(), 0);
+		immediate_context_->OMSetDepthStencilState(depth_stencil_states_[static_cast<std::size_t>(depth_stencil_state::depth)].get(), 0);
 	}
 
 	// SamplerState
