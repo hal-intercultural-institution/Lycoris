@@ -44,7 +44,7 @@ namespace lycoris::render::shader
 	{
 	public:
         pixel_shader() = default;
-        pixel_shader(winrt::com_ptr<ID3D11VertexShader>&& pixel_shader);
+        pixel_shader(winrt::com_ptr<ID3D11PixelShader>&& pixel_shader);
         pixel_shader(const pixel_shader&) = delete;
         pixel_shader(pixel_shader&&) = default;
         ~pixel_shader() = default;

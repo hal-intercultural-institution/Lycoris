@@ -21,7 +21,7 @@ ID3D11InputLayout& lycoris::render::shader::vertex_shader::get_input_layout() co
     return *input_layout_;
 }
 
-lycoris::render::shader::pixel_shader::pixel_shader(winrt::com_ptr<ID3D11VertexShader>&& pixel_shader)
+lycoris::render::shader::pixel_shader::pixel_shader(winrt::com_ptr<ID3D11PixelShader>&& pixel_shader)
 {
     pixel_shader_ = std::move(pixel_shader);
 }
