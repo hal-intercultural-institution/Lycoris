@@ -34,6 +34,12 @@ namespace lycoris::render::shader
         winrt::com_ptr<ID3D11InputLayout> input_layout_;
     };
 
+    constexpr auto pixel_shader_count = 1;
+    enum class pixel
+    {
+	    normal,
+    };
+
 	class pixel_shader
 	{
 	public:

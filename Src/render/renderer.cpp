@@ -18,6 +18,7 @@ namespace
 	constexpr std::uint32_t shader_flags = D3DCOMPILE_ENABLE_STRICTNESS;
 #endif
 	constexpr auto vertex_shader_version = "vs_4_0";
+	constexpr auto pixel_shader_version = "ps_4_0";
 }
 
 ID3D11Device& lycoris::render::renderer::get_device() const
@@ -81,6 +82,23 @@ lycoris::render::shader::vertex_shader lycoris::render::renderer::compile_vertex
 		static_cast<std::uint32_t>(layout.size()), vs_bytecode, vs_bytecode_size, layout_ptr.put());
 
 	return shader::vertex_shader(std::move(shader_ptr), std::move(layout_ptr));
+}
+
+lycoris::render::shader::pixel_shader lycoris::render::renderer::compile_pixel_shader(const std::filesystem::path& path,
+	const std::string& function_name) const
+{
+	winrt::com_ptr<ID3D11PixelShader> shader_ptr;
+	winrt::com_ptr<ID3DBlob> ps_binary, error_message;
+	if (FAILED(D3DCompileFromFile(path.wstring().c_str(), nullptr, nullptr,
+		function_name.c_str(), pixel_shader_version, shader_flags, 0, ps_binary.put(), error_message.put())))
+	{
+		const auto error = static_cast<char*>(error_message->GetBufferPointer());
+		throw std::runtime_error("PixelShader: failed to compile: " + std::string(error));
+	}
+	device_->CreatePixelShader(ps_binary->GetBufferPointer(), ps_binary->GetBufferSize(),
+		nullptr, shader_ptr.put());
+
+	return shader::pixel_shader(std::move(shader_ptr));
 }
 
 lycoris::render::screen& lycoris::render::renderer::get_screen()
@@ -228,8 +246,16 @@ void lycoris::render::renderer::set_vertex_shader(const shader::vertex vertex_sh
 	immediate_context_->IASetInputLayout(&shader.get_input_layout());
 }
 
+void lycoris::render::renderer::set_pixel_shader(const shader::pixel pixel_shader)
+{
+	if (pixel_shader_ == pixel_shader) return;
+	pixel_shader_ = pixel_shader;
+
+	immediate_context_->PSSetShader(&pixel_shaders_[static_cast<std::size_t>(pixel_shader_)].get_shader(), nullptr, 0);
+}
+
 void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
-	const text_canvas& canvas) const
+                                          const text_canvas& canvas) const
 {
 	d2d_device_context_->SetTarget(d2d_bitmap_screen_.get());
 	d2d_device_context_->BeginDraw();
@@ -484,10 +510,11 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		vertex_shaders_[static_cast<std::size_t>(shader::vertex::animated)] = compile_vertex_shader("data/shader.hlsl", "vs_anim", layout);
 	}
 
-	// PixelShader
+	// PixelShader (normal)
 	{
-		pixel_shader_ = shader::pixel_shader::compile("data/shader.hlsl", "ps_main");
-		shader::pixel_shader::set(pixel_shader_);
+		auto& shader = pixel_shaders_[static_cast<std::size_t>(shader::pixel::normal)];
+		shader = compile_pixel_shader("data/shader.hlsl", "ps_main");
+		immediate_context_->PSSetShader(&shader.get_shader(), nullptr, 0);
 	}
 	
 	// Constant Buffers

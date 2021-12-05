@@ -1,19 +1,6 @@
 ﻿#include "render/shader.h"
 
-#include <d3dcompiler.h>
-
 #include "render/renderer.h"
-#include "game.h"
-
-namespace
-{
-#ifdef _DEBUG
-    constexpr std::uint32_t flag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#else
-    constexpr std::uint32_t flag = D3DCOMPILE_ENABLE_STRICTNESS;
-#endif
-
-}
 
 lycoris::render::shader::vertex_shader::vertex_shader(winrt::com_ptr<ID3D11VertexShader>&& vertex_shader,
 	winrt::com_ptr<ID3D11InputLayout>&& input_layout)
