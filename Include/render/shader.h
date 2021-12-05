@@ -37,8 +37,17 @@ namespace lycoris::render::shader
 	class pixel_shader
 	{
 	public:
-        static void set(pixel_shader& shader);
-        static pixel_shader compile(const std::filesystem::path& path, std::string function_name);
+        pixel_shader() = default;
+        pixel_shader(winrt::com_ptr<ID3D11VertexShader>&& pixel_shader);
+        pixel_shader(const pixel_shader&) = delete;
+        pixel_shader(pixel_shader&&) = default;
+        ~pixel_shader() = default;
+
+        pixel_shader& operator=(const pixel_shader&) = delete;
+        pixel_shader& operator=(pixel_shader&&) = default;
+
+        ID3D11PixelShader& get_shader() const;
+
 	private:
         winrt::com_ptr<ID3D11PixelShader> pixel_shader_;
 	};

@@ -34,25 +34,13 @@ ID3D11InputLayout& lycoris::render::shader::vertex_shader::get_input_layout() co
     return *input_layout_;
 }
 
-void lycoris::render::shader::pixel_shader::set(pixel_shader& shader)
+lycoris::render::shader::pixel_shader::pixel_shader(winrt::com_ptr<ID3D11VertexShader>&& pixel_shader)
 {
-    auto& device_context = game::get_game().get_renderer().get_device_context();
-    device_context.PSSetShader(shader.pixel_shader_.get(), nullptr, 0);
+    pixel_shader_ = std::move(pixel_shader);
 }
 
-lycoris::render::shader::pixel_shader lycoris::render::shader::pixel_shader::compile(const std::filesystem::path& path, const std::string function_name)
+ID3D11PixelShader& lycoris::render::shader::pixel_shader::get_shader() const
 {
-    auto shader = pixel_shader();
-    auto& renderer = game::get_game().get_renderer();
-	
-    winrt::com_ptr<ID3DBlob> ps_binary, error_message;
-    if (FAILED(D3DCompileFromFile(path.wstring().c_str(), nullptr, nullptr,
-        function_name.c_str(), "ps_4_0", flag, 0, ps_binary.put(), error_message.put())))
-    {
-	    const auto error = static_cast<char*>(error_message->GetBufferPointer());
-        throw std::runtime_error("PixelShader: failed to compile: " + std::string(error));
-    }
-    renderer.get_device().CreatePixelShader(ps_binary->GetBufferPointer(), ps_binary->GetBufferSize(), nullptr, shader.pixel_shader_.put());
-
-    return shader;
+    assert(pixel_shader_);
+    return *pixel_shader_;
 }
