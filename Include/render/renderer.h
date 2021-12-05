@@ -78,7 +78,6 @@ namespace lycoris::render
 		
 		float get_screen_width() const;
 		float get_screen_height() const;
-		ID3D11RenderTargetView* get_render_target_view();
 		bool is_active() const noexcept;
 		HWND get_window_handle() const;
 	
@@ -142,9 +141,6 @@ namespace lycoris::render
 		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas) const;
 		// テキスト描画 (テクスチャ) (DirectWrite)
 		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas, const texture::texture& texture) const;
-
-		//ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
-		//ID3D11PixelShader& get_pixel_shader(int index);
 
 		screen& get_screen();
 		// get the primary camera
