@@ -182,9 +182,14 @@ void lycoris::render::renderer::set_animation(const animation::animator& animato
 	anim_matrix_.update();
 }
 
-void lycoris::render::renderer::set_vertex_shader(shader::vertex shader)
+void lycoris::render::renderer::set_vertex_shader(const shader::vertex vertex_shader)
 {
-	shader::vertex_shader::set(vertex_shaders_[static_cast<std::size_t>(shader)]);
+	if (vertex_shader_ == vertex_shader) return;
+	vertex_shader_ = vertex_shader;
+
+	const auto& shader = vertex_shaders_[static_cast<std::size_t>(vertex_shader_)];
+	immediate_context_->VSSetShader(&shader.get_shader(), nullptr, 0);
+	immediate_context_->IASetInputLayout(&shader.get_input_layout());
 }
 
 void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
@@ -427,7 +432,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		};
 		auto& shader = vertex_shaders_[static_cast<std::size_t>(shader::vertex::normal)];
 		shader = shader::vertex_shader::compile("data/shader.hlsl", "vs_main", layout);
-		shader::vertex_shader::set(shader);
+		set_vertex_shader(shader::vertex::normal);
 	}
 
 	// Vertex Shader, Input Layout (animated)

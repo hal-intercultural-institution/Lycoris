@@ -144,7 +144,7 @@ namespace lycoris::render
 		// アニメーション用 (一括)
 		void set_animation(const animation::animator& animator);
 		// 頂点シェーダー設定
-		void set_vertex_shader(shader::vertex shader);
+		void set_vertex_shader(shader::vertex vertex_shader);
 		// テキスト描画 (画面) (DirectWrite)
 		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas) const;
 		// テキスト描画 (テクスチャ) (DirectWrite)
@@ -174,6 +174,7 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 
 		std::array<shader::vertex_shader, static_cast<std::size_t>(shader::vertex::max)> vertex_shaders_;
+		shader::vertex vertex_shader_ = shader::vertex::normal;
 		shader::pixel_shader pixel_shader_;
 
 		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_enabled_;

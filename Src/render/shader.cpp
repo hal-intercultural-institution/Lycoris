@@ -15,11 +15,11 @@ namespace
 
 }
 
-void lycoris::render::shader::vertex_shader::set(vertex_shader& shader)
+lycoris::render::shader::vertex_shader::vertex_shader(winrt::com_ptr<ID3D11VertexShader>&& vertex_shader,
+	winrt::com_ptr<ID3D11InputLayout>&& input_layout)
 {
-    auto& device_context = game::get_game().get_renderer().get_device_context();
-    device_context.VSSetShader(shader.vertex_shader_.get(), nullptr, 0);
-    device_context.IASetInputLayout(shader.input_layout_.get());
+    vertex_shader_ = std::move(vertex_shader);
+    input_layout_ = std::move(input_layout);
 }
 
 lycoris::render::shader::vertex_shader lycoris::render::shader::vertex_shader::compile(const std::filesystem::path& path, const std::string function_name,

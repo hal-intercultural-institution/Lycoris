@@ -17,7 +17,15 @@ namespace lycoris::render::shader
 	class vertex_shader
     {
     public:
-        static void set(vertex_shader& shader);
+        vertex_shader() = default;
+        vertex_shader(winrt::com_ptr<ID3D11VertexShader>&& vertex_shader, winrt::com_ptr<ID3D11InputLayout>&& input_layout);
+        vertex_shader(const vertex_shader&) = delete;
+        vertex_shader(vertex_shader&&) = default;
+        ~vertex_shader() = default;
+
+        vertex_shader& operator=(const vertex_shader&) = delete;
+        vertex_shader& operator=(vertex_shader&&) = default;
+
         static vertex_shader compile(const std::filesystem::path& path, std::string function_name,
             std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout);
         ID3D11VertexShader& get_shader() const noexcept;
