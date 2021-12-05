@@ -9,9 +9,11 @@
 #include <winrt/base.h>
 
 #include "animation.h"
+#include "render/texture.h"
 #include "render/constantbuffer.h"
 #include "render/shader.h"
 #include "render/camera.h"
+#include "render/text.h"
 
 namespace lycoris::render
 {
@@ -21,13 +23,29 @@ namespace lycoris::render
 	{
 		return static_cast<float>(color) / 255.0f;
 	}
-	
+
+	constexpr auto blend_state_count = 4;
 	enum class blend_state
 	{
 		none,
 		alpha,
 		add,
 		subtract
+	};
+
+	constexpr auto culling_mode_count = 3;
+	enum class culling_mode
+	{
+		none,
+		front,
+		back
+	};
+
+	constexpr auto depth_stencil_state_count = 2;
+	enum class depth_stencil_state
+	{
+		none,
+		depth
 	};
 
 	struct vertex
@@ -76,7 +94,6 @@ namespace lycoris::render
 		
 		float get_screen_width() const;
 		float get_screen_height() const;
-		ID3D11RenderTargetView* get_render_target_view();
 		bool is_active() const noexcept;
 		HWND get_window_handle() const;
 	
@@ -101,7 +118,9 @@ namespace lycoris::render
 		// DeviceContextを取得
 		ID3D11DeviceContext& get_device_context() const;
 		// Depth (Z) buffer を使用するかどうか
-		void set_depth_enabled(bool flag) const;
+		void set_depth_enabled(bool flag);
+		// Depth, Stencil の設定
+		void set_depth_stencil_state(depth_stencil_state state);
 		// 画面クリア
 		void clear() const;
 		// レンダーターゲットをフロントバッファに転送
@@ -123,7 +142,7 @@ namespace lycoris::render
 		// UVオフセットを更新する
 		void set_uv_offset(const DirectX::XMFLOAT2& offset);
 		// カリング設定
-		void set_culling_mode(D3D11_CULL_MODE culling_mode);
+		void set_culling_mode(culling_mode culling_mode);
 		// 背景色
 		void set_background_color(const DirectX::XMFLOAT4& color);
 		// ビューポート
@@ -135,12 +154,13 @@ namespace lycoris::render
 		// アニメーション用 (一括)
 		void set_animation(const animation::animator& animator);
 		// 頂点シェーダー設定
-		void set_vertex_shader(shader::vertex shader);
-		// テキスト描画 (DirectWrite)
-		void draw_text(const std::wstring& text);
-
-		//ID3D11VertexShader& get_vertex_shader(std::uint64_t index);
-		//ID3D11PixelShader& get_pixel_shader(int index);
+		void set_vertex_shader(shader::vertex vertex_shader);
+		// ピクセルシェーダー設定
+		void set_pixel_shader(shader::pixel pixel_shader);
+		// テキスト描画 (画面) (DirectWrite)
+		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas) const;
+		// テキスト描画 (テクスチャ) (DirectWrite)
+		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas, const texture::texture& texture) const;
 
 		screen& get_screen();
 		// get the primary camera
@@ -148,7 +168,18 @@ namespace lycoris::render
 		// get camera
 		std::array<camera, 4>& get_cameras();
 
+		[[nodiscard("Ignoring value returned wastes resources.")]]
+		// creates text format object used by text renderer
+		text_format create_text_format(const std::wstring& font_name, float size) const;
+		[[nodiscard("Ignoring value returned wastes resources.")]]
+		// creates text color object used by text renderer
+		text_color create_text_color(const DirectX::XMFLOAT4& color) const;
+
 	private:
+		shader::vertex_shader compile_vertex_shader(const std::filesystem::path& path, const std::string& function_name,
+			const std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout) const;
+		shader::pixel_shader compile_pixel_shader(const std::filesystem::path& path, const std::string& function_name) const;
+
 		// pointers
 		
 		winrt::com_ptr<ID3D11Device> device_;
@@ -158,20 +189,25 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 
-		std::array<shader::vertex_shader, static_cast<std::size_t>(shader::vertex::max)> vertex_shaders_;
-		shader::pixel_shader pixel_shader_;
+		std::array<shader::vertex_shader, shader::vertex_shader_count> vertex_shaders_;
+		shader::vertex vertex_shader_ = shader::vertex::normal;
+		std::array<shader::pixel_shader, shader::pixel_shader_count> pixel_shaders_;
+		shader::pixel pixel_shader_ = shader::pixel::normal;
 
-		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_enabled_;
-		winrt::com_ptr<ID3D11DepthStencilState> depth_stencil_state_disabled_;
+		std::array<winrt::com_ptr<ID3D11DepthStencilState>, depth_stencil_state_count> depth_stencil_states_;
+		depth_stencil_state depth_stencil_state_ = depth_stencil_state::depth;
 		winrt::com_ptr<ID3D11Texture2D> depth_stencil_texture_;
-		winrt::com_ptr<ID3D11RasterizerState> rasterizer_state_;
-		std::array<winrt::com_ptr<ID3D11BlendState>, 4> blend_states_;
+		std::array<winrt::com_ptr<ID3D11RasterizerState>, culling_mode_count> rasterizer_states_;
+		culling_mode culling_mode_ = culling_mode::back;
+		std::array<winrt::com_ptr<ID3D11BlendState>, blend_state_count> blend_states_;
+		blend_state blend_state_ = blend_state::alpha;
 		winrt::com_ptr<ID3D11SamplerState> sampler_state_;
 
 		winrt::com_ptr<ID2D1Device> d2d_device_;
 		winrt::com_ptr<ID2D1DeviceContext> d2d_device_context_;
-		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_;
-		winrt::com_ptr<IDWriteTextFormat> d_write_text_format_;
+		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_screen_;
+
+		winrt::com_ptr<IDWriteFactory> d_write_factory_;
 
 		// values
 
@@ -182,8 +218,6 @@ namespace lycoris::render
 		constant_buffer<DirectX::XMFLOAT4, 4> directional_light_ = {};
 		constant_buffer<DirectX::XMFLOAT4, 5> uv_offset_ = {};
 		constant_buffer<std::array<DirectX::XMFLOAT4X4, animation_max>, 6> anim_matrix_ = {};
-
-		D3D11_CULL_MODE culling_mode_ = D3D11_CULL_BACK;
 
 		std::array<float, 4> background_color_ = { color_of(247), color_of(219), color_of(240), 1.0f };
 		

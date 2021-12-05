@@ -19,11 +19,12 @@ namespace lycoris::game
 	class game
 	{
 	public:
-		std::uint64_t get_frame_count() const;
-		std::uint32_t get_fps_last_second() const;
-		double get_last_tick_time() const;
-		double get_last_draw_time() const;
-		HINSTANCE get_instance_handle();
+		std::uint64_t get_frame_count() const noexcept;
+		std::uint32_t get_fps_last_second() const noexcept;
+		double get_last_tick_time() const noexcept;
+		double get_last_draw_time() const noexcept;
+		std::uint32_t get_draw_call_count() const noexcept;
+		HINSTANCE get_instance_handle() const noexcept;
 		scene& get_current_scene() const;
 		render::renderer& get_renderer() noexcept;
 		render::texture::texture_loader& get_texture_loader() noexcept;
@@ -34,7 +35,9 @@ namespace lycoris::game
 		void run();
 		void destroy();
 
-		static bool is_initialized();
+		void increment_draw_call_count() noexcept;
+
+		static bool is_initialized() noexcept;
 
 		~game() noexcept;
 
@@ -71,7 +74,7 @@ namespace lycoris::game
 		static void set_game(game* ptr);
 
 		LARGE_INTEGER per_second_{};
-		std::uint32_t frames_last_second_ = 0;
+		std::uint32_t frames_last_second_ = 0, internal_draw_calls_ = 0;
 		double frame_time_tick_ = 0.0, frame_time_draw_ = 0.0;
 	};
 	

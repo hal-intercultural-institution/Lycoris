@@ -102,6 +102,9 @@
     <ClInclude Include="Include\render\keyframe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\render\text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\render\camera.cpp">
@@ -186,6 +189,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\render\animation\animator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\render\text.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

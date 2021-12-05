@@ -1,9 +1,3 @@
-//=============================================================================
-//
-// レンダリング処理 [renderer.cpp]
-// Author : 
-//
-//=============================================================================
 #include "render/renderer.h"
 
 #include <d3dcompiler.h>
@@ -13,7 +7,20 @@
 
 #include "game.h"
 
-constexpr std::array blend_factor = { 0.0f, 0.0f, 0.0f, 0.0f };
+namespace
+{
+#ifdef _DEBUG
+	constexpr std::uint32_t shader_flags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+	constexpr std::uint32_t shader_flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#endif
+	constexpr auto vertex_shader_version = "vs_4_0";
+	constexpr auto pixel_shader_version = "ps_4_0";
+
+	constexpr std::array blend_factor = { 0.0f, 0.0f, 0.0f, 0.0f };
+	constexpr auto locale = L"ja-JP";
+
+}
 
 ID3D11Device& lycoris::render::renderer::get_device() const
 {
@@ -35,17 +42,83 @@ std::array<lycoris::render::camera, 4>& lycoris::render::renderer::get_cameras()
 	return camera_;
 }
 
+lycoris::render::text_format lycoris::render::renderer::create_text_format(const std::wstring& font_name, const float size) const
+{
+	winrt::com_ptr<IDWriteTextFormat> format;
+	d_write_factory_->CreateTextFormat(
+		font_name.c_str(), nullptr,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		size, locale, format.put());
+	return text_format(std::move(format));
+}
+
+lycoris::render::text_color lycoris::render::renderer::create_text_color(const DirectX::XMFLOAT4& color) const
+{
+	winrt::com_ptr<ID2D1SolidColorBrush> brush;
+	d2d_device_context_->CreateSolidColorBrush(D2D1::ColorF(color.x, color.y, color.z, color.w), brush.put());
+	return text_color(std::move(brush));
+}
+
+lycoris::render::shader::vertex_shader lycoris::render::renderer::compile_vertex_shader(
+	const std::filesystem::path& path, const std::string& function_name,
+	const std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout) const
+{
+	winrt::com_ptr<ID3D11VertexShader> shader_ptr;
+	winrt::com_ptr<ID3D11InputLayout> layout_ptr;
+	winrt::com_ptr<ID3DBlob> vs_binary, error_message;
+	const HRESULT hr = D3DCompileFromFile(path.wstring().c_str(), nullptr, nullptr, 
+		function_name.c_str(), vertex_shader_version, shader_flags, 0, vs_binary.put(), error_message.put());
+	if (FAILED(hr))
+	{
+		const auto error = static_cast<char*>(error_message->GetBufferPointer());
+		throw std::runtime_error("Renderer: failed to compile vertex shader: " + std::string(error));
+	}
+	const auto& vs_bytecode = vs_binary->GetBufferPointer();
+	const auto& vs_bytecode_size = vs_binary->GetBufferSize();
+	device_->CreateVertexShader(vs_bytecode, vs_bytecode_size, nullptr, shader_ptr.put());
+
+	const auto layout = std::vector(input_layout);
+
+	device_->CreateInputLayout(layout.data(),
+		static_cast<std::uint32_t>(layout.size()), vs_bytecode, vs_bytecode_size, layout_ptr.put());
+
+	return shader::vertex_shader(std::move(shader_ptr), std::move(layout_ptr));
+}
+
+lycoris::render::shader::pixel_shader lycoris::render::renderer::compile_pixel_shader(const std::filesystem::path& path,
+	const std::string& function_name) const
+{
+	winrt::com_ptr<ID3D11PixelShader> shader_ptr;
+	winrt::com_ptr<ID3DBlob> ps_binary, error_message;
+	if (FAILED(D3DCompileFromFile(path.wstring().c_str(), nullptr, nullptr,
+		function_name.c_str(), pixel_shader_version, shader_flags, 0, ps_binary.put(), error_message.put())))
+	{
+		const auto error = static_cast<char*>(error_message->GetBufferPointer());
+		throw std::runtime_error("PixelShader: failed to compile: " + std::string(error));
+	}
+	device_->CreatePixelShader(ps_binary->GetBufferPointer(), ps_binary->GetBufferSize(),
+		nullptr, shader_ptr.put());
+
+	return shader::pixel_shader(std::move(shader_ptr));
+}
+
 lycoris::render::screen& lycoris::render::renderer::get_screen()
 {
 	return screen_;
 }
 
-void lycoris::render::renderer::set_depth_enabled(bool flag) const
+void lycoris::render::renderer::set_depth_enabled(const bool flag)
 {
-	if (flag)
-		immediate_context_->OMSetDepthStencilState(depth_stencil_state_enabled_.get(), 0);
-	else
-		immediate_context_->OMSetDepthStencilState(depth_stencil_state_disabled_.get(), 0);
+	const auto state = flag ? depth_stencil_state::depth : depth_stencil_state::none;
+	set_depth_stencil_state(state);
+}
+
+void lycoris::render::renderer::set_depth_stencil_state(const depth_stencil_state state)
+{
+	if (depth_stencil_state_ == state) return;
+
+	depth_stencil_state_ = state;
+	immediate_context_->OMSetDepthStencilState(depth_stencil_states_[static_cast<std::size_t>(depth_stencil_state_)].get(), 0);
 }
 
 void lycoris::render::renderer::set_world_view_projection_2d()
@@ -117,21 +190,12 @@ void lycoris::render::renderer::set_uv_offset(const DirectX::XMFLOAT2& offset)
 	uv_offset_.update({ offset.x, offset.y, 0.0f, 0.0f });
 }
 
-void lycoris::render::renderer::set_culling_mode(D3D11_CULL_MODE culling_mode)
+void lycoris::render::renderer::set_culling_mode(const culling_mode culling_mode)
 {
-	if (culling_mode == culling_mode_) return;
+	if (culling_mode_ == culling_mode) return;
 	culling_mode_ = culling_mode;
 	
-	D3D11_RASTERIZER_DESC rasterizer_desc = {};
-	rasterizer_desc.FillMode = D3D11_FILL_SOLID; // D3D11_FILL_WIREFRAME
-	rasterizer_desc.CullMode = culling_mode;
-	rasterizer_desc.DepthClipEnable = true;
-	rasterizer_desc.MultisampleEnable = false;
-	winrt::com_ptr<ID3D11RasterizerState> rasterizer_state;
-	device_->CreateRasterizerState(&rasterizer_desc, rasterizer_state.put());
-	rasterizer_state_ = std::move(rasterizer_state);
-	
-	immediate_context_->RSSetState(rasterizer_state_.get());
+	immediate_context_->RSSetState(rasterizer_states_[static_cast<std::size_t>(culling_mode_)].get());
 }
 
 void lycoris::render::renderer::set_background_color(const DirectX::XMFLOAT4& color)
@@ -144,12 +208,15 @@ void lycoris::render::renderer::set_viewport(const viewport& viewport)
 	const std::array viewports = {
 		viewport.get_raw()
 	};
-	immediate_context_->RSSetViewports(viewports.size(), viewports.data());
+	immediate_context_->RSSetViewports(static_cast<std::uint32_t>(viewports.size()), viewports.data());
 }
 
-void lycoris::render::renderer::set_blend_state(blend_state state)
+void lycoris::render::renderer::set_blend_state(const blend_state state)
 {
-	immediate_context_->OMSetBlendState(blend_states_[static_cast<std::size_t>(state)].get(),
+	if (blend_state_ == state) return;
+	blend_state_ = state;
+
+	immediate_context_->OMSetBlendState(blend_states_[static_cast<std::size_t>(blend_state_)].get(),
 		blend_factor.data(), 0xffffffff);
 }
 
@@ -176,19 +243,59 @@ void lycoris::render::renderer::set_animation(const animation::animator& animato
 	anim_matrix_.update();
 }
 
-void lycoris::render::renderer::set_vertex_shader(shader::vertex shader)
+void lycoris::render::renderer::set_vertex_shader(const shader::vertex vertex_shader)
 {
-	shader::vertex_shader::set(vertex_shaders_[static_cast<std::size_t>(shader)]);
+	if (vertex_shader_ == vertex_shader) return;
+	vertex_shader_ = vertex_shader;
+
+	const auto& shader = vertex_shaders_[static_cast<std::size_t>(vertex_shader_)];
+	immediate_context_->VSSetShader(&shader.get_shader(), nullptr, 0);
+	immediate_context_->IASetInputLayout(&shader.get_input_layout());
 }
 
-void lycoris::render::renderer::draw_text(const std::wstring& text)
+void lycoris::render::renderer::set_pixel_shader(const shader::pixel pixel_shader)
 {
-	winrt::com_ptr<ID2D1SolidColorBrush> brush;
-	d2d_device_context_->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brush.put());
+	if (pixel_shader_ == pixel_shader) return;
+	pixel_shader_ = pixel_shader;
+
+	immediate_context_->PSSetShader(&pixel_shaders_[static_cast<std::size_t>(pixel_shader_)].get_shader(), nullptr, 0);
+}
+
+void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
+                                          const text_canvas& canvas) const
+{
+	d2d_device_context_->SetTarget(d2d_bitmap_screen_.get());
 	d2d_device_context_->BeginDraw();
-	const auto rect = D2D1::RectF(0, 0, 600, 400);
-	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), d_write_text_format_.get(), &rect, brush.get());
+	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), &format.get(), &canvas.get(), &color.get());
 	d2d_device_context_->EndDraw();
+}
+
+void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
+	const text_canvas& canvas, const texture::texture& texture) const
+{
+	winrt::com_ptr<IDXGISurface> surface;
+	winrt::com_ptr<ID2D1Bitmap1> bitmap;
+
+	HRESULT result = texture.get_texture()->QueryInterface(IID_PPV_ARGS(surface.put()));
+	if (FAILED(result))
+		throw std::runtime_error("TextRenderer: failed to create DXGI Surface from Direct3D Texture");
+
+	const auto dpi = static_cast<float>(GetDpiForWindow(screen_.get_window_handle()));
+	const D2D1_BITMAP_PROPERTIES1 bitmap_properties = D2D1::BitmapProperties1(
+		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+		D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+		dpi, dpi
+	);
+
+	result = d2d_device_context_->CreateBitmapFromDxgiSurface(surface.get(), &bitmap_properties, bitmap.put());
+	if (FAILED(result))
+		throw std::runtime_error("TextRenderer: failed to create Direct2D Bitmap from DXGI Surface");
+	d2d_device_context_->SetTarget(bitmap.get());
+
+	d2d_device_context_->BeginDraw();
+	d2d_device_context_->DrawText(text.c_str(), static_cast<std::uint32_t>(text.size()), &format.get(), &canvas.get(), &color.get());
+	d2d_device_context_->EndDraw();
+
 }
 
 void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool bWindow)
@@ -198,7 +305,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	screen_.set_window_handle(hWnd);
 
 	// Device, SwapChain, ImmediateContext 生成
-	DXGI_SWAP_CHAIN_DESC   swap_chain_desc = {};
+	DXGI_SWAP_CHAIN_DESC swap_chain_desc = {};
 	swap_chain_desc.BufferCount = 1;
 	swap_chain_desc.BufferDesc.Width = static_cast<std::uint32_t>(screen_.get_screen_width());
 	swap_chain_desc.BufferDesc.Height = static_cast<std::uint32_t>(screen_.get_screen_height());
@@ -243,9 +350,9 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 
 	{
 		// RenderTargetView
-		winrt::com_ptr<ID3D11Texture2D> backBuffer = nullptr;
-		swap_chain_->GetBuffer(0, __uuidof(ID3D11Texture2D), backBuffer.put_void());
-		hr = device_->CreateRenderTargetView(backBuffer.get(), nullptr, render_target_view_.put());
+		winrt::com_ptr<ID3D11Texture2D> back_buffer;
+		swap_chain_->GetBuffer(0, __uuidof(ID3D11Texture2D), back_buffer.put_void());
+		hr = device_->CreateRenderTargetView(back_buffer.get(), nullptr, render_target_view_.put());
 		if (FAILED(hr))
 			throw std::runtime_error("Renderer: failed to create RenderTargetView.");
 
@@ -278,7 +385,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 			(render_target_view_.get())
 		};
 
-		immediate_context_->OMSetRenderTargets(1, render_targets.data(), depth_stencil_view_.get());
+		immediate_context_->OMSetRenderTargets(static_cast<uint32_t>(render_targets.size()), render_targets.data(), depth_stencil_view_.get());
 	}
 
 	// カメラとviewport
@@ -292,18 +399,24 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	{
 		D3D11_RASTERIZER_DESC rasterizer_desc = {};
 		rasterizer_desc.FillMode = D3D11_FILL_SOLID; // D3D11_FILL_WIREFRAME
-		rasterizer_desc.CullMode = D3D11_CULL_BACK;
+		rasterizer_desc.CullMode = D3D11_CULL_NONE;
 		rasterizer_desc.DepthClipEnable = true;
 		rasterizer_desc.MultisampleEnable = false;
-		device_->CreateRasterizerState(&rasterizer_desc, rasterizer_state_.put());
-		
-		immediate_context_->RSSetState(rasterizer_state_.get());
+		device_->CreateRasterizerState(&rasterizer_desc, rasterizer_states_[static_cast<std::size_t>(culling_mode::none)].put());
+
+		rasterizer_desc.CullMode = D3D11_CULL_FRONT;
+		device_->CreateRasterizerState(&rasterizer_desc, rasterizer_states_[static_cast<std::size_t>(culling_mode::front)].put());
+
+		rasterizer_desc.CullMode = D3D11_CULL_BACK;
+		device_->CreateRasterizerState(&rasterizer_desc, rasterizer_states_[static_cast<std::size_t>(culling_mode::back)].put());
+
+		immediate_context_->RSSetState(rasterizer_states_[static_cast<std::size_t>(culling_mode::back)].get());
 	}
 
 	// Blend State (ピクセルシェーダーの後 既にあるピクセルの値とのブレンドの仕方を決定する)
 	{
 		D3D11_BLEND_DESC blend_desc = {};
-		blend_desc.AlphaToCoverageEnable = true;
+		blend_desc.AlphaToCoverageEnable = false;
 		blend_desc.IndependentBlendEnable = false;
 		blend_desc.RenderTarget[0].BlendEnable = true;
 		blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
@@ -347,13 +460,15 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		depth_stencil_desc.DepthFunc = D3D11_COMPARISON_LESS;
 		depth_stencil_desc.StencilEnable = false;
 
-		device_->CreateDepthStencilState(&depth_stencil_desc, depth_stencil_state_enabled_.put()); // 深度有効ステート
+		device_->CreateDepthStencilState(&depth_stencil_desc,
+			depth_stencil_states_[static_cast<std::size_t>(depth_stencil_state::depth)].put()); // 深度有効ステート
 
-		depth_stencil_desc.DepthEnable = FALSE;
+		depth_stencil_desc.DepthEnable = false;
 		depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-		device_->CreateDepthStencilState(&depth_stencil_desc, depth_stencil_state_disabled_.put()); // 深度無効ステート
+		device_->CreateDepthStencilState(&depth_stencil_desc,
+			depth_stencil_states_[static_cast<std::size_t>(depth_stencil_state::none)].put()); // 深度無効ステート
 
-		immediate_context_->OMSetDepthStencilState(depth_stencil_state_enabled_.get(), 0);
+		immediate_context_->OMSetDepthStencilState(depth_stencil_states_[static_cast<std::size_t>(depth_stencil_state::depth)].get(), 0);
 	}
 
 	// SamplerState
@@ -369,10 +484,13 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		sampler_desc.MinLOD = 0;
 		sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
 
-		const auto& samplerState = sampler_state_.put();
-		device_->CreateSamplerState(&sampler_desc, samplerState);
+		device_->CreateSamplerState(&sampler_desc, sampler_state_.put());
 
-		immediate_context_->PSSetSamplers(0, 1, samplerState);
+		std::array samplers = {
+			sampler_state_.get()
+		};
+
+		immediate_context_->PSSetSamplers(0, static_cast<std::uint32_t>(samplers.size()), samplers.data());
 	}
 
 	// Vertex Shader, Input Layout (normal)
@@ -384,8 +502,9 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 		auto& shader = vertex_shaders_[static_cast<std::size_t>(shader::vertex::normal)];
-		shader = shader::vertex_shader::compile("data/shader.hlsl", "vs_main", layout);
-		shader::vertex_shader::set(shader);
+		shader = compile_vertex_shader("data/shader.hlsl", "vs_main", layout);
+		immediate_context_->VSSetShader(&shader.get_shader(), nullptr, 0);
+		immediate_context_->IASetInputLayout(&shader.get_input_layout());
 	}
 
 	// Vertex Shader, Input Layout (animated)
@@ -397,14 +516,14 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 				{ "BLENDINDICES", 0, DXGI_FORMAT_R32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		auto& shader = vertex_shaders_[static_cast<std::size_t>(shader::vertex::animated)];
-		shader = shader::vertex_shader::compile("data/shader.hlsl", "vs_anim", layout);
+		vertex_shaders_[static_cast<std::size_t>(shader::vertex::animated)] = compile_vertex_shader("data/shader.hlsl", "vs_anim", layout);
 	}
 
-	// PixelShader
+	// PixelShader (normal)
 	{
-		pixel_shader_ = shader::pixel_shader::compile("data/shader.hlsl", "ps_main");
-		shader::pixel_shader::set(pixel_shader_);
+		auto& shader = pixel_shaders_[static_cast<std::size_t>(shader::pixel::normal)];
+		shader = compile_pixel_shader("data/shader.hlsl", "ps_main");
+		immediate_context_->PSSetShader(&shader.get_shader(), nullptr, 0);
 	}
 	
 	// Constant Buffers
@@ -450,30 +569,19 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		winrt::com_ptr<IDXGISurface> dxgi_surface;
 		hr = swap_chain_->GetBuffer(0, IID_PPV_ARGS(dxgi_surface.put()));
 
-		float dpi = static_cast<float>(GetDpiForWindow(hWnd));
+		const auto dpi = static_cast<float>(GetDpiForWindow(hWnd));
 		D2D1_BITMAP_PROPERTIES1 bitmap_properties = D2D1::BitmapProperties1(
 			D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
 			D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
 			dpi, dpi
 		);
 
-		hr = d2d_device_context_->CreateBitmapFromDxgiSurface(dxgi_surface.get(), &bitmap_properties, d2d_bitmap_.put());
-		d2d_device_context_->SetTarget(d2d_bitmap_.get());
+		hr = d2d_device_context_->CreateBitmapFromDxgiSurface(dxgi_surface.get(), &bitmap_properties, d2d_bitmap_screen_.put());
 	}
 
 	{
-		winrt::com_ptr<IDWriteFactory> d_write_factory;
-		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(d_write_factory.get()), reinterpret_cast<IUnknown**>(d_write_factory.put()));
-
-		d_write_factory->CreateTextFormat(
-			L"Consolas", nullptr,
-			DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-			16.0f, L"ja-JP", d_write_text_format_.put());
+		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(d_write_factory_.get()), reinterpret_cast<IUnknown**>(d_write_factory_.put()));
 	}
-
-	d_write_text_format_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-
-	camera_[0].set_use(true);
 
 }
 

@@ -79,11 +79,12 @@ void lycoris::render::sprite::draw()
 {
 	if (u_index_ < 0) u_index_ = 0;
 	if (v_index_ < 0) v_index_ = 0;
-	
-	auto& renderer = game::get_game().get_renderer();
+
+	auto& game = game::get_game();
+	auto& renderer = game.get_renderer();
 
 	renderer.set_depth_enabled(false);
-	renderer.set_culling_mode(D3D11_CULL_BACK);
+	renderer.set_culling_mode(culling_mode::back);
 
 	renderer.set_view_projection_2d();
 
@@ -141,6 +142,7 @@ void lycoris::render::sprite::draw()
 	renderer.set_uv_offset(uv_offset);
 
 	renderer.get_device_context().Draw(4, 0);
+	game.increment_draw_call_count();
 }
 
 lycoris::render::sprite lycoris::render::sprite::create(const float width, const float height, const std::uint32_t u, const std::uint32_t v, texture::texture&& texture)
