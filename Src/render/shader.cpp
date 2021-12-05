@@ -22,33 +22,6 @@ lycoris::render::shader::vertex_shader::vertex_shader(winrt::com_ptr<ID3D11Verte
     input_layout_ = std::move(input_layout);
 }
 
-lycoris::render::shader::vertex_shader lycoris::render::shader::vertex_shader::compile(const std::filesystem::path& path, const std::string function_name,
-    std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout)
-{
-    auto shader = vertex_shader();
-    auto& renderer = game::get_game().get_renderer();
-
-    winrt::com_ptr<ID3DBlob> vs_binary, error_messge;
-    HRESULT hr = D3DCompileFromFile(path.wstring().c_str(), nullptr, nullptr,
-        function_name.c_str(), "vs_4_0", flag, 0, vs_binary.put(), error_messge.put());
-    if (FAILED(hr))
-    {
-        const auto error = static_cast<char*>(error_messge->GetBufferPointer());
-        throw std::runtime_error("Renderer: failed to compile vertex shader: " + std::string(error));
-    }
-    const auto& vs_bytecode = vs_binary->GetBufferPointer();
-    const auto& vs_bytecode_size = vs_binary->GetBufferSize();
-    renderer.get_device().CreateVertexShader(vs_bytecode, vs_bytecode_size, nullptr, shader.vertex_shader_.put());
-
-    auto layout = std::vector(input_layout);
-
-    renderer.get_device().CreateInputLayout(layout.data(),
-        static_cast<std::uint32_t>(layout.size()), vs_bytecode, vs_bytecode_size, shader.input_layout_.put());
-    renderer.get_device_context().IASetInputLayout(shader.input_layout_.get());
-
-    return shader;
-}
-
 ID3D11VertexShader& lycoris::render::shader::vertex_shader::get_shader() const noexcept
 {
     assert(vertex_shader_);

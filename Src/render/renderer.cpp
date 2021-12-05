@@ -10,6 +10,16 @@
 constexpr std::array blend_factor = { 0.0f, 0.0f, 0.0f, 0.0f };
 constexpr auto locale = L"ja-JP";
 
+namespace
+{
+#ifdef _DEBUG
+	constexpr std::uint32_t shader_flags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+	constexpr std::uint32_t shader_flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#endif
+	constexpr auto vertex_shader_version = "vs_4_0";
+}
+
 ID3D11Device& lycoris::render::renderer::get_device() const
 {
 	return *device_.get();
@@ -45,6 +55,32 @@ lycoris::render::text_color lycoris::render::renderer::create_text_color(const D
 	winrt::com_ptr<ID2D1SolidColorBrush> brush;
 	d2d_device_context_->CreateSolidColorBrush(D2D1::ColorF(color.x, color.y, color.z, color.w), brush.put());
 	return text_color(std::move(brush));
+}
+
+lycoris::render::shader::vertex_shader lycoris::render::renderer::compile_vertex_shader(
+	const std::filesystem::path& path, const std::string& function_name,
+	const std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout) const
+{
+	winrt::com_ptr<ID3D11VertexShader> shader_ptr;
+	winrt::com_ptr<ID3D11InputLayout> layout_ptr;
+	winrt::com_ptr<ID3DBlob> vs_binary, error_message;
+	const HRESULT hr = D3DCompileFromFile(path.wstring().c_str(), nullptr, nullptr, 
+		function_name.c_str(), vertex_shader_version, shader_flags, 0, vs_binary.put(), error_message.put());
+	if (FAILED(hr))
+	{
+		const auto error = static_cast<char*>(error_message->GetBufferPointer());
+		throw std::runtime_error("Renderer: failed to compile vertex shader: " + std::string(error));
+	}
+	const auto& vs_bytecode = vs_binary->GetBufferPointer();
+	const auto& vs_bytecode_size = vs_binary->GetBufferSize();
+	device_->CreateVertexShader(vs_bytecode, vs_bytecode_size, nullptr, shader_ptr.put());
+
+	const auto layout = std::vector(input_layout);
+
+	device_->CreateInputLayout(layout.data(),
+		static_cast<std::uint32_t>(layout.size()), vs_bytecode, vs_bytecode_size, layout_ptr.put());
+
+	return shader::vertex_shader(std::move(shader_ptr), std::move(layout_ptr));
 }
 
 lycoris::render::screen& lycoris::render::renderer::get_screen()
@@ -431,8 +467,9 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 		auto& shader = vertex_shaders_[static_cast<std::size_t>(shader::vertex::normal)];
-		shader = shader::vertex_shader::compile("data/shader.hlsl", "vs_main", layout);
-		set_vertex_shader(shader::vertex::normal);
+		shader = compile_vertex_shader("data/shader.hlsl", "vs_main", layout);
+		immediate_context_->VSSetShader(&shader.get_shader(), nullptr, 0);
+		immediate_context_->IASetInputLayout(&shader.get_input_layout());
 	}
 
 	// Vertex Shader, Input Layout (animated)
@@ -444,8 +481,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 				{ "BLENDINDICES", 0, DXGI_FORMAT_R32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		auto& shader = vertex_shaders_[static_cast<std::size_t>(shader::vertex::animated)];
-		shader = shader::vertex_shader::compile("data/shader.hlsl", "vs_anim", layout);
+		vertex_shaders_[static_cast<std::size_t>(shader::vertex::animated)] = compile_vertex_shader("data/shader.hlsl", "vs_anim", layout);
 	}
 
 	// PixelShader

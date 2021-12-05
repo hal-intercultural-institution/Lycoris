@@ -164,6 +164,9 @@ namespace lycoris::render
 		text_color create_text_color(const DirectX::XMFLOAT4& color) const;
 
 	private:
+		shader::vertex_shader compile_vertex_shader(const std::filesystem::path& path, const std::string& function_name,
+			const std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout) const;
+
 		// pointers
 		
 		winrt::com_ptr<ID3D11Device> device_;
