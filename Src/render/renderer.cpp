@@ -208,7 +208,7 @@ void lycoris::render::renderer::set_viewport(const viewport& viewport)
 	const std::array viewports = {
 		viewport.get_raw()
 	};
-	immediate_context_->RSSetViewports(viewports.size(), viewports.data());
+	immediate_context_->RSSetViewports(static_cast<std::uint32_t>(viewports.size()), viewports.data());
 }
 
 void lycoris::render::renderer::set_blend_state(const blend_state state)
@@ -305,7 +305,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	screen_.set_window_handle(hWnd);
 
 	// Device, SwapChain, ImmediateContext ê∂ê¨
-	DXGI_SWAP_CHAIN_DESC   swap_chain_desc = {};
+	DXGI_SWAP_CHAIN_DESC swap_chain_desc = {};
 	swap_chain_desc.BufferCount = 1;
 	swap_chain_desc.BufferDesc.Width = static_cast<std::uint32_t>(screen_.get_screen_width());
 	swap_chain_desc.BufferDesc.Height = static_cast<std::uint32_t>(screen_.get_screen_height());
@@ -350,9 +350,9 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 
 	{
 		// RenderTargetView
-		winrt::com_ptr<ID3D11Texture2D> backBuffer = nullptr;
-		swap_chain_->GetBuffer(0, __uuidof(ID3D11Texture2D), backBuffer.put_void());
-		hr = device_->CreateRenderTargetView(backBuffer.get(), nullptr, render_target_view_.put());
+		winrt::com_ptr<ID3D11Texture2D> back_buffer;
+		swap_chain_->GetBuffer(0, __uuidof(ID3D11Texture2D), back_buffer.put_void());
+		hr = device_->CreateRenderTargetView(back_buffer.get(), nullptr, render_target_view_.put());
 		if (FAILED(hr))
 			throw std::runtime_error("Renderer: failed to create RenderTargetView.");
 
@@ -385,7 +385,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 			(render_target_view_.get())
 		};
 
-		immediate_context_->OMSetRenderTargets(1, render_targets.data(), depth_stencil_view_.get());
+		immediate_context_->OMSetRenderTargets(static_cast<uint32_t>(render_targets.size()), render_targets.data(), depth_stencil_view_.get());
 	}
 
 	// ÉJÉÅÉâÇ∆viewport
@@ -582,8 +582,6 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	{
 		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(d_write_factory_.get()), reinterpret_cast<IUnknown**>(d_write_factory_.put()));
 	}
-
-	camera_[0].set_use(true);
 
 }
 
