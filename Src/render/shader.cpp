@@ -49,6 +49,18 @@ lycoris::render::shader::vertex_shader lycoris::render::shader::vertex_shader::c
     return shader;
 }
 
+ID3D11VertexShader& lycoris::render::shader::vertex_shader::get_shader() const noexcept
+{
+    assert(vertex_shader_);
+    return *vertex_shader_;
+}
+
+ID3D11InputLayout& lycoris::render::shader::vertex_shader::get_input_layout() const noexcept
+{
+    assert(input_layout_);
+    return *input_layout_;
+}
+
 void lycoris::render::shader::pixel_shader::set(pixel_shader& shader)
 {
     auto& device_context = game::get_game().get_renderer().get_device_context();

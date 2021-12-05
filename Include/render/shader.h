@@ -20,6 +20,9 @@ namespace lycoris::render::shader
         static void set(vertex_shader& shader);
         static vertex_shader compile(const std::filesystem::path& path, std::string function_name,
             std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout);
+        ID3D11VertexShader& get_shader() const noexcept;
+        ID3D11InputLayout& get_input_layout() const noexcept;
+
     private:
         winrt::com_ptr<ID3D11VertexShader> vertex_shader_;
         winrt::com_ptr<ID3D11InputLayout> input_layout_;
