@@ -27,6 +27,7 @@ namespace lycoris::render::animation
 		keyframe interpolate();
 
 		void set_frame(float frame);
+		void increment(float value);
 
 	private:
 		std::vector<keyframe> keyframes_{};
@@ -51,6 +52,8 @@ namespace lycoris::render::animation
 
 		// sets frame and interpolate keyframes
 		void set_frame(float frame);
+		// increment frame
+		void increment(float value);
 		// gets current frame
 		float get_frame() const;
 		// gets maximum frame
