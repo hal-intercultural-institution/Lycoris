@@ -8,7 +8,7 @@
 #include <DirectXMath.h>
 #include <winrt/base.h>
 
-#include "animation.h"
+#include "render/animation.h"
 #include "render/texture.h"
 #include "render/constantbuffer.h"
 #include "render/shader.h"
