@@ -26,8 +26,13 @@ void lycoris::render::animation::animator::set_frame(const float frame)
 
 float lycoris::render::animation::animator::get_frame() const
 {
-	const auto last_frame = animations_.at(0)->back().get_frame();
+	const auto last_frame = get_max_frame();
 	return frame_ - std::floorf(frame_ / last_frame) * last_frame;
+}
+
+float lycoris::render::animation::animator::get_max_frame() const
+{
+	return animations_.at(0)->back().get_frame();
 }
 
 const std::vector<lycoris::render::animation::keyframe>& lycoris::render::animation::animator::get() const

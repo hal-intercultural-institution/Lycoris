@@ -53,6 +53,8 @@ namespace lycoris::render::animation
 		void set_frame(float frame);
 		// gets current frame
 		float get_frame() const;
+		// gets maximum frame
+		float get_max_frame() const;
 		// gets calculated keyframes
 		const std::vector<keyframe>& get() const;
 		// set_frame(float) & get()
