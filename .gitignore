@@ -5,3 +5,4 @@ Release/
 *.exe
 *.vcxproj.user
 Include/constants.h
+Include/render/shader/
