@@ -8,7 +8,7 @@
 #include <DirectXMath.h>
 #include <winrt/base.h>
 
-#include "animation.h"
+#include "render/animation.h"
 #include "render/texture.h"
 #include "render/constantbuffer.h"
 #include "render/shader.h"
@@ -17,7 +17,7 @@
 
 namespace lycoris::render
 {
-	constexpr auto animation_max = 16;
+	constexpr auto animation_max = 32;
 
 	constexpr float color_of(const std::uint8_t color)
 	{

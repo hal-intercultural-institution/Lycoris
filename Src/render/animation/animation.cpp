@@ -57,6 +57,28 @@ void lycoris::render::animation::animation::set_frame(const float frame)
 	if (last_frame <= frame_)
 	{
 		frame_ -= std::floorf(frame_ / last_frame) * last_frame;
+	}
+
+	current_index_ = 0;
+
+	while (true)
+	{
+		const auto next_frame = keyframes_.at(current_index_ + 1).get_frame();
+		// index + 1 のキーフレに到達していれば、index++。
+		if (next_frame <= frame_) current_index_++;
+		else break;
+	}
+
+}
+
+void lycoris::render::animation::animation::increment(const float value)
+{
+	frame_ += value;
+	const auto last_frame = keyframes_.back().get_frame();
+	// indexが最後の1つ前だったとき、最後のキーフレをオーバーしているときは、最初に戻す。
+	if (last_frame <= frame_)
+	{
+		frame_ -= std::floorf(frame_ / last_frame) * last_frame;
 		current_index_ = 0;
 	}
 
@@ -67,5 +89,4 @@ void lycoris::render::animation::animation::set_frame(const float frame)
 		if (next_frame <= frame_) current_index_++;
 		else break;
 	}
-
 }
