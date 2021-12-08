@@ -9,7 +9,7 @@ vs_out vs_main(const vs_in input)
 
     output.pos = mul(input.pos, wvp);
     output.normal = input.normal;
-    output.color = input.color;
+    output.color = input.color * diffuse;
     output.texel = input.texel + offset.xy;
 
     return output;

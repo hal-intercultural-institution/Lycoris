@@ -8,7 +8,7 @@ vs_out vs_anim(const vs_in_anim input)
 
     output.pos = mul(input.pos, wvp);
     output.normal = input.normal;
-    output.color = input.color;
+    output.color = input.color * diffuse;
     output.texel = input.texel + offset.xy;
 
     return output;
