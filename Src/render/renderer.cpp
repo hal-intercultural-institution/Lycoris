@@ -6,6 +6,9 @@
 #include <array>
 
 #include "game.h"
+#include "render/shader/ps.h"
+#include "render/shader/vs.h"
+#include "render/shader/vs_anim.h"
 
 namespace
 {
@@ -63,8 +66,6 @@ lycoris::render::shader::vertex_shader lycoris::render::renderer::compile_vertex
 	const std::filesystem::path& path, const std::string& function_name,
 	const std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout) const
 {
-	winrt::com_ptr<ID3D11VertexShader> shader_ptr;
-	winrt::com_ptr<ID3D11InputLayout> layout_ptr;
 	winrt::com_ptr<ID3DBlob> vs_binary, error_message;
 	const HRESULT hr = D3DCompileFromFile(path.wstring().c_str(), nullptr, nullptr, 
 		function_name.c_str(), vertex_shader_version, shader_flags, 0, vs_binary.put(), error_message.put());
@@ -73,14 +74,21 @@ lycoris::render::shader::vertex_shader lycoris::render::renderer::compile_vertex
 		const auto error = static_cast<char*>(error_message->GetBufferPointer());
 		throw std::runtime_error("Renderer: failed to compile vertex shader: " + std::string(error));
 	}
-	const auto& vs_bytecode = vs_binary->GetBufferPointer();
-	const auto& vs_bytecode_size = vs_binary->GetBufferSize();
-	device_->CreateVertexShader(vs_bytecode, vs_bytecode_size, nullptr, shader_ptr.put());
 
+	return compile_vertex_shader(vs_binary->GetBufferPointer(), vs_binary->GetBufferSize(), input_layout);
+}
+
+lycoris::render::shader::vertex_shader lycoris::render::renderer::compile_vertex_shader(const void* byte_code,
+	const std::size_t length, const std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout) const
+{
+	winrt::com_ptr<ID3D11VertexShader> shader_ptr;
+	winrt::com_ptr<ID3D11InputLayout> layout_ptr;
+
+	device_->CreateVertexShader(byte_code, length, nullptr, shader_ptr.put());
 	const auto layout = std::vector(input_layout);
 
 	device_->CreateInputLayout(layout.data(),
-		static_cast<std::uint32_t>(layout.size()), vs_bytecode, vs_bytecode_size, layout_ptr.put());
+		static_cast<std::uint32_t>(layout.size()), byte_code, length, layout_ptr.put());
 
 	return shader::vertex_shader(std::move(shader_ptr), std::move(layout_ptr));
 }
@@ -96,8 +104,16 @@ lycoris::render::shader::pixel_shader lycoris::render::renderer::compile_pixel_s
 		const auto error = static_cast<char*>(error_message->GetBufferPointer());
 		throw std::runtime_error("PixelShader: failed to compile: " + std::string(error));
 	}
-	device_->CreatePixelShader(ps_binary->GetBufferPointer(), ps_binary->GetBufferSize(),
-		nullptr, shader_ptr.put());
+
+	return compile_pixel_shader(ps_binary->GetBufferPointer(), ps_binary->GetBufferSize());
+}
+
+lycoris::render::shader::pixel_shader lycoris::render::renderer::compile_pixel_shader(const void* byte_code,
+	const std::size_t length) const
+{
+	winrt::com_ptr<ID3D11PixelShader> shader_ptr;
+
+	device_->CreatePixelShader(byte_code, length, nullptr, shader_ptr.put());
 
 	return shader::pixel_shader(std::move(shader_ptr));
 }
@@ -502,7 +518,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 		auto& shader = vertex_shaders_[static_cast<std::size_t>(shader::vertex::normal)];
-		shader = compile_vertex_shader("data/shader.hlsl", "vs_main", layout);
+		shader = compile_vertex_shader(g_vs_main, sizeof g_vs_main, layout);
 		immediate_context_->VSSetShader(&shader.get_shader(), nullptr, 0);
 		immediate_context_->IASetInputLayout(&shader.get_input_layout());
 	}
@@ -516,13 +532,13 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 				{ "BLENDINDICES", 0, DXGI_FORMAT_R32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		vertex_shaders_[static_cast<std::size_t>(shader::vertex::animated)] = compile_vertex_shader("data/shader.hlsl", "vs_anim", layout);
+		vertex_shaders_[static_cast<std::size_t>(shader::vertex::animated)] = compile_vertex_shader(g_vs_anim, sizeof g_vs_anim, layout);
 	}
 
 	// PixelShader (normal)
 	{
 		auto& shader = pixel_shaders_[static_cast<std::size_t>(shader::pixel::normal)];
-		shader = compile_pixel_shader("data/shader.hlsl", "ps_main");
+		shader = compile_pixel_shader(g_ps_main, sizeof g_ps_main);
 		immediate_context_->PSSetShader(&shader.get_shader(), nullptr, 0);
 	}
 	
@@ -534,7 +550,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		material_ = constant_buffer<material, 3>::create();
 		directional_light_ = constant_buffer<DirectX::XMFLOAT4, 4>::create();
 		uv_offset_ = constant_buffer<DirectX::XMFLOAT4, 5>::create();
-		anim_matrix_ = constant_buffer<std::array<DirectX::XMFLOAT4X4, 16>, 6>::create();
+		anim_matrix_ = constant_buffer<std::array<DirectX::XMFLOAT4X4, animation_max>, 6>::create();
 	}
 	
 	{

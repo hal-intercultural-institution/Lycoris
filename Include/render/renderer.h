@@ -8,7 +8,7 @@
 #include <DirectXMath.h>
 #include <winrt/base.h>
 
-#include "animation.h"
+#include "render/animation.h"
 #include "render/texture.h"
 #include "render/constantbuffer.h"
 #include "render/shader.h"
@@ -17,7 +17,7 @@
 
 namespace lycoris::render
 {
-	constexpr auto animation_max = 16;
+	constexpr auto animation_max = 32;
 
 	constexpr float color_of(const std::uint8_t color)
 	{
@@ -176,9 +176,16 @@ namespace lycoris::render
 		text_color create_text_color(const DirectX::XMFLOAT4& color) const;
 
 	private:
+		// compile vertex shader from file
 		shader::vertex_shader compile_vertex_shader(const std::filesystem::path& path, const std::string& function_name,
 			const std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout) const;
+		// compile vertex shader from pre-compiled byte array
+		shader::vertex_shader compile_vertex_shader(const void* byte_code, std::size_t length,
+			const std::initializer_list<D3D11_INPUT_ELEMENT_DESC>& input_layout) const;
+		// compile pixel shader from file
 		shader::pixel_shader compile_pixel_shader(const std::filesystem::path& path, const std::string& function_name) const;
+		// compile pixel shader from pre-compiled byte array
+		shader::pixel_shader compile_pixel_shader(const void* byte_code, std::size_t length) const;
 
 		// pointers
 		

@@ -306,6 +306,11 @@ void lycoris::game::game::set_load_screen(std::unique_ptr<load_screen>&& load_sc
 	load_screen_->on_initialize();
 }
 
+void lycoris::game::game::set_window_title(const char* title)
+{
+	SetWindowText(renderer_.get_screen().get_window_handle(), title);
+}
+
 void lycoris::game::game::set_settings(system::settings& settings)
 {
 	settings_ = settings;

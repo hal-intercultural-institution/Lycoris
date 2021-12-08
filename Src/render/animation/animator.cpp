@@ -24,6 +24,32 @@ void lycoris::render::animation::animator::set_frame(const float frame)
 	}
 }
 
+void lycoris::render::animation::animator::increment(const float value)
+{
+	frame_ += value;
+	if (frame_ < 0.0f) throw std::runtime_error("Animator: keyframe cannot be negative value");
+	if (animations_.empty()) throw std::runtime_error("Animator: animation data are not loaded");
+
+	assert(calculated_.size() == animations_.size());
+
+	for (std::size_t i = 0; i < animations_.size(); ++i)
+	{
+		animations_.at(i).increment(value);
+		calculated_.at(i) = animations_.at(i).interpolate();
+	}
+}
+
+float lycoris::render::animation::animator::get_frame() const
+{
+	const auto last_frame = get_max_frame();
+	return frame_ - std::floorf(frame_ / last_frame) * last_frame;
+}
+
+float lycoris::render::animation::animator::get_max_frame() const
+{
+	return animations_.at(0)->back().get_frame();
+}
+
 const std::vector<lycoris::render::animation::keyframe>& lycoris::render::animation::animator::get() const
 {
 	return calculated_;

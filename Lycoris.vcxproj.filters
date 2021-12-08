@@ -195,4 +195,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\vs.hlsl" />
+    <FxCompile Include="Shader\ps.hlsl" />
+    <FxCompile Include="Shader\vs_anim.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\io.hlsli" />
+    <None Include="Shader\buffer.hlsli" />
+  </ItemGroup>
 </Project>
