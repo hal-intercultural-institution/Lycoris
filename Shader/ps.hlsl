@@ -5,5 +5,5 @@ SamplerState sampler0 : register(s0);
 
 float4 ps_main(const vs_out input) : SV_TARGET
 {
-    return texture0.Sample(sampler0, input.texel);
+    return texture0.Sample(sampler0, input.texel) * input.color;
 }
