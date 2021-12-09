@@ -237,7 +237,7 @@ void lycoris::render::renderer::set_background_color(const DirectX::XMFLOAT4& co
 void lycoris::render::renderer::set_viewport(const viewport& viewport)
 {
 	const std::array viewports = {
-		viewport.get_raw()
+		viewport.get()
 	};
 	immediate_context_->RSSetViewports(static_cast<std::uint32_t>(viewports.size()), viewports.data());
 }

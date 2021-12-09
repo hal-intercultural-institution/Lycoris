@@ -19,10 +19,11 @@ namespace lycoris::render
 		// top_left_y = y of base position, 0.0f ~ 1.0f
 		viewport(float width, float height, float top_left_x, float top_left_y);
 
-		const D3D11_VIEWPORT& get_raw() const noexcept;
+		D3D11_VIEWPORT get() const noexcept;
+		float get_aspect_ratio() const noexcept;
 
 	private:
-		D3D11_VIEWPORT viewport_{};
+		float width_ = 0.f, height_ = 0.f, top_left_x_ = 0.f, top_left_y_ = 0.f;
 
 	};
 
