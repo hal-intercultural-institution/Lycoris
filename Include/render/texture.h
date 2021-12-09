@@ -16,6 +16,12 @@ namespace lycoris::render::texture
 	{
 	public:
 		image(std::uint32_t width, std::uint32_t height, std::uint32_t size_per_pixel);
+		image(const image&) = delete;
+		image(image&&) = default;
+		~image() = default;
+
+		image& operator=(const image&) = delete;
+		image& operator=(image&&) = default;
 
 		std::uint8_t* get_raw_buffer() noexcept;
 		const std::uint8_t* get_buffer() const noexcept;
