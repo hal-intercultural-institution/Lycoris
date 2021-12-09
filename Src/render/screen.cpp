@@ -68,32 +68,28 @@ void lycoris::render::screen::initialize_d2d()
 
 void lycoris::render::screen::resize(const std::uint32_t new_width, const std::uint32_t new_height)
 {
+	const auto& game = game::get_game();
+
 	const auto wid = static_cast<float>(new_width), hei = static_cast<float>(new_height);
 	if (screen_width_ == wid && screen_width_ == hei) return;
 
 	screen_width_ = wid;
 	screen_height_ = hei;
 
-	const auto& renderer = game::get_game().get_renderer();
+	resize();
+	SetWindowPos(window_handle_, nullptr, CW_USEDEFAULT, CW_USEDEFAULT,
+		new_width + game.get_window_border_x(), new_height + game.get_window_border_y(), SWP_NOMOVE);
+}
 
-	const std::array<ID3D11RenderTargetView*, 1> targets = {
-		nullptr
-	};
-	renderer.get_device_context().OMSetRenderTargets(
-		static_cast<std::uint32_t>(targets.size()), targets.data(), nullptr);
+void lycoris::render::screen::resize(std::uint64_t param)
+{
+	const auto wid = static_cast<float>(param & 0xFFFF), hei = static_cast<float>(param >> 16 & 0xFFFF);
+	if (screen_width_ == wid && screen_width_ == hei) return;
 
-	renderer.get_2d_device_context().SetTarget(nullptr);
-	render_target_view_ = nullptr;
-	depth_stencil_texture_ = nullptr;
-	depth_stencil_view_ = nullptr;
-	d2d_bitmap_screen_ = nullptr;
+	screen_width_ = wid;
+	screen_height_ = hei;
 
-	const HRESULT hr = renderer.get_swap_chain().ResizeBuffers(1, static_cast<std::uint32_t>(screen_width_),
-		static_cast<std::uint32_t>(screen_height_), DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-	if (FAILED(hr)) throw std::runtime_error("Renderer: failed to resize buffer");
-
-	initialize();
-	initialize_d2d();
+	resize();
 }
 
 void lycoris::render::screen::clear(const std::array<float, 4>& color) const
@@ -138,4 +134,28 @@ HWND lycoris::render::screen::get_window_handle() const
 ID2D1Bitmap1& lycoris::render::screen::get_d2d_screen() const
 {
 	return *d2d_bitmap_screen_;
+}
+
+void lycoris::render::screen::resize()
+{
+	const auto& renderer = game::get_game().get_renderer();
+
+	const std::array<ID3D11RenderTargetView*, 1> targets = {
+		nullptr
+	};
+	renderer.get_device_context().OMSetRenderTargets(
+		static_cast<std::uint32_t>(targets.size()), targets.data(), nullptr);
+
+	renderer.get_2d_device_context().SetTarget(nullptr);
+	render_target_view_ = nullptr;
+	depth_stencil_texture_ = nullptr;
+	depth_stencil_view_ = nullptr;
+	d2d_bitmap_screen_ = nullptr;
+
+	const HRESULT hr = renderer.get_swap_chain().ResizeBuffers(1, static_cast<std::uint32_t>(screen_width_),
+		static_cast<std::uint32_t>(screen_height_), DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	if (FAILED(hr)) throw std::runtime_error("Renderer: failed to resize buffer");
+
+	initialize();
+	initialize_d2d();
 }

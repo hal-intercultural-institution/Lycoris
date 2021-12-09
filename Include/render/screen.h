@@ -20,7 +20,10 @@ namespace lycoris::render
 
 		void initialize();
 		void initialize_d2d();
+		// resizes window(screen) manually
 		void resize(std::uint32_t new_width, std::uint32_t new_height);
+		// resizes only back buffer (for window-procedure)
+		void resize(std::uint64_t param);
 		void clear(const std::array<float, 4>& color) const;
 
 		void set_activation(bool activation) noexcept;
@@ -33,6 +36,8 @@ namespace lycoris::render
 		ID2D1Bitmap1& get_d2d_screen() const;
 
 	private:
+		// actual implementation of resizing
+		void resize();
 		float screen_width_;
 		float screen_height_;
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
