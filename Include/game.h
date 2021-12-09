@@ -44,7 +44,7 @@ namespace lycoris::game
 
 		~game() noexcept;
 
-		void set_settings(system::settings& settings);
+		void set_settings(const system::settings& settings);
 		void set_scene(std::unique_ptr<scene>&& scene);
 		void set_load_screen(std::unique_ptr<load_screen>&& load_screen);
 		void set_window_title(const char* title);

@@ -326,7 +326,7 @@ void lycoris::game::game::set_window_title(const char* title)
 	SetWindowText(renderer_.get_screen().get_window_handle(), title);
 }
 
-void lycoris::game::game::set_settings(system::settings& settings)
+void lycoris::game::game::set_settings(const system::settings& settings)
 {
 	settings_ = settings;
 }
