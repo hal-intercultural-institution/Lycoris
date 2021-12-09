@@ -201,6 +201,7 @@
     <ClInclude Include="Include\render\animation.h" />
     <ClInclude Include="Include\render\camera.h" />
     <ClInclude Include="Include\render\constantbuffer.h" />
+    <ClInclude Include="Include\render\screen.h" />
     <ClInclude Include="Include\render\text.h" />
     <ClInclude Include="Include\render\keyframe.h" />
     <ClInclude Include="Include\render\model3d.h" />

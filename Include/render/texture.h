@@ -15,33 +15,19 @@ namespace lycoris::render::texture
 	class image
 	{
 	public:
-		image(const std::uint32_t width, const std::uint32_t height, const std::uint32_t sizePerPixel) :
-			buffer_(uint64_of(width) * uint64_of(height) * uint64_of(sizePerPixel)), width_(width), height_(height), size_per_pixel_(sizePerPixel) {}
+		image(std::uint32_t width, std::uint32_t height, std::uint32_t size_per_pixel);
+		image(const image&) = delete;
+		image(image&&) = default;
+		~image() = default;
 
-		std::uint8_t* get_raw_buffer() noexcept
-		{
-			return buffer_.data();
-		}
+		image& operator=(const image&) = delete;
+		image& operator=(image&&) = default;
 
-		const std::uint8_t* get_buffer() const noexcept
-		{
-			return buffer_.data();
-		}
-
-		std::uint32_t get_width() const noexcept
-		{
-			return width_;
-		}
-
-		std::uint32_t get_height() const noexcept
-		{
-			return height_;
-		}
-
-		std::uint32_t get_size_per_pixel() const noexcept
-		{
-			return size_per_pixel_;
-		}
+		std::uint8_t* get_raw_buffer() noexcept;
+		const std::uint8_t* get_buffer() const noexcept;
+		std::uint32_t get_width() const noexcept;
+		std::uint32_t get_height() const noexcept;
+		std::uint32_t get_size_per_pixel() const noexcept;
 
 	private:
 		std::vector<std::uint8_t> buffer_;
@@ -55,43 +41,17 @@ namespace lycoris::render::texture
 	public:
 		// construct with nullptr
 		texture() = default;
-
 		// construct with pointers
-		texture(ID3D11ShaderResourceView* shader_resource_view, ID3D11Texture2D* texture) noexcept
-		{
-			shader_resource_view_.attach(shader_resource_view);
-			texture_.attach(texture);
-		}
-
-		texture(const texture&) = default;
+		texture(winrt::com_ptr<ID3D11ShaderResourceView>&& shader_resource_view, winrt::com_ptr<ID3D11Texture2D>&& texture) noexcept;
+		texture(const texture&) = delete;
 		texture(texture&& other) = default;
+		~texture() = default;
 
-		texture& operator=(const texture&) = default;
+		texture& operator=(const texture&) = delete;
 		texture& operator=(texture&& other) = default;
 
-		ID3D11Texture2D* get_texture() const noexcept
-		{
-			//if (texture_)
-			//	throw std::runtime_error("Texture: texture_ is nullptr.");
-			return texture_.get();
-		}
-
-		ID3D11Texture2D** put_texture() noexcept
-		{
-			return texture_.put();
-		}
-
-		ID3D11ShaderResourceView* get_shader_resource_view() const noexcept
-		{
-			return shader_resource_view_.get();
-		}
-
-		ID3D11ShaderResourceView** put_shader_resource_view() noexcept
-		{
-			return shader_resource_view_.put();
-		}
-
-		~texture() = default;
+		ID3D11Texture2D* get_texture() const noexcept;
+		ID3D11ShaderResourceView* get_shader_resource_view() const noexcept;
 
 	private:
 		winrt::com_ptr<ID3D11Texture2D> texture_;
@@ -101,10 +61,21 @@ namespace lycoris::render::texture
 	class texture_loader
 	{
 	public:
+		texture_loader() = default;
+		texture_loader(const texture_loader&) = delete;
+		texture_loader(texture_loader&&) = delete;
+		~texture_loader() = default;
+
+		texture_loader& operator=(const texture_loader&) = delete;
+		texture_loader& operator=(texture_loader&&) = delete;
+
+		explicit operator bool() const noexcept;
+
 		void initialize();
 		image load_image_from_file(const std::filesystem::path& path);
 		texture create_texture_from_file(const std::filesystem::path& path);
 		void destroy();
+
 	private:
 		//winrt::com_ptr<IWICImagingFactory> imaging_factory_;
 		IWICImagingFactory* imaging_factory_ = nullptr;
