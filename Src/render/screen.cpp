@@ -2,10 +2,11 @@
 
 void lycoris::render::screen::resize(const std::uint32_t new_width, const std::uint32_t new_height)
 {
-	if (screen_width_ == new_width && screen_width_ == new_height) return;
+	const auto wid = static_cast<float>(new_width), hei = static_cast<float>(new_height);
+	if (screen_width_ == wid && screen_width_ == hei) return;
 
-	screen_width_ = static_cast<float>(new_width);
-	screen_height_ = static_cast<float>(new_height);
+	screen_width_ = wid;
+	screen_height_ = hei;
 }
 
 void lycoris::render::screen::set_activation(const bool activation) noexcept
