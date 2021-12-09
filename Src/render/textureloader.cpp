@@ -55,6 +55,11 @@ lycoris::render::texture::image lycoris::render::texture::texture_loader::load_i
 	return img;
 }
 
+lycoris::render::texture::texture_loader::operator bool() const noexcept
+{
+	return imaging_factory_ != nullptr;
+}
+
 void lycoris::render::texture::texture_loader::initialize()
 {
 	if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,

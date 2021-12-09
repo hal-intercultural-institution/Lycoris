@@ -61,10 +61,21 @@ namespace lycoris::render::texture
 	class texture_loader
 	{
 	public:
+		texture_loader() = default;
+		texture_loader(const texture_loader&) = delete;
+		texture_loader(texture_loader&&) = delete;
+		~texture_loader() = default;
+
+		texture_loader& operator=(const texture_loader&) = delete;
+		texture_loader& operator=(texture_loader&&) = delete;
+
+		explicit operator bool() const noexcept;
+
 		void initialize();
 		image load_image_from_file(const std::filesystem::path& path);
 		texture create_texture_from_file(const std::filesystem::path& path);
 		void destroy();
+
 	private:
 		//winrt::com_ptr<IWICImagingFactory> imaging_factory_;
 		IWICImagingFactory* imaging_factory_ = nullptr;
