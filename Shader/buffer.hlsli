@@ -35,5 +35,5 @@ cbuffer UVOffset : register(b5)
 
 cbuffer AnimMatrix : register(b6)
 {
-    matrix anim_matrix[16];
+    matrix anim_matrix[32];
 }
