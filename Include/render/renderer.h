@@ -80,13 +80,13 @@ namespace lycoris::render
 	{
 	public:
 		screen() noexcept : screen_width_(1280), screen_height_(720), activation_(false), window_handle_(nullptr) {}
-
 		screen(const screen&) = delete;
-		screen& operator=(const screen&) = delete;
-		
-		screen(screen&& other) noexcept = default;
+		screen(screen&& other) = delete;
 		~screen() = default;
-		
+
+		screen& operator=(const screen&) = delete;
+		screen& operator=(screen&&) = delete;
+
 		void resize(std::uint32_t new_width, std::uint32_t new_height);
 
 		void set_activation(bool activation) noexcept;
