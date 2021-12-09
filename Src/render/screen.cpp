@@ -2,6 +2,13 @@
 
 #include "game.h"
 
+void lycoris::render::screen::initialize(const std::uint32_t width, const std::uint32_t height)
+{
+	screen_width_ = static_cast<float>(width);
+	screen_height_ = static_cast<float>(height);
+	initialize();
+}
+
 void lycoris::render::screen::initialize()
 {
 	const auto& renderer = game::get_game().get_renderer();

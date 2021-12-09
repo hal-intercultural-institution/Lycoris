@@ -331,6 +331,7 @@ void lycoris::render::renderer::draw_text(const std::wstring& text, const text_f
 
 void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool bWindow)
 {
+	const auto& settings = game::get_game().get_launch_settings();
 	HRESULT hr = S_OK;
 
 	screen_.set_window_handle(hWnd);
@@ -338,8 +339,8 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	// Device, SwapChain, ImmediateContext 生成
 	DXGI_SWAP_CHAIN_DESC swap_chain_desc = {};
 	swap_chain_desc.BufferCount = 1;
-	swap_chain_desc.BufferDesc.Width = static_cast<std::uint32_t>(screen_.get_screen_width());
-	swap_chain_desc.BufferDesc.Height = static_cast<std::uint32_t>(screen_.get_screen_height());
+	swap_chain_desc.BufferDesc.Width = settings.screen_width;
+	swap_chain_desc.BufferDesc.Height = settings.screen_height;
 	swap_chain_desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swap_chain_desc.BufferDesc.RefreshRate.Numerator = 60;
 	swap_chain_desc.BufferDesc.RefreshRate.Denominator = 1;
@@ -380,7 +381,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		throw std::runtime_error("Renderer: failed to create d3d device.");
 
 	// バックバッファ、深度とステンシルの初期化
-	screen_.initialize();
+	screen_.initialize(settings.screen_width, settings.screen_height);
 
 	// カメラとviewport
 	{

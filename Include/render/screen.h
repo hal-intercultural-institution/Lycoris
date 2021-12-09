@@ -18,6 +18,8 @@ namespace lycoris::render
 		screen& operator=(const screen&) = delete;
 		screen& operator=(screen&&) = delete;
 
+		// first initialization
+		void initialize(std::uint32_t width, std::uint32_t height);
 		void initialize();
 		void initialize_d2d();
 		// resizes window(screen) manually
