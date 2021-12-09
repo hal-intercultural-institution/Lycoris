@@ -42,7 +42,7 @@ namespace lycoris::render::texture
 		// construct with nullptr
 		texture() = default;
 		// construct with pointers
-		texture(winrt::com_ptr<ID3D11ShaderResourceView> shader_resource_view, winrt::com_ptr<ID3D11Texture2D> texture) noexcept;
+		texture(winrt::com_ptr<ID3D11ShaderResourceView>&& shader_resource_view, winrt::com_ptr<ID3D11Texture2D>&& texture) noexcept;
 		texture(const texture&) = delete;
 		texture(texture&& other) = default;
 		~texture() = default;
@@ -50,17 +50,8 @@ namespace lycoris::render::texture
 		texture& operator=(const texture&) = delete;
 		texture& operator=(texture&& other) = default;
 
-		ID3D11Texture2D* get_texture() const noexcept
-		{
-			//if (texture_)
-			//	throw std::runtime_error("Texture: texture_ is nullptr.");
-			return texture_.get();
-		}
-
-		ID3D11ShaderResourceView* get_shader_resource_view() const noexcept
-		{
-			return shader_resource_view_.get();
-		}
+		ID3D11Texture2D* get_texture() const noexcept;
+		ID3D11ShaderResourceView* get_shader_resource_view() const noexcept;
 
 	private:
 		winrt::com_ptr<ID3D11Texture2D> texture_;

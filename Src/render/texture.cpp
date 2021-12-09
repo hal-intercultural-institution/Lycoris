@@ -32,3 +32,20 @@ std::uint32_t lycoris::render::texture::image::get_size_per_pixel() const noexce
 {
 	return size_per_pixel_;
 }
+
+lycoris::render::texture::texture::texture(winrt::com_ptr<ID3D11ShaderResourceView>&& shader_resource_view,
+	winrt::com_ptr<ID3D11Texture2D>&& texture) noexcept
+{
+	shader_resource_view_ = std::move(shader_resource_view);
+	texture_ = std::move(texture);
+}
+
+ID3D11Texture2D* lycoris::render::texture::texture::get_texture() const noexcept
+{
+	return texture_.get();
+}
+
+ID3D11ShaderResourceView* lycoris::render::texture::texture::get_shader_resource_view() const noexcept
+{
+	return shader_resource_view_.get();
+}
