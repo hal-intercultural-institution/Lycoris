@@ -1,6 +1,6 @@
-#include "render/renderer.h"
+#include "render/screen.h"
 
-void lycoris::render::screen::resize(std::uint32_t new_width, std::uint32_t new_height)
+void lycoris::render::screen::resize(const std::uint32_t new_width, const std::uint32_t new_height)
 {
 	if (screen_width_ == new_width && screen_width_ == new_height) return;
 
