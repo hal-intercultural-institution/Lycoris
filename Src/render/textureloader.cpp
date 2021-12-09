@@ -74,43 +74,45 @@ void lycoris::render::texture::texture_loader::destroy()
 
 lycoris::render::texture::texture lycoris::render::texture::texture_loader::create_texture_from_file(const std::filesystem::path& path)
 {
-	auto result = texture();
 	const auto image = load_image_from_file(path);
 	auto& renderer = game::get_game().get_renderer();
 	auto& device = renderer.get_device();
 
-	// ???Texture2D????
-	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = image.get_width();
-	texDesc.Height = image.get_height();
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = 0;
+	winrt::com_ptr<ID3D11Texture2D> texture_ptr;
+	winrt::com_ptr<ID3D11ShaderResourceView> shader_resource_view_ptr;
 
-	D3D11_SUBRESOURCE_DATA initialData{};
-	initialData.pSysMem = image.get_buffer();
-	initialData.SysMemPitch = texDesc.Width * image.get_size_per_pixel();
+	// Texture2DÇçÏÇÈ
+	D3D11_TEXTURE2D_DESC tex_desc;
+	tex_desc.Width = image.get_width();
+	tex_desc.Height = image.get_height();
+	tex_desc.MipLevels = 1;
+	tex_desc.ArraySize = 1;
+	tex_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	tex_desc.SampleDesc.Count = 1;
+	tex_desc.SampleDesc.Quality = 0;
+	tex_desc.Usage = D3D11_USAGE_DEFAULT;
+	tex_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+	tex_desc.CPUAccessFlags = 0;
+	tex_desc.MiscFlags = 0;
 
-	if (FAILED(device.CreateTexture2D(&texDesc, &initialData, result.put_texture())))
+	D3D11_SUBRESOURCE_DATA initial_data{};
+	initial_data.pSysMem = image.get_buffer();
+	initial_data.SysMemPitch = tex_desc.Width * image.get_size_per_pixel();
+
+	HRESULT hr = device.CreateTexture2D(&tex_desc, &initial_data, texture_ptr.put());
+	if (FAILED(hr))
 		throw std::runtime_error("TextureLoader: failed to create Texture2D");
 
-	// ShaderResourceView ????
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	srvDesc.Format = texDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-	srvDesc.Texture2D.MostDetailedMip = 0;
+	// ShaderResourceViewÇçÏÇÈ
+	D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc;
+	srv_desc.Format = tex_desc.Format;
+	srv_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srv_desc.Texture2D.MipLevels = 1;
+	srv_desc.Texture2D.MostDetailedMip = 0;
 
-	HRESULT hr = S_OK;
-	hr = device.CreateShaderResourceView(result.get_texture(), &srvDesc, result.put_shader_resource_view());
+	hr = device.CreateShaderResourceView(texture_ptr.get(), &srv_desc, shader_resource_view_ptr.put());
 	if (FAILED(hr))
 		throw std::runtime_error("TextureLoader: failed to create ShaderResourceView");
 
-	return result;
+	return texture(std::move(shader_resource_view_ptr), std::move(texture_ptr));
 }
