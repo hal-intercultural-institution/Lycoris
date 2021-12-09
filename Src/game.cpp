@@ -297,6 +297,11 @@ HINSTANCE lycoris::game::game::get_instance_handle() const noexcept
 	return h_instance_;
 }
 
+const lycoris::system::settings& lycoris::game::game::get_launch_settings() const noexcept
+{
+	return settings_;
+}
+
 lycoris::game::scene& lycoris::game::game::get_current_scene() const
 {
 	if (!scene_)
