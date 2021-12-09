@@ -57,19 +57,9 @@ namespace lycoris::render::texture
 			return texture_.get();
 		}
 
-		ID3D11Texture2D** put_texture() noexcept
-		{
-			return texture_.put();
-		}
-
 		ID3D11ShaderResourceView* get_shader_resource_view() const noexcept
 		{
 			return shader_resource_view_.get();
-		}
-
-		ID3D11ShaderResourceView** put_shader_resource_view() noexcept
-		{
-			return shader_resource_view_.put();
 		}
 
 	private:
