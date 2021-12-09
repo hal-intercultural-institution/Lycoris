@@ -15,33 +15,13 @@ namespace lycoris::render::texture
 	class image
 	{
 	public:
-		image(const std::uint32_t width, const std::uint32_t height, const std::uint32_t sizePerPixel) :
-			buffer_(uint64_of(width) * uint64_of(height) * uint64_of(sizePerPixel)), width_(width), height_(height), size_per_pixel_(sizePerPixel) {}
+		image(std::uint32_t width, std::uint32_t height, std::uint32_t size_per_pixel);
 
-		std::uint8_t* get_raw_buffer() noexcept
-		{
-			return buffer_.data();
-		}
-
-		const std::uint8_t* get_buffer() const noexcept
-		{
-			return buffer_.data();
-		}
-
-		std::uint32_t get_width() const noexcept
-		{
-			return width_;
-		}
-
-		std::uint32_t get_height() const noexcept
-		{
-			return height_;
-		}
-
-		std::uint32_t get_size_per_pixel() const noexcept
-		{
-			return size_per_pixel_;
-		}
+		std::uint8_t* get_raw_buffer() noexcept;
+		const std::uint8_t* get_buffer() const noexcept;
+		std::uint32_t get_width() const noexcept;
+		std::uint32_t get_height() const noexcept;
+		std::uint32_t get_size_per_pixel() const noexcept;
 
 	private:
 		std::vector<std::uint8_t> buffer_;
