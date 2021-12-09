@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include <d3d11.h>
+#include <d2d1_1.h>
 #include <winrt/base.h>
 
 namespace lycoris::render
@@ -17,7 +18,10 @@ namespace lycoris::render
 		screen& operator=(const screen&) = delete;
 		screen& operator=(screen&&) = delete;
 
+		void initialize();
+		void initialize_d2d();
 		void resize(std::uint32_t new_width, std::uint32_t new_height);
+		void clear(const std::array<float, 4>& color) const;
 
 		void set_activation(bool activation) noexcept;
 		void set_window_handle(HWND window_handle);
@@ -26,12 +30,15 @@ namespace lycoris::render
 		float get_screen_height() const;
 		bool is_active() const noexcept;
 		HWND get_window_handle() const;
+		ID2D1Bitmap1& get_d2d_screen() const;
 
 	private:
 		float screen_width_;
 		float screen_height_;
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
+		winrt::com_ptr<ID3D11Texture2D> depth_stencil_texture_;
+		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_screen_;
 		bool activation_;
 		HWND window_handle_;
 	};

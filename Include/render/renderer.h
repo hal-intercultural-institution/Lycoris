@@ -88,6 +88,12 @@ namespace lycoris::render
 		ID3D11Device& get_device() const;
 		// DeviceContext‚ğæ“¾
 		ID3D11DeviceContext& get_device_context() const;
+		// SwapChain‚ğæ“¾
+		IDXGISwapChain& get_swap_chain() const;
+		// D2DDevice‚ğæ“¾
+		ID2D1Device& get_2d_device() const;
+		// D2DDeviceContext‚ğæ“¾
+		ID2D1DeviceContext& get_2d_device_context() const;
 		// Depth (Z) buffer ‚ğg—p‚·‚é‚©‚Ç‚¤‚©
 		void set_depth_enabled(bool flag);
 		// Depth, Stencil ‚Ìİ’è
@@ -164,8 +170,6 @@ namespace lycoris::render
 		winrt::com_ptr<ID3D11DeviceContext> immediate_context_;
 		winrt::com_ptr<IDXGISwapChain> swap_chain_;
 		winrt::com_ptr<IDXGIDevice1> dxgi_device_;
-		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
-		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 
 		std::array<shader::vertex_shader, shader::vertex_shader_count> vertex_shaders_;
 		shader::vertex vertex_shader_ = shader::vertex::normal;
@@ -174,7 +178,6 @@ namespace lycoris::render
 
 		std::array<winrt::com_ptr<ID3D11DepthStencilState>, depth_stencil_state_count> depth_stencil_states_;
 		depth_stencil_state depth_stencil_state_ = depth_stencil_state::depth;
-		winrt::com_ptr<ID3D11Texture2D> depth_stencil_texture_;
 		std::array<winrt::com_ptr<ID3D11RasterizerState>, culling_mode_count> rasterizer_states_;
 		culling_mode culling_mode_ = culling_mode::back;
 		std::array<winrt::com_ptr<ID3D11BlendState>, blend_state_count> blend_states_;
@@ -183,7 +186,6 @@ namespace lycoris::render
 
 		winrt::com_ptr<ID2D1Device> d2d_device_;
 		winrt::com_ptr<ID2D1DeviceContext> d2d_device_context_;
-		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_screen_;
 
 		winrt::com_ptr<IDWriteFactory> d_write_factory_;
 
