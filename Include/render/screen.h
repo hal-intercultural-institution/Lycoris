@@ -23,7 +23,7 @@ namespace lycoris::render
 		void initialize();
 		void initialize_d2d();
 		// resizes window(screen) manually
-		void resize(std::uint32_t new_width, std::uint32_t new_height);
+		void resize(std::int32_t new_width, std::int32_t new_height);
 		// resizes only back buffer (for window-procedure)
 		void resize(std::uint64_t param);
 		void clear(const std::array<float, 4>& color) const;

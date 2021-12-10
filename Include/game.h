@@ -27,7 +27,7 @@ namespace lycoris::game
 		std::int32_t get_window_border_x() const noexcept;
 		std::int32_t get_window_border_y() const noexcept;
 		HINSTANCE get_instance_handle() const noexcept;
-		const lycoris::system::settings& get_launch_settings() const noexcept;
+		const system::settings& get_launch_settings() const noexcept;
 		scene& get_current_scene() const;
 		render::renderer& get_renderer() noexcept;
 		render::texture::texture_loader& get_texture_loader() noexcept;

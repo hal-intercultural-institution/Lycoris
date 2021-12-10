@@ -73,7 +73,7 @@ void lycoris::render::screen::initialize_d2d()
 
 }
 
-void lycoris::render::screen::resize(const std::uint32_t new_width, const std::uint32_t new_height)
+void lycoris::render::screen::resize(const std::int32_t new_width, const std::int32_t new_height)
 {
 	const auto& game = game::get_game();
 
