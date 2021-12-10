@@ -24,7 +24,10 @@ namespace lycoris::game
 		double get_last_tick_time() const noexcept;
 		double get_last_draw_time() const noexcept;
 		std::uint32_t get_draw_call_count() const noexcept;
+		std::int32_t get_window_border_x() const noexcept;
+		std::int32_t get_window_border_y() const noexcept;
 		HINSTANCE get_instance_handle() const noexcept;
+		const system::settings& get_launch_settings() const noexcept;
 		scene& get_current_scene() const;
 		render::renderer& get_renderer() noexcept;
 		render::texture::texture_loader& get_texture_loader() noexcept;
@@ -41,7 +44,7 @@ namespace lycoris::game
 
 		~game() noexcept;
 
-		void set_settings(system::settings& settings);
+		void set_settings(const system::settings& settings);
 		void set_scene(std::unique_ptr<scene>&& scene);
 		void set_load_screen(std::unique_ptr<load_screen>&& load_screen);
 		void set_window_title(const char* title);
@@ -77,6 +80,7 @@ namespace lycoris::game
 		LARGE_INTEGER per_second_{};
 		std::uint32_t frames_last_second_ = 0, internal_draw_calls_ = 0;
 		double frame_time_tick_ = 0.0, frame_time_draw_ = 0.0;
+		int32_t window_border_x_ = 0, window_border_y_ = 0;
 	};
 	
 }

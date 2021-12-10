@@ -4,18 +4,31 @@
 
 lycoris::render::viewport::viewport(const float width, const float height, const float top_left_x, const float top_left_y)
 {
-	const screen& screen = game::get_game().get_renderer().get_screen();
-	viewport_.Width = screen.get_screen_width() * width;
-	viewport_.Height = screen.get_screen_height() * height;
-	viewport_.MinDepth = 0.0f;
-	viewport_.MaxDepth = 1.0f;
-	viewport_.TopLeftX = screen.get_screen_width() * top_left_x;
-	viewport_.TopLeftY = screen.get_screen_height() * top_left_y;
+	width_ = width;
+	height_ = height;
+	top_left_x_ = top_left_x;
+	top_left_y_ = top_left_y;
 }
 
-const D3D11_VIEWPORT& lycoris::render::viewport::get_raw() const noexcept
+D3D11_VIEWPORT lycoris::render::viewport::get() const noexcept
 {
-	return viewport_;
+	const auto& screen = game::get_game().get_renderer().get_screen();
+
+	return
+	{
+		screen.get_screen_width()* top_left_x_,
+		screen.get_screen_height()* top_left_y_,
+		screen.get_screen_width() * width_,
+		screen.get_screen_height() * height_,
+		0.f,
+		1.f
+	};
+}
+
+float lycoris::render::viewport::get_aspect_ratio() const noexcept
+{
+	const auto& screen = game::get_game().get_renderer().get_screen();
+	return screen.get_screen_width() * width_ / screen.get_screen_height() * height_;
 }
 
 const DirectX::XMFLOAT3& lycoris::render::camera::get_position() const noexcept
@@ -118,8 +131,7 @@ void lycoris::render::camera::set()
 	ivm._41 = ivm._42 = ivm._43 = 0.0f;
 
 	// projection matrix
-	const auto aspect_ratio = viewport_.get_raw().Width / viewport_.get_raw().Height;
-	const auto projection_matrix = DirectX::XMMatrixPerspectiveFovLH(1.0f, aspect_ratio, 1.0f, 10000.0f);
+	const auto projection_matrix = DirectX::XMMatrixPerspectiveFovLH(1.0f, viewport_.get_aspect_ratio(), 1.0f, 10000.0f);
 	XMStoreFloat4x4(&projection_matrix_, projection_matrix);
 	renderer.set_projection_matrix(projection_matrix_);
 }

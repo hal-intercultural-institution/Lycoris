@@ -21,13 +21,15 @@ void lycoris::profiler::debug_overlay::on_tick()
 
 	auto& game = game::get_game();
 	text_ = std::format(
-		L"Lycoris {}-{}, {} build\nfps: {}\nTick: {:f}\nDraw: {:f}\nMouse x: {}\nMouse y: {}\nGame-pads: {}\nCamera pos: {} {} {}\nCamera rot: {} {}\nCamera distance: {}\nDrawCalls: {}",
+		L"Lycoris {}-{}, {} build\nfps: {}\nTick: {:f}\nDraw: {:f}\nResolution: {}x{}\nMouse x: {}\nMouse y: {}\nGame-pads: {}\nCamera pos: {} {} {}\nCamera rot: {} {}\nCamera distance: {}\nDrawCalls: {}",
 		constants::branch_name,
 		constants::commit_id,
 		constants::configuration_name,
 		game.get_fps_last_second(),
 		game.get_last_tick_time(),
 		game.get_last_draw_time(),
+		game.get_renderer().get_screen().get_screen_width(),
+		game.get_renderer().get_screen().get_screen_height(),
 		game.get_input_system().get_mouse().get_screen_x(),
 		game.get_input_system().get_mouse().get_screen_y(),
 		game.get_input_system().get_game_pad_count(),

@@ -73,11 +73,11 @@ void lycoris::game::game::initialize(HINSTANCE h_instance, int n_show_cmd, MSG* 
 	RECT window_size{}, client_size{};
 	GetWindowRect(h_wnd, &window_size);
 	GetClientRect(h_wnd, &client_size);
-	const int border_x = window_size.right - window_size.left - (client_size.right - client_size.left);
-	const int border_y = window_size.bottom - window_size.top - (client_size.bottom - client_size.top);
+	window_border_x_ = window_size.right - window_size.left - (client_size.right - client_size.left);
+	window_border_y_ = window_size.bottom - window_size.top - (client_size.bottom - client_size.top);
 
 	SetWindowPos(h_wnd, nullptr, CW_USEDEFAULT, CW_USEDEFAULT,
-		border_x + settings_.screen_width, border_y + settings_.screen_height, SWP_NOMOVE);
+		window_border_x_ + settings_.screen_width, window_border_y_ + settings_.screen_height, SWP_NOMOVE);
 
 	ShowWindow(h_wnd, n_show_cmd);
 	UpdateWindow(h_wnd);
@@ -282,9 +282,24 @@ std::uint32_t lycoris::game::game::get_draw_call_count() const noexcept
 	return internal_draw_calls_;
 }
 
+std::int32_t lycoris::game::game::get_window_border_x() const noexcept
+{
+	return window_border_x_;
+}
+
+std::int32_t lycoris::game::game::get_window_border_y() const noexcept
+{
+	return window_border_y_;
+}
+
 HINSTANCE lycoris::game::game::get_instance_handle() const noexcept
 {
 	return h_instance_;
+}
+
+const lycoris::system::settings& lycoris::game::game::get_launch_settings() const noexcept
+{
+	return settings_;
 }
 
 lycoris::game::scene& lycoris::game::game::get_current_scene() const
@@ -311,7 +326,7 @@ void lycoris::game::game::set_window_title(const char* title)
 	SetWindowText(renderer_.get_screen().get_window_handle(), title);
 }
 
-void lycoris::game::game::set_settings(system::settings& settings)
+void lycoris::game::game::set_settings(const system::settings& settings)
 {
 	settings_ = settings;
 }

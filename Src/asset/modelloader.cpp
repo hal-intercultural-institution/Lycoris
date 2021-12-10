@@ -311,7 +311,7 @@ std::unordered_map<std::string, lycoris::render::model3d::model_material> lycori
 	std::vector<std::string> line;
 	std::unordered_map<std::string, render::model3d::model_material> materials;
 	std::string current;
-	auto texture_loader = game::get_game().get_texture_loader();
+	auto& texture_loader = game::get_game().get_texture_loader();
 	
 	while (file.next_splitted_line(line))
 	{
