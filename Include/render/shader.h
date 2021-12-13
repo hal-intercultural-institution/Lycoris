@@ -32,10 +32,11 @@ namespace lycoris::render::shader
         winrt::com_ptr<ID3D11InputLayout> input_layout_;
     };
 
-    constexpr auto pixel_shader_count = 1;
+    constexpr auto pixel_shader_count = 2;
     enum class pixel
     {
 	    normal,
+        alpha_test,
     };
 
 	class pixel_shader

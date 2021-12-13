@@ -7,6 +7,7 @@
 
 #include "game.h"
 #include "render/shader/ps.h"
+#include "render/shader/ps_alpha.h"
 #include "render/shader/vs.h"
 #include "render/shader/vs_anim.h"
 
@@ -249,6 +250,13 @@ void lycoris::render::renderer::set_blend_state(const blend_state state)
 
 	immediate_context_->OMSetBlendState(blend_states_[static_cast<std::size_t>(blend_state_)].get(),
 		blend_factor.data(), 0xffffffff);
+}
+
+void lycoris::render::renderer::set_alpha_test_state(const bool is_enabled)
+{
+	const shader::pixel incoming = is_enabled ? shader::pixel::alpha_test : shader::pixel::normal;
+	if (pixel_shader_ == incoming) return;
+	set_pixel_shader(incoming);
 }
 
 void lycoris::render::renderer::set_animation_matrix(const std::size_t index, const DirectX::XMFLOAT4X4& matrix)
@@ -519,6 +527,11 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		auto& shader = pixel_shaders_[static_cast<std::size_t>(shader::pixel::normal)];
 		shader = compile_pixel_shader(g_ps_main, sizeof g_ps_main);
 		immediate_context_->PSSetShader(&shader.get_shader(), nullptr, 0);
+	}
+
+	{
+		auto& shader = pixel_shaders_[static_cast<std::size_t>(shader::pixel::alpha_test)];
+		shader = compile_pixel_shader(g_ps_alpha, sizeof g_ps_alpha);
 	}
 	
 	// Constant Buffers

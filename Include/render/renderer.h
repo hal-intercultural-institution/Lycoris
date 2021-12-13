@@ -126,6 +126,8 @@ namespace lycoris::render
 		void set_viewport(const viewport& viewport);
 		// ぶれんどすてーと
 		void set_blend_state(blend_state state);
+		// あるふぁてすと (true = enable)
+		void set_alpha_test_state(bool is_enabled);
 		// アニメーション用
 		void set_animation_matrix(std::size_t index, const DirectX::XMFLOAT4X4& matrix);
 		// アニメーション用 (一括)
