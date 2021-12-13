@@ -75,6 +75,11 @@ void lycoris::render::sprite::set_blend_state(const blend_state state)
 	blend_state_ = state;
 }
 
+void lycoris::render::sprite::set_alpha_test_state(bool enabled)
+{
+	alpha_test_ = enabled;
+}
+
 void lycoris::render::sprite::draw()
 {
 	if (u_index_ < 0) u_index_ = 0;
@@ -124,6 +129,7 @@ void lycoris::render::sprite::draw()
 	renderer.set_material(material_);
 	renderer.set_blend_state(blend_state_);
 	renderer.set_vertex_shader(shader::vertex::normal);
+	renderer.set_alpha_test_state(alpha_test_);
 
 	constexpr std::uint32_t stride = sizeof(vertex);
 	constexpr std::uint32_t offset = 0;

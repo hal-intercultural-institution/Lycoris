@@ -33,7 +33,8 @@ namespace lycoris::render
 		void set_vertical_alignment(vertical_alignment alignment) noexcept;
 		void set_scale(const DirectX::XMFLOAT2& scale) noexcept;
 		void set_blend_state(blend_state state);
-		
+		void set_alpha_test_state(bool enabled);
+
 		void draw();
 
 		static sprite create(float width, float height, std::uint32_t u, std::uint32_t v, texture::texture&& texture);
@@ -52,5 +53,6 @@ namespace lycoris::render
 		float width_ = 0.0f, height_ = 0.0f;
 		std::int32_t u_index_ = 0, v_index_ = 0;
 		blend_state blend_state_ = blend_state::none;
+		bool alpha_test_ = false;
 	};
 }
