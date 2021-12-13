@@ -19,6 +19,7 @@
 namespace lycoris::render
 {
 	constexpr auto animation_max = 32;
+	constexpr auto camera_max = 4;
 
 	constexpr float color_of(const std::uint8_t color)
 	{
@@ -126,6 +127,8 @@ namespace lycoris::render
 		void set_viewport(const viewport& viewport);
 		// ぶれんどすてーと
 		void set_blend_state(blend_state state);
+		// あるふぁてすと (true = enable)
+		void set_alpha_test_state(bool is_enabled);
 		// アニメーション用
 		void set_animation_matrix(std::size_t index, const DirectX::XMFLOAT4X4& matrix);
 		// アニメーション用 (一括)
@@ -134,6 +137,8 @@ namespace lycoris::render
 		void set_vertex_shader(shader::vertex vertex_shader);
 		// ピクセルシェーダー設定
 		void set_pixel_shader(shader::pixel pixel_shader);
+		// カメラ設定
+		void set_current_camera(std::size_t index);
 		// テキスト描画 (画面) (DirectWrite)
 		void draw_text(const std::wstring& text, const text_format& format, const text_color& color, const text_canvas& canvas) const;
 		// テキスト描画 (テクスチャ) (DirectWrite)
@@ -143,7 +148,7 @@ namespace lycoris::render
 		// get the primary camera
 		camera& get_camera();
 		// get camera
-		std::array<camera, 4>& get_cameras();
+		std::array<camera, camera_max>& get_cameras();
 
 		[[nodiscard("Ignoring value returned wastes resources.")]]
 		// creates text format object used by text renderer
@@ -202,6 +207,7 @@ namespace lycoris::render
 		std::array<float, 4> background_color_ = { color_of(247), color_of(219), color_of(240), 1.0f };
 		
 		screen screen_;
-		std::array<camera, 4> camera_{};
+		std::array<camera, camera_max> camera_{};
+		std::size_t current_camera_ = 0;
 	};
 }

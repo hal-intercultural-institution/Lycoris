@@ -7,6 +7,7 @@
 
 #include "game.h"
 #include "render/shader/ps.h"
+#include "render/shader/ps_alpha.h"
 #include "render/shader/vs.h"
 #include "render/shader/vs_anim.h"
 
@@ -52,7 +53,7 @@ ID2D1DeviceContext& lycoris::render::renderer::get_2d_device_context() const
 
 lycoris::render::camera& lycoris::render::renderer::get_camera()
 {
-	return camera_.at(0);
+	return camera_.at(current_camera_);
 }
 
 std::array<lycoris::render::camera, 4>& lycoris::render::renderer::get_cameras()
@@ -251,6 +252,13 @@ void lycoris::render::renderer::set_blend_state(const blend_state state)
 		blend_factor.data(), 0xffffffff);
 }
 
+void lycoris::render::renderer::set_alpha_test_state(const bool is_enabled)
+{
+	const shader::pixel incoming = is_enabled ? shader::pixel::alpha_test : shader::pixel::normal;
+	if (pixel_shader_ == incoming) return;
+	set_pixel_shader(incoming);
+}
+
 void lycoris::render::renderer::set_animation_matrix(const std::size_t index, const DirectX::XMFLOAT4X4& matrix)
 {
 	anim_matrix_.get()[index] = matrix;
@@ -290,6 +298,12 @@ void lycoris::render::renderer::set_pixel_shader(const shader::pixel pixel_shade
 	pixel_shader_ = pixel_shader;
 
 	immediate_context_->PSSetShader(&pixel_shaders_[static_cast<std::size_t>(pixel_shader_)].get_shader(), nullptr, 0);
+}
+
+void lycoris::render::renderer::set_current_camera(const std::size_t index)
+{
+	assert(index < camera_max);
+	current_camera_ = index;
 }
 
 void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,
@@ -519,6 +533,11 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 		auto& shader = pixel_shaders_[static_cast<std::size_t>(shader::pixel::normal)];
 		shader = compile_pixel_shader(g_ps_main, sizeof g_ps_main);
 		immediate_context_->PSSetShader(&shader.get_shader(), nullptr, 0);
+	}
+
+	{
+		auto& shader = pixel_shaders_[static_cast<std::size_t>(shader::pixel::alpha_test)];
+		shader = compile_pixel_shader(g_ps_alpha, sizeof g_ps_alpha);
 	}
 	
 	// Constant Buffers

@@ -23,6 +23,7 @@ namespace lycoris::render
 
 		void set_billboard(bool billboard);
 		void set_blend_state(blend_state state);
+		void set_alpha_test_state(bool enabled);
 
 		void draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale, const DirectX::XMFLOAT3& rotation);
 
@@ -36,5 +37,6 @@ namespace lycoris::render
 		material  material_{};
 		blend_state blend_state_ = blend_state::none;
 		bool billboard_ = false;
+		bool alpha_test_ = false;
 	};
 }
