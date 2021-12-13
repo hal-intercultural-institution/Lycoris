@@ -202,6 +202,7 @@
     <FxCompile Include="Shader\vs.hlsl" />
     <FxCompile Include="Shader\ps.hlsl" />
     <FxCompile Include="Shader\vs_anim.hlsl" />
+    <FxCompile Include="Shader\ps_alpha.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\io.hlsli" />
