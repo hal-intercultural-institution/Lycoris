@@ -53,7 +53,7 @@ ID2D1DeviceContext& lycoris::render::renderer::get_2d_device_context() const
 
 lycoris::render::camera& lycoris::render::renderer::get_camera()
 {
-	return camera_.at(0);
+	return camera_.at(current_camera_);
 }
 
 std::array<lycoris::render::camera, 4>& lycoris::render::renderer::get_cameras()
@@ -298,6 +298,12 @@ void lycoris::render::renderer::set_pixel_shader(const shader::pixel pixel_shade
 	pixel_shader_ = pixel_shader;
 
 	immediate_context_->PSSetShader(&pixel_shaders_[static_cast<std::size_t>(pixel_shader_)].get_shader(), nullptr, 0);
+}
+
+void lycoris::render::renderer::set_current_camera(const std::size_t index)
+{
+	assert(index < camera_max);
+	current_camera_ = index;
 }
 
 void lycoris::render::renderer::draw_text(const std::wstring& text, const text_format& format, const text_color& color,

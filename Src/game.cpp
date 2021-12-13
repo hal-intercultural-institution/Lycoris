@@ -203,11 +203,14 @@ void lycoris::game::game::on_draw()
 
 	if (scene_)
 	{
+		std::size_t index = 0;
 		for (auto& camera : renderer_.get_cameras())
 		{
 			if (!camera) continue;
+			renderer_.set_current_camera(index);
 			camera.set();
 			scene_->on_draw();
+			index++;
 		}
 	}
 	renderer_.set_viewport(default_viewport_);
