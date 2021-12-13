@@ -206,5 +206,6 @@
   <ItemGroup>
     <None Include="Shader\io.hlsli" />
     <None Include="Shader\buffer.hlsli" />
+    <None Include="Shader\ps_texture.hlsli" />
   </ItemGroup>
 </Project>

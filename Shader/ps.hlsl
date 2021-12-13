@@ -1,7 +1,5 @@
 #include "io.hlsli"
-
-Texture2D texture0 : register(t0);
-SamplerState sampler0 : register(s0);
+#include "ps_texture.hlsli"
 
 float4 ps_main(const vs_out input) : SV_TARGET
 {
