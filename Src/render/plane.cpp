@@ -32,6 +32,11 @@ void lycoris::render::plane::set_alpha_test_state(const bool enabled)
 	alpha_test_ = enabled;
 }
 
+void lycoris::render::plane::set_culling_mode(const culling_mode mode) noexcept
+{
+	culling_mode_ = mode;
+}
+
 void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& scale, const DirectX::XMFLOAT3& rotation)
 {
 	constexpr DirectX::XMFLOAT3 compensation = { 0.0f, DirectX::XM_PI, 0.0f};
@@ -50,7 +55,7 @@ void lycoris::render::plane::draw(const DirectX::XMFLOAT3& position, const Direc
 
 	renderer.set_depth_enabled(true);
 	renderer.set_world_matrix(world_matrix_float);
-	renderer.set_culling_mode(culling_mode::back);
+	renderer.set_culling_mode(culling_mode_);
 	renderer.set_blend_state(blend_state_);
 	renderer.set_alpha_test_state(alpha_test_);
 	renderer.set_uv_offset({ 0.0f, 0.0f });
