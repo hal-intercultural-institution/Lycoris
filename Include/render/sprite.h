@@ -50,8 +50,8 @@ namespace lycoris::render
 		DirectX::XMFLOAT2 scale_ = { 1.0f, 1.0f };
 		DirectX::XMFLOAT2 position_{};
 		float rotation_ = 0.0f;
-		horizontal_alignment horizontal_alignment_ = horizontal_alignment::left;
-		vertical_alignment vertical_alignment_ = vertical_alignment::top;
+		horizontal_alignment horizontal_alignment_ = horizontal_alignment::center;
+		vertical_alignment vertical_alignment_ = vertical_alignment::middle;
 		float u_width_ = 1.0f, v_height_ = 1.0f;
 		float width_ = 0.0f, height_ = 0.0f;
 		std::int32_t u_index_ = 0, v_index_ = 0;

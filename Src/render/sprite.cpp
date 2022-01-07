@@ -108,10 +108,10 @@ void lycoris::render::sprite::draw()
 	switch (horizontal_alignment_)
 	{
 	case horizontal_alignment::right:
-		x_pos -= width_ * scale_.x;
+		x_pos -= width_ * scale_.x * .5f;
 		break;
-	case horizontal_alignment::center:
-		x_pos -= width_ * scale_.x * 0.5f;
+	case horizontal_alignment::left:
+		x_pos += width_ * scale_.x * .5f;
 		break;
 	default:
 		break;
@@ -120,10 +120,10 @@ void lycoris::render::sprite::draw()
 	switch (vertical_alignment_)
 	{
 	case vertical_alignment::bottom:
-		y_pos -= height_ * scale_.y;
+		y_pos -= height_ * scale_.y * .5f;
 		break;
-	case vertical_alignment::middle:
-		y_pos -= height_ * scale_.y * 0.5f;
+	case vertical_alignment::top:
+		y_pos += height_ * scale_.y * .5f;
 		break;
 	default:
 		break;
@@ -183,10 +183,10 @@ lycoris::render::sprite lycoris::render::sprite::create(const float width, const
 	
 	const std::array<vertex, vertex_count> vertices = {
 		{
-			{ { 0.0f, 0.0f, 0.0f }, {},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f } },
-			{ { width, 0.0f, 0.0f }, {},  { 1.0f, 1.0f, 1.0f, 1.0f }, { u_width, 0.0f } },
-			{ { 0.0f, height, 0.0f }, {},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, v_height } },
-			{ { width, height, 0.0f }, {},  { 1.0f, 1.0f, 1.0f, 1.0f }, { u_width, v_height } },
+			{ { width * -.5f, height * -.5f, 0.0f }, {},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f } },
+			{ { width * .5f, height * -.5f, 0.0f }, {},  { 1.0f, 1.0f, 1.0f, 1.0f }, { u_width, 0.0f } },
+			{ { width * -.5f, height * .5f, 0.0f }, {},  { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, v_height } },
+			{ { width * .5f, height * .5f, 0.0f }, {},  { 1.0f, 1.0f, 1.0f, 1.0f }, { u_width, v_height } },
 		}
 	};
 
