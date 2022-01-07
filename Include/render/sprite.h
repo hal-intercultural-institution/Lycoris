@@ -20,12 +20,14 @@ namespace lycoris::render
 		
 		ID3D11Buffer* get_vertex_buffer() const;
 		DirectX::XMFLOAT2& get_position();
+		float get_rotation() const;
 		std::int32_t& get_u_index();
 		std::int32_t& get_v_index();
 		material& get_material();
 		blend_state get_blend_state() const;
 		
 		void set_position(const DirectX::XMFLOAT2& position);
+		void set_rotation(float rotation);
 		void set_u_index(std::int32_t index);
 		void set_v_index(std::int32_t index);
 		void set_material(const material& material);
@@ -47,6 +49,7 @@ namespace lycoris::render
 		material  material_{};
 		DirectX::XMFLOAT2 scale_ = { 1.0f, 1.0f };
 		DirectX::XMFLOAT2 position_{};
+		float rotation_ = 0.0f;
 		horizontal_alignment horizontal_alignment_ = horizontal_alignment::left;
 		vertical_alignment vertical_alignment_ = vertical_alignment::top;
 		float u_width_ = 1.0f, v_height_ = 1.0f;

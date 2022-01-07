@@ -15,6 +15,11 @@ DirectX::XMFLOAT2& lycoris::render::sprite::get_position()
 	return position_;
 }
 
+float lycoris::render::sprite::get_rotation() const
+{
+	return rotation_;
+}
+
 std::int32_t& lycoris::render::sprite::get_u_index()
 {
 	return u_index_;
@@ -38,6 +43,11 @@ lycoris::render::blend_state lycoris::render::sprite::get_blend_state() const
 void lycoris::render::sprite::set_position(const DirectX::XMFLOAT2& position)
 {
 	position_ = position;
+}
+
+void lycoris::render::sprite::set_rotation(const float rotation)
+{
+	rotation_ = rotation;
 }
 
 void lycoris::render::sprite::set_u_index(const std::int32_t index)
@@ -120,6 +130,7 @@ void lycoris::render::sprite::draw()
 	}
 
 	auto world_matrix = XMMatrixMultiply(DirectX::XMMatrixIdentity(), DirectX::XMMatrixScaling(scale_.x, scale_.y, 0.0f));
+	world_matrix = XMMatrixMultiply(world_matrix, DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, -rotation_));
 	world_matrix = XMMatrixMultiply(world_matrix, DirectX::XMMatrixTranslation(x_pos, y_pos, 0.0f));
 
 	DirectX::XMFLOAT4X4 world_matrix_float{};
