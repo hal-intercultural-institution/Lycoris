@@ -30,10 +30,12 @@ namespace lycoris::render
 
 		void set_activation(bool activation) noexcept;
 		void set_window_handle(HWND window_handle);
+		void set_fullscreen(bool value);
 
 		float get_screen_width() const;
 		float get_screen_height() const;
 		bool is_active() const noexcept;
+		bool is_fullscreen() const noexcept;
 		HWND get_window_handle() const;
 		ID2D1Bitmap1& get_d2d_screen() const;
 
@@ -42,11 +44,13 @@ namespace lycoris::render
 		void resize();
 		float screen_width_;
 		float screen_height_;
+		float old_width_, old_height_;
 		winrt::com_ptr<ID3D11RenderTargetView> render_target_view_;
 		winrt::com_ptr<ID3D11DepthStencilView> depth_stencil_view_;
 		winrt::com_ptr<ID3D11Texture2D> depth_stencil_texture_;
 		winrt::com_ptr<ID2D1Bitmap1> d2d_bitmap_screen_;
 		bool activation_;
+		bool is_fullscreen_;
 		HWND window_handle_;
 	};
 }

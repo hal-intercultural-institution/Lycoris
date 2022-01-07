@@ -118,6 +118,36 @@ void lycoris::render::screen::set_window_handle(HWND window_handle)
 	window_handle_ = window_handle;
 }
 
+void lycoris::render::screen::set_fullscreen(const bool value)
+{
+	if (is_fullscreen_ == value) return;
+	is_fullscreen_ = value;
+	const auto& renderer = game::get_game().get_renderer();
+	const auto x = static_cast<float>(GetSystemMetrics(SM_CXSCREEN));
+	const auto y = static_cast<float>(GetSystemMetrics(SM_CYSCREEN));
+
+	if (is_fullscreen_)
+	{
+		old_width_ = screen_width_;
+		old_height_ = screen_height_;
+		screen_width_ = x;
+		screen_height_ = y;
+		resize();
+	}
+	else
+	{
+		screen_width_ = old_width_;
+		screen_height_ = old_height_;
+		resize();
+	}
+
+	std::stringstream ss;
+	ss << is_fullscreen_ << " " << screen_width_ << " " << screen_height_;
+	game::get_game().logger.log(ss.str());
+	const auto result = renderer.get_swap_chain().SetFullscreenState(is_fullscreen_, nullptr);
+	if (FAILED(result)) throw std::runtime_error("Failed to set full screen state");
+}
+
 float lycoris::render::screen::get_screen_width() const
 {
 	return screen_width_;
@@ -131,6 +161,11 @@ float lycoris::render::screen::get_screen_height() const
 bool lycoris::render::screen::is_active() const noexcept
 {
 	return activation_;
+}
+
+bool lycoris::render::screen::is_fullscreen() const noexcept
+{
+	return is_fullscreen_;
 }
 
 HWND lycoris::render::screen::get_window_handle() const

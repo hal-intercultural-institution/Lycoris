@@ -363,6 +363,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	swap_chain_desc.SampleDesc.Count = 1;
 	swap_chain_desc.SampleDesc.Quality = 0;
 	swap_chain_desc.Windowed = true;
+	swap_chain_desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 	swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 	std::array feature_level {
@@ -372,7 +373,7 @@ void lycoris::render::renderer::initialize(HINSTANCE hInstance, HWND hWnd, bool 
 	
 	std::uint32_t flags = 0;
 	flags |= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-	
+
 #if _DEBUG
 	// debug layer
 	flags |= D3D11_CREATE_DEVICE_DEBUG;

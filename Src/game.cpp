@@ -193,6 +193,12 @@ void lycoris::game::game::on_tick()
 		camera.on_tick();
 	}
 	overlay_.on_tick();
+
+	if (input_system_.get_keyboard().is_triggered(VK_F11))
+	{
+		renderer_.get_screen().set_fullscreen(!renderer_.get_screen().is_fullscreen());
+	}
+
 	input_system_.post_update();
 }
 
@@ -380,6 +386,7 @@ LRESULT CALLBACK wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_SIZE:
 		if (!lycoris::game::game::is_initialized()) break;
+		if (lycoris::game::get_game().get_renderer().get_screen().is_fullscreen()) break;
 		switch (wParam)
 		{
 		case 0: // restored, maximized
